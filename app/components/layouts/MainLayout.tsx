@@ -1,3 +1,4 @@
+import Footer from "./Footer";
 import Header from "./Header";
 
 export default function MainLayout({
@@ -6,9 +7,10 @@ export default function MainLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div>
+    <div className="min-h-screen">
       <Header />
       {children}
+      <Footer />
     </div>
   );
 }
