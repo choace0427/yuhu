@@ -4,12 +4,31 @@ import { supabase } from "@/supabase";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../_store/authStore";
-import { Avatar, Flex, Text } from "@mantine/core";
+import {
+  ActionIcon,
+  Avatar,
+  Card,
+  Flex,
+  ScrollArea,
+  Menu,
+  Skeleton,
+  Text,
+  TextInput,
+  LoadingOverlay,
+  Textarea,
+} from "@mantine/core";
+import { IconSend } from "@tabler/icons-react";
+import { IconNotification } from "@tabler/icons-react";
+import { IconUser } from "@tabler/icons-react";
+import { IconDotsVertical } from "@tabler/icons-react";
+import { IconSearch } from "@tabler/icons-react";
 
 export default function ChatPage() {
   const { userInfo } = useAuthStore();
   const router = useRouter();
   const [chatMembers, setChatMembers] = useState([]);
+
+  const [chatMembersLoading, setChatMembersLoading] = useState(false);
 
   const selectChatUser = async (
     sender_id: any,
@@ -59,6 +78,7 @@ export default function ChatPage() {
 
   useEffect(() => {
     const fetchChatMembers = async () => {
+      setChatMembersLoading(true);
       if (userInfo) {
         try {
           const { data: therapist_list, error } = await supabase.rpc(
@@ -78,6 +98,7 @@ export default function ChatPage() {
           console.error("Error executing RPC:", err);
         }
       }
+      setChatMembersLoading(false);
     };
 
     fetchChatMembers();
@@ -88,21 +109,43 @@ export default function ChatPage() {
       <TherapistList
         chatMembers={chatMembers}
         selectChatUser={selectChatUser}
+        chatMembersLoading={chatMembersLoading}
       />
+      <ChatSection />
     </div>
   );
 }
 
-const TherapistList = ({ chatMembers, selectChatUser }: any) => {
+const TherapistList = ({
+  chatMembers,
+  selectChatUser,
+  chatMembersLoading,
+}: any) => {
   const [unreadCounts, setUnreadCounts] = useState<{ [key: string]: number }>(
     {}
   );
   const { userInfo } = useAuthStore();
 
+  let skeletions_count = 8;
+
   return (
-    <div className="w-1/3 p-4 border-r">
+    <div className="max-w-[350px] w-full p-4 border-r">
       <h2 className="text-xl font-bold mb-4">Therapists</h2>
       <ul>
+        {chatMembersLoading &&
+          Array.from({ length: skeletions_count }).map((_, index) => {
+            return (
+              <div key={index} className="flex gap-2 p-2">
+                <div>
+                  <Skeleton height={50} circle />
+                </div>
+                <div className="w-full flex flex-col justify-evenly">
+                  <Skeleton height={8} radius="xl" />
+                  <Skeleton height={8} radius="xl" />
+                </div>
+              </div>
+            );
+          })}
         {chatMembers &&
           chatMembers.map((member: any, index: number) => (
             <li
@@ -134,6 +177,52 @@ const TherapistList = ({ chatMembers, selectChatUser }: any) => {
             </li>
           ))}
       </ul>
+    </div>
+  );
+};
+
+const ChatSection = () => {
+  return (
+    <div className="w-full p-4">
+      <Flex align={"center"} gap={"sm"} mb={"sm"}>
+        <TextInput
+          placeholder="Search chat here"
+          disabled
+          rightSection={<IconSearch size={"1rem"} />}
+          w={"100%"}
+        />{" "}
+      </Flex>
+
+      <div>
+        <Card shadow="sm" withBorder p={0}>
+          <ScrollArea
+            className="!h-[calc(100vh - 230px)] relative"
+            offsetScrollbars
+            scrollbarSize={6}
+            scrollHideDelay={2500}
+            p={"sm"}
+            styles={{
+              root: {
+                height: "calc(100vh - 230px)",
+              },
+            }}
+          ></ScrollArea>
+        </Card>
+        <div className="flex items-center mt-6">
+          <Textarea
+            placeholder="Type a message..."
+            disabled
+            w={"100%"}
+            rows={1}
+            size="md"
+            rightSection={
+              <ActionIcon variant="transparent">
+                <IconSend color="#46A7B0" />
+              </ActionIcon>
+            }
+          />
+        </div>
+      </div>
     </div>
   );
 };

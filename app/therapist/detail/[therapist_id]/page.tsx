@@ -115,7 +115,7 @@ export default function TherapistDetailPage(params: any) {
   };
 
   const handleConfirmBooking = (therapist: string) => {
-    router.push(`/booking?therapist=${userId}`);
+    router.push(`/booking/${userId}`);
   };
 
   return (
@@ -127,17 +127,18 @@ export default function TherapistDetailPage(params: any) {
       ) : (
         <div className="w-full flex flex-col max-w-[900px] mx-auto items-center">
           <div className="flex flex-col w-full  gap-8 py-10">
-            <div className="flex flex-row w-full items-start gap-12">
-              <Image
-                className="rounded-md w-[250px] h-[250px]"
-                id="therapist"
-                src={userData?.avatar_url || ""}
-                alt="therapist"
-                width={250}
-                height={250}
-              />
-
-              <div className="flex flex-col gap-4 pr-20 pt-2">
+            <div className="flex justify-between w-full items-start gap-12">
+              <div className="w-full">
+                <Image
+                  className="rounded-md w-[250px] h-[250px]"
+                  id="therapist"
+                  src={userData?.avatar_url || ""}
+                  alt="therapist"
+                  width={250}
+                  height={250}
+                />
+              </div>
+              <div className="flex flex-col w-full gap-4 pr-20 pt-2">
                 <span className=" text-3xl font-bold Poppins-font">
                   {userData?.name || ""}
                 </span>
