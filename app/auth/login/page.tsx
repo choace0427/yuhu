@@ -39,7 +39,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-row lg:flex-col w-full">
-      <div className="lg:w-1/2 w-full h-[calc(100vh-74px)] flex justify-center items-center">
+      <div className="lg:w-1/2 w-full h-[calc(100vh-80px)] flex justify-center items-center">
         <div className="flex m-auto justify-center items-center w-full">
           <div className="m-auto pb-10 gap-8 flex flex-col sm:w-[450px] w-[350px]">
             <header className="text-start flex flex-col gap-4">
