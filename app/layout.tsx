@@ -1,6 +1,16 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import {
+  ColorSchemeScript,
+  MantineProvider,
+  mantineHtmlProps,
+} from "@mantine/core";
+
 import "./globals.css";
+import "@mantine/core/styles.css";
+import MainLayout from "./components/layouts/MainLayout";
+import { Bounce } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -24,11 +34,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+    <html lang="en" {...mantineHtmlProps}>
+      <head>
+        <ColorSchemeScript />
+      </head>
+      <body>
+        <MantineProvider>
+          <MainLayout>{children}</MainLayout>
+        </MantineProvider>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick={false}
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+          transition={Bounce}
+        />
       </body>
     </html>
   );
