@@ -12,6 +12,7 @@ import { ToastContainer } from "react-toastify";
 import "./globals.css";
 import "@mantine/core/styles.css";
 import "@mantine/carousel/styles.css";
+import "@mantine/dates/styles.css";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
