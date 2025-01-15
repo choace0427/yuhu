@@ -20,16 +20,11 @@ import {
   TextInput,
 } from "@mantine/core";
 import {
-  IconBlocks,
   IconDotsVertical,
-  IconMessageCircle,
   IconNotification,
-  IconPhoto,
   IconSearch,
   IconSend,
-  IconSettings,
   IconUser,
-  IconX,
 } from "@tabler/icons-react";
 
 type User = {

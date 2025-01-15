@@ -207,18 +207,22 @@ const Header = () => {
             </Menu.Target>
 
             <Menu.Dropdown>
-              <Menu.Item
-                leftSection={<IconSettings size={14} />}
-                onClick={() => router.push("/therapist")}
-              >
-                Therapist
-              </Menu.Item>
-              <Menu.Item
-                leftSection={<IconServicemark size={14} />}
-                onClick={() => router.push("/customer")}
-              >
-                Services
-              </Menu.Item>
+              {userInfo?.role === "therapist" ? (
+                <Menu.Item
+                  leftSection={<IconSettings size={14} />}
+                  onClick={() => router.push("/therapist")}
+                >
+                  Therapist
+                </Menu.Item>
+              ) : (
+                <Menu.Item
+                  leftSection={<IconServicemark size={14} />}
+                  onClick={() => router.push("/customer")}
+                >
+                  Services
+                </Menu.Item>
+              )}
+
               <Menu.Item
                 leftSection={<IconMessageCircle size={14} />}
                 onClick={() => router.push("/chat")}
