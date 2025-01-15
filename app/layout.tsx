@@ -5,12 +5,13 @@ import {
   MantineProvider,
   mantineHtmlProps,
 } from "@mantine/core";
-
-import "./globals.css";
-import "@mantine/core/styles.css";
 import MainLayout from "./components/layouts/MainLayout";
 import { Bounce } from "react-toastify";
 import { ToastContainer } from "react-toastify";
+
+import "./globals.css";
+import "@mantine/core/styles.css";
+import "@mantine/carousel/styles.css";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
