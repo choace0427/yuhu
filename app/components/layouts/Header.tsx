@@ -103,22 +103,10 @@ const Header = () => {
         <Image src="/img/logo.png" alt="logo" width={30} height={30} />
         <div className="Poppins-font font-bold">
           <span className="text-lg text-[#46A7B0]">Y</span>
-          <span
-            className={`text-lg ${
-              colorScheme === "light" ? "text-black" : "text-white"
-            }`}
-          >
-            uhu
-          </span>
+          <span className={`text-lg`}>uhu</span>
           &nbsp;
           <span className="text-lg text-[#46A7B0]">W</span>
-          <span
-            className={`text-lg ${
-              colorScheme === "light" ? "text-black" : "text-white"
-            }`}
-          >
-            ellness
-          </span>
+          <span className={`text-lg `}>ellness</span>
         </div>
       </div>
       <Group justify="center" gap={"xl"}>

@@ -12,6 +12,7 @@ import {
   Card,
   Divider,
   Flex,
+  Loader,
   LoadingOverlay,
   Menu,
   Popover,
@@ -33,6 +34,7 @@ import {
   IconSettings,
   IconTrash,
   IconUser,
+  IconX,
 } from "@tabler/icons-react";
 import { toast } from "react-toastify";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
@@ -112,31 +114,33 @@ export default function ChatPage(params: any) {
     }
   };
 
-  useEffect(() => {
-    const fetchChatMembers = async () => {
-      setChatMembersLoading(true);
-      if (userInfo) {
-        try {
-          const { data: therapist_list, error } = await supabase.rpc(
-            "chat_members",
-            {
-              input_member_id: userInfo.id,
-              input_role: userInfo.role,
-            }
-          );
-
-          if (error) {
-            console.error("Error fetching chat members:", error);
-          } else {
-            setChatMembers(therapist_list);
+  const fetchChatMembers = async (input_search_text: any) => {
+    setChatMembersLoading(true);
+    if (userInfo) {
+      try {
+        const { data: therapist_list, error } = await supabase.rpc(
+          "chat_members",
+          {
+            input_member_id: userInfo.id,
+            input_role: userInfo.role,
+            input_search_text: input_search_text,
           }
-        } catch (err) {
-          console.error("Error executing RPC:", err);
+        );
+
+        if (error) {
+          console.error("Error fetching chat members:", error);
+        } else {
+          setChatMembers(therapist_list);
         }
+      } catch (err) {
+        console.error("Error executing RPC:", err);
       }
-      setChatMembersLoading(false);
-    };
-    fetchChatMembers();
+    }
+    setChatMembersLoading(false);
+  };
+
+  useEffect(() => {
+    fetchChatMembers("");
   }, [userInfo]);
 
   useEffect(() => {
@@ -175,6 +179,9 @@ export default function ChatPage(params: any) {
         currentUser={currentUser}
         setCurrentUser={setCurrentUser}
         chatMembersLoading={chatMembersLoading}
+        setChatMembersLoading={setChatMembersLoading}
+        setChatMembers={setChatMembers}
+        fetchChatMembers={fetchChatMembers}
       />
       {conversationData ? (
         <ChatSection
@@ -197,17 +204,53 @@ const TherapistList = ({
   selectChatUser,
   currentUser,
   chatMembersLoading,
+  setChatMembers,
+  fetchChatMembers,
+  setChatMembersLoading,
 }: any) => {
   const [unreadCounts, setUnreadCounts] = useState<{ [key: string]: number }>(
     {}
   );
   const { userInfo } = useAuthStore();
-
   let skeletions_count = 8;
+  const [searchMembers, setSearchMembers] = useState("");
+  const handleMemberSearch = async (e: any) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      setChatMembersLoading(true);
+      await fetchChatMembers(searchMembers);
+      setChatMembersLoading(false);
+    }
+  };
 
   return (
     <div className="max-w-[350px] w-full p-4 border-r">
-      <h2 className="text-xl font-bold mb-4">Therapists</h2>
+      <TextInput
+        placeholder="Search members"
+        leftSection={<IconSearch size={"1.2rem"} />}
+        rightSection={
+          searchMembers.trim() !== "" ? (
+            chatMembersLoading ? (
+              <Loader size={"sm"} />
+            ) : (
+              <IconX
+                size={"1.2rem"}
+                className="hover:cursor-pointer"
+                onClick={() => {
+                  fetchChatMembers("");
+                  setSearchMembers("");
+                }}
+              />
+            )
+          ) : (
+            <></>
+          )
+        }
+        mb={"sm"}
+        value={searchMembers}
+        onChange={(e: any) => setSearchMembers(e.target.value)}
+        onKeyDown={handleMemberSearch}
+      />
       <ul>
         {chatMembersLoading &&
           Array.from({ length: skeletions_count }).map((_, index) => {
@@ -225,6 +268,7 @@ const TherapistList = ({
           })}
 
         {chatMembers &&
+          chatMembers.length > 0 &&
           chatMembers.map((member: any, index: number) => (
             <li
               key={index}
@@ -275,6 +319,13 @@ const ChatSection = ({ room_id, currentUser }: any) => {
 
   const [editConversationId, setEditConversationId] = useState("");
   const [editText, setEditText] = useState("");
+
+  const [searchChat, setSearchChat] = useState("");
+  const [searchChatData, setSearchChatData] = useState<any>([]);
+  const [searchChatLoading, setSearchChatLoading] = useState(false);
+  const [showSearchResults, setShowSearchResults] = useState<boolean>(false);
+
+  const searchContainerRef = useRef<HTMLDivElement>(null);
 
   const handleEmojiClick = (emojiData: EmojiClickData, messageId?: string) => {
     if (messageId) {
@@ -399,6 +450,31 @@ const ChatSection = ({ room_id, currentUser }: any) => {
     return acc;
   }, {});
 
+  const handleSearchChat = async () => {
+    setSearchChatLoading(true);
+
+    try {
+      const { data, error } = await supabase.rpc("search_chats", {
+        input_room_id: room_id,
+        input_search_text: searchChat,
+      });
+
+      if (error) {
+        console.error("Error searching chats:", error.message);
+        setSearchChatData([]);
+      } else {
+        console.log("Search results:", data);
+        setSearchChatData(data || []);
+        setShowSearchResults(true);
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      setSearchChatData([]);
+    } finally {
+      setSearchChatLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchMessages();
     const chatInsertRealtime = supabase
@@ -476,15 +552,85 @@ const ChatSection = ({ room_id, currentUser }: any) => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target as Node)
+      ) {
+        setShowSearchResults(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="w-full p-4">
       <Flex align={"center"} gap={"sm"} mb={"sm"}>
-        <TextInput
-          placeholder="Search chat here"
-          rightSection={<IconSearch size={"1rem"} />}
-          w={"100%"}
-        />
-        <Menu shadow="md" width={200} position="bottom-end">
+        <div
+          ref={searchContainerRef}
+          className="flex flex-col items-center relative w-full"
+        >
+          <TextInput
+            placeholder="Search chat here"
+            leftSection={<IconSearch size="1rem" />}
+            rightSection={
+              searchChatLoading ? (
+                <Loader size="xs" />
+              ) : (
+                <IconX
+                  size={"1rem"}
+                  className="hover:cursor-pointer"
+                  onClick={() => {
+                    // setSearchChat(null);
+                    handleSearchChat();
+                  }}
+                />
+              )
+            }
+            w="100%"
+            value={searchChat}
+            onChange={(e) => setSearchChat(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && searchChat !== "") {
+                e.preventDefault();
+                handleSearchChat();
+              }
+            }}
+            onFocus={() =>
+              searchChatData.length > 0 && setShowSearchResults(true)
+            }
+          />
+          {searchChatData.length > 0 ? (
+            <Card
+              withBorder
+              pr={0}
+              className="!absolute top-[38px] w-[98%] mx-auto z-20"
+            >
+              <ScrollArea.Autosize mah={160} scrollbarSize={6}>
+                <Flex direction="column" gap="sm">
+                  {searchChatData.map((item: any) => {
+                    return (
+                      <Flex gap="sm" align="center" key={item.chat_id}>
+                        <Text>{item.messages}</Text>
+                      </Flex>
+                    );
+                  })}
+                </Flex>
+              </ScrollArea.Autosize>
+            </Card>
+          ) : (
+            searchChat !== "" &&
+            !searchChatLoading && (
+              <div className="absolute top-[38px]">No Messages</div>
+            )
+          )}
+        </div>
+        <Menu shadow="md" width={200} position="bottom-end" styles={{}}>
           <Menu.Target>
             <IconDotsVertical
               size={"1.2rem"}
@@ -538,6 +684,19 @@ const ChatSection = ({ room_id, currentUser }: any) => {
                 <div key={date}>
                   <div className="text-center my-4 text-gray-500 text-sm">
                     {dayjs(date).format("MMMM DD, YYYY")}
+                    {(() => {
+                      const messageDate = dayjs(date);
+                      const today = dayjs();
+                      const yesterday = dayjs().subtract(1, "day");
+
+                      if (messageDate.isSame(today, "day")) {
+                        return "Today";
+                      } else if (messageDate.isSame(yesterday, "day")) {
+                        return "Yesterday";
+                      } else {
+                        return messageDate.format("DD/MM/YYYY");
+                      }
+                    })()}
                   </div>
 
                   {groupedMessages[date].map((msg: any, index: number) => {
@@ -602,7 +761,7 @@ const ChatSection = ({ room_id, currentUser }: any) => {
                               >
                                 <Menu.Target>
                                   <ActionIcon size="xs" variant="transparent">
-                                    <IconDotsVertical size={16} />
+                                    <IconDotsVertical size={16} color="gray" />
                                   </ActionIcon>
                                 </Menu.Target>
 

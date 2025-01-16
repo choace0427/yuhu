@@ -86,6 +86,7 @@ export default function ChatPage() {
             {
               input_member_id: userInfo.id,
               input_role: userInfo.role,
+              input_search_text: "",
             }
           );
 
