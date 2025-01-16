@@ -26,13 +26,11 @@ export default function LoginPage() {
 
   const [loading, setLoading] = useState(false);
 
-  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const handleFormSubmit = () => {
     const values = form.getValues();
+    setLoading(true);
     try {
-      setLoading(true);
-      await signUp(values.name, values.email, values.password, router);
+      signUp(values.name, values.email, values.password, router);
     } catch (error) {
       console.log("error", error);
     }
@@ -46,14 +44,20 @@ export default function LoginPage() {
           <div className="m-auto pb-10 gap-8 flex flex-col sm:w-[450px] w-[350px]">
             <header className="text-start flex flex-col gap-4">
               <Image src="/img/logo.png" alt="logo" w={80} h={50} ml={-20} />
-              <span className="text-3xl text-black font-bold Poppins-font text-left">
+              <span className="text-3xl font-bold Poppins-font text-left">
                 Sign up with us
               </span>
-              <span className="text-black/80 text-base Poppins-font">
-                Already have an account? Login
+              <span className="text-base Poppins-font">
+                Already have an account?{" "}
+                <span
+                  className="text-[#46A7B0] hover:cursor-pointer"
+                  onClick={() => router.push("/auth/login")}
+                >
+                  Login
+                </span>
               </span>
             </header>
-            <form onSubmit={handleFormSubmit}>
+            <form onSubmit={form.onSubmit(handleFormSubmit)}>
               <TextInput
                 mt="sm"
                 label="Full Name"
@@ -80,13 +84,13 @@ export default function LoginPage() {
               />
               <Button
                 type="submit"
-                mt="lg"
+                mt={60}
                 size="lg"
                 fullWidth
                 className="!bg-[#46A7B0]"
                 loading={loading}
               >
-                Creaet Account
+                Create Account
               </Button>
             </form>
             <div className="flex justify-start items-center self-stretch flex-grow-0 flex-shrink-0 gap-[23px]">
@@ -132,8 +136,8 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-      <div className="hidden lg:block lg:w-1/2 h-[calc(100vh-64px)] fixed right-0">
-        <div className="flex flex-col items-center justify-center gap-8 h-full bg-[#46A7B0] rounded-3xl">
+      <div className="hidden lg:block lg:w-1/2 h-[calc(100vh-80px)] fixed right-0">
+        <div className="flex flex-col items-center justify-center gap-8 h-full bg-[#46A7B0] rounded-l-3xl">
           <div className="flex flex-col gap-8">
             <div className="flex border-8 rounded-3xl w-[450px] h-[400px]">
               <Image

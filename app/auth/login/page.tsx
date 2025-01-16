@@ -24,13 +24,11 @@ export default function LoginPage() {
 
   const [loading, setLoading] = useState(false);
 
-  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const handleFormSubmit = () => {
     const values = form.getValues();
     try {
       setLoading(true);
-      await signIn(values.email, values.password, router);
+      signIn(values.email, values.password, router);
     } catch (error) {
       console.log("error", error);
     }
@@ -44,14 +42,14 @@ export default function LoginPage() {
           <div className="m-auto pb-10 gap-8 flex flex-col sm:w-[450px] w-[350px]">
             <header className="text-start flex flex-col gap-4">
               <Image src="/img/logo.png" alt="logo" w={80} h={50} ml={-20} />
-              <span className="text-3xl text-black font-bold Poppins-font text-left">
+              <span className="text-3xl font-bold Poppins-font text-left">
                 Welcome back 👋
               </span>
-              <span className="text-black/80 text-base Poppins-font">
+              <span className="text-base Poppins-font">
                 We are happy to have you back
               </span>
             </header>
-            <form onSubmit={handleFormSubmit}>
+            <form onSubmit={form.onSubmit(handleFormSubmit)}>
               <TextInput
                 mt="sm"
                 label="Email"
@@ -70,7 +68,7 @@ export default function LoginPage() {
               />
               <Button
                 type="submit"
-                mt="lg"
+                mt={60}
                 size="lg"
                 fullWidth
                 className="!bg-[#46A7B0]"
@@ -122,8 +120,8 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-      <div className="hidden lg:block lg:w-1/2 h-[calc(100vh-64px)] fixed right-0">
-        <div className="flex flex-col items-center justify-center gap-8 h-full bg-[#46A7B0] rounded-3xl">
+      <div className="hidden lg:block lg:w-1/2 h-[calc(100vh-80px)] fixed right-0">
+        <div className="flex flex-col items-center justify-center gap-8 h-full bg-[#46A7B0] rounded-l-3xl">
           <div className="flex flex-col gap-8">
             <div className="flex border-8 rounded-3xl w-[450px] h-[400px]">
               <Image

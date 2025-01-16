@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/supabase";
@@ -23,6 +22,7 @@ import {
 } from "@tabler/icons-react";
 import ThemeSwitch from "../themeSwitch";
 import { useAuthStore } from "@/app/_store/authStore";
+import { toast } from "react-toastify";
 
 const Header = () => {
   const { colorScheme } = useMantineColorScheme();
@@ -47,6 +47,19 @@ const Header = () => {
     }
   };
 
+  const excludedPaths = [
+    "customer",
+    "home",
+    "service",
+    "auth",
+    "contactus",
+    "pricing",
+    "team",
+    "about",
+  ];
+
+  const isExcludedPath = excludedPaths.some((path) => pathname.includes(path));
+
   useEffect(() => {
     if (userInfo) {
       const notificationsRealtime = supabase
@@ -68,6 +81,11 @@ const Header = () => {
       return () => {
         notificationsRealtime.unsubscribe();
       };
+    } else if (!isExcludedPath) {
+      setTimeout(() => {
+        router.push("/auth/login");
+      }, 500);
+      toast.warn("Authentication required. Please log in to continue.");
     }
   }, [userInfo]);
 
@@ -103,8 +121,8 @@ const Header = () => {
       </div>
       <Group justify="center" gap={"xl"}>
         <Anchor
-          href={`${process.env.NEXT_PUBLIC_APP_URL}/`}
           underline={pathname === "/" ? "always" : "hover"}
+          onClick={() => router.push("/")}
           variant=""
           className={`Poppins-font !font-semibold ${
             pathname === "/"
@@ -115,8 +133,8 @@ const Header = () => {
           Home
         </Anchor>
         <Anchor
-          href={`${process.env.NEXT_PUBLIC_APP_URL}/about`}
           underline={pathname === "/about" ? "always" : "hover"}
+          onClick={() => router.push("/about")}
           className={`Poppins-font !font-semibold  ${
             pathname === "/about"
               ? "!text-[#46A7B0] border-b-2 border-[#46A7B0]"
@@ -126,8 +144,8 @@ const Header = () => {
           About
         </Anchor>
         <Anchor
-          href={`${process.env.NEXT_PUBLIC_APP_URL}/services`}
           underline={pathname === "/services" ? "always" : "hover"}
+          onClick={() => router.push("/services")}
           className={`Poppins-font !font-semibold ${
             pathname === "/services"
               ? "!text-[#46A7B0] border-b-2 border-[#46A7B0]"
@@ -137,8 +155,8 @@ const Header = () => {
           Our services
         </Anchor>
         <Anchor
-          href={`${process.env.NEXT_PUBLIC_APP_URL}/team`}
           underline={pathname === "/team" ? "always" : "hover"}
+          onClick={() => router.push("/team")}
           className={`Poppins-font !font-semibold ${
             pathname === "/team"
               ? "!text-[#46A7B0] border-b-2 border-[#46A7B0]"
@@ -148,7 +166,7 @@ const Header = () => {
           Team
         </Anchor>
         <Anchor
-          href={`${process.env.NEXT_PUBLIC_APP_URL}/pricing`}
+          onClick={() => router.push("/pricing")}
           underline={pathname === "/pricing" ? "always" : "hover"}
           className={`Poppins-font !font-semibold ${
             pathname === "/pricing"
@@ -159,7 +177,7 @@ const Header = () => {
           Pricing
         </Anchor>
         <Anchor
-          href={`${process.env.NEXT_PUBLIC_APP_URL}/contactus`}
+          onClick={() => router.push("/contactus")}
           underline={pathname === "/contactus" ? "always" : "hover"}
           className={`Poppins-font !font-semibold ${
             pathname === "/contactus"
