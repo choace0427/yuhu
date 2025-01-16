@@ -8,11 +8,13 @@ import { useAuthStore } from "@/app/_store/authStore";
 import {
   ActionIcon,
   Avatar,
+  Box,
   Card,
   Divider,
   Flex,
   LoadingOverlay,
   Menu,
+  Popover,
   ScrollArea,
   Skeleton,
   Text,
@@ -20,12 +22,20 @@ import {
   TextInput,
 } from "@mantine/core";
 import {
+  IconCopy,
   IconDotsVertical,
+  IconEdit,
+  IconMoodSmile,
   IconNotification,
+  IconPencil,
   IconSearch,
   IconSend,
+  IconSettings,
+  IconTrash,
   IconUser,
 } from "@tabler/icons-react";
+import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
+import { toast } from "react-toastify";
 
 type User = {
   id: string;
@@ -257,15 +267,74 @@ const ChatSection = ({ room_id, currentUser }: any) => {
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const textareaRef = useRef(null);
 
   const { userInfo } = useAuthStore();
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [hoveredMessage, setHoveredMessage] = useState<string | null>(null);
+
+  const [editConversationId, setEditConversationId] = useState("");
+  const [editText, setEditText] = useState("");
+
+  const handleEmojiClick = (emojiData: EmojiClickData, messageId?: string) => {
+    if (messageId) {
+      console.log(`Adding reaction ${emojiData.emoji} to message ${messageId}`);
+    } else {
+      const emoji = emojiData.emoji;
+      const cursorPosition = textareaRef.current?.selectionStart || 0;
+      const updatedMessage =
+        newMessage.slice(0, cursorPosition) +
+        emoji +
+        newMessage.slice(cursorPosition);
+      setNewMessage(updatedMessage);
+
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.focus();
+          textareaRef.current.setSelectionRange(
+            cursorPosition + emoji.length,
+            cursorPosition + emoji.length
+          );
+        }
+      }, 0);
+    }
+  };
+
+  const handleUpdateMessage = async () => {
+    const { error } = await supabase
+      .from("chats")
+      .update({ messages: newMessage, status: "edited" })
+      .eq("conversation_id", editConversationId)
+      .single();
+    if (error) {
+      console.error(error);
+      return;
+    } else {
+      setEditConversationId("");
+      setEditText("");
+      setNewMessage("");
+    }
+  };
+
+  const handleMessageDelete = async (conversation_id: any) => {
+    const { error } = await supabase
+      .from("chats")
+      .delete()
+      .eq("conversation_id", conversation_id)
+      .eq("room_id", room_id);
+    if (error) console.error(error);
+  };
 
   const handleKeyDown = (e: any) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
+      if (newMessage.trim() === "") return;
 
-      sendMessage();
+      if (editConversationId) {
+        handleUpdateMessage();
+      } else {
+        sendMessage();
+      }
     }
   };
 
@@ -297,6 +366,7 @@ const ChatSection = ({ room_id, currentUser }: any) => {
       room_id: room_id,
       messages: newMessage,
       sender_id: userInfo.id,
+      receiver_id: currentUser[0]?.user_id,
     });
 
     if (error) {
@@ -320,19 +390,28 @@ const ChatSection = ({ room_id, currentUser }: any) => {
     setLoading(false);
   };
 
+  const groupedMessages = messages.reduce((acc: any, msg: any) => {
+    const date = dayjs(msg.created_at).format("YYYY-MM-DD");
+    if (!acc[date]) {
+      acc[date] = [];
+    }
+    acc[date].push(msg);
+    return acc;
+  }, {});
+
   useEffect(() => {
-    const chatRealtime = supabase
-      .channel("chats-db-changes")
+    fetchMessages();
+    const chatInsertRealtime = supabase
+      .channel("chatsInsert-db-changes")
       .on(
         "postgres_changes",
         {
-          event: "*",
+          event: "INSERT",
           schema: "public",
           table: "chats",
           filter: `room_id=eq.${room_id}`,
         },
         (payload) => {
-          console.log("Database change detected:", payload);
           setMessages((prevMessages) => {
             const newMessage = payload.new;
             if (newMessage) {
@@ -343,10 +422,57 @@ const ChatSection = ({ room_id, currentUser }: any) => {
         }
       )
       .subscribe();
-    fetchMessages();
+
+    const chatUpdateRealtime = supabase
+      .channel("chatsUpdate-db-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "chats",
+          filter: `room_id=eq.${room_id}`,
+        },
+        (payload) => {
+          const updatedMessage = payload.new;
+          setMessages((prevMessages) =>
+            prevMessages.map((message) =>
+              message.conversation_id === updatedMessage.conversation_id
+                ? { ...message, ...updatedMessage }
+                : message
+            )
+          );
+        }
+      )
+      .subscribe();
+
+    const chatDeleteRealtime = supabase
+      .channel("chatsDelete-db-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "DELETE",
+          schema: "public",
+          table: "chats",
+        },
+        (payload) => {
+          setMessages((prevMessages) => {
+            const deletedMessageId = payload.old.conversation_id;
+            if (deletedMessageId) {
+              return prevMessages.filter(
+                (message) => message.conversation_id !== deletedMessageId
+              );
+            }
+            return prevMessages;
+          });
+        }
+      )
+      .subscribe();
 
     return () => {
-      chatRealtime.unsubscribe();
+      chatInsertRealtime.unsubscribe();
+      chatUpdateRealtime.unsubscribe();
+      chatDeleteRealtime.unsubscribe();
     };
   }, []);
 
@@ -393,7 +519,8 @@ const ChatSection = ({ room_id, currentUser }: any) => {
             offsetScrollbars
             scrollbarSize={6}
             scrollHideDelay={2500}
-            p={"sm"}
+            py={"sm"}
+            px={50}
             styles={{
               root: {
                 height: "calc(100vh - 230px)",
@@ -405,55 +532,150 @@ const ChatSection = ({ room_id, currentUser }: any) => {
               zIndex={1000}
               overlayProps={{ radius: "sm", blur: 2 }}
             />
+
             {userInfo &&
-              messages.map((msg: any, index: number) => {
-                return (
-                  <div
-                    key={index}
-                    className={`w-full flex mb-2 ${
-                      msg.sender_id === userInfo.id
-                        ? "items-end"
-                        : "items-start"
-                    }  flex-col`}
-                  >
-                    <div
-                      className={`flex mb-3 ${
-                        msg.sender_id === userInfo.id
-                          ? "flex-row"
-                          : "flex-row-reverse"
-                      } gap-2 items-end`}
-                    >
-                      <div>
-                        <div
-                          key={index}
-                          className={`p-[6px] max-w-[450px] rounded-md ${
-                            msg.sender_id === userInfo.id
-                              ? "text-white bg-[#46A7B0]"
-                              : "text-black bg-[#E6E6E6]"
-                          }`}
-                        >
-                          {msg.messages}
-                        </div>
-                        <Text size="xs" mt={"3"}>
-                          {dayjs(msg.created_at).format("hh:mm A")}
-                        </Text>
-                      </div>
-                      <Avatar
-                        src={
-                          currentUser.length > 0 &&
-                          msg.sender_id === userInfo.id
-                            ? ""
-                            : currentUser[0]?.avatar_url
-                        }
-                        alt={msg.name}
-                        mb={3}
-                        size={"sm"}
-                        radius={"xl"}
-                      />
-                    </div>
+              Object.keys(groupedMessages).map((date) => (
+                <div key={date}>
+                  <div className="text-center my-4 text-gray-500 text-sm">
+                    {dayjs(date).format("MMMM DD, YYYY")}
                   </div>
-                );
-              })}
+
+                  {groupedMessages[date].map((msg: any, index: number) => {
+                    const isSender = msg.sender_id === userInfo.id;
+                    return (
+                      <div
+                        key={msg.conversation_id || index}
+                        className={`w-full flex mb-2 ${
+                          isSender ? "items-end" : "items-start"
+                        } flex-col`}
+                        onMouseEnter={() =>
+                          setHoveredMessage(msg.conversation_id)
+                        }
+                        onMouseLeave={() => setHoveredMessage(null)}
+                      >
+                        <div
+                          className={`flex mb-3 relative ${
+                            isSender ? "flex-row" : "flex-row-reverse"
+                          } gap-2 items-end`}
+                        >
+                          <div className="relative">
+                            <div
+                              className={`flex gap-1 items-end ${
+                                isSender ? "flex-row-reverse" : ""
+                              }`}
+                            >
+                              <div
+                                className={`p-[6px] max-w-[450px] relative break-words whitespace-pre-wrap rounded-md ${
+                                  isSender
+                                    ? "text-white bg-[#46A7B0]"
+                                    : "text-black bg-[#E6E6E6]"
+                                }`}
+                              >
+                                {msg.messages}
+                              </div>
+                              {msg?.status === "edited" && (
+                                <Text size="xs">(edited)</Text>
+                              )}
+                            </div>
+                            <Text
+                              size="xs"
+                              mt={"3"}
+                              className={`${
+                                isSender ? "text-start" : "text-end"
+                              }`}
+                            >
+                              {dayjs(msg.created_at).format("hh:mm A")}
+                            </Text>
+                          </div>
+                          {hoveredMessage === msg.conversation_id && (
+                            <Box
+                              className={`absolute top-[10px] ${
+                                isSender ? "left-[-50px]" : "right-[-10px]"
+                              }  transform translate-x-full -translate-y-1/2`}
+                            >
+                              <Menu
+                                shadow="md"
+                                width={200}
+                                position={
+                                  isSender ? "bottom-end" : "bottom-start"
+                                }
+                              >
+                                <Menu.Target>
+                                  <ActionIcon size="xs" variant="transparent">
+                                    <IconDotsVertical size={16} />
+                                  </ActionIcon>
+                                </Menu.Target>
+
+                                <Menu.Dropdown>
+                                  <Menu.Item
+                                    leftSection={<IconCopy size={14} />}
+                                    onClick={() => {
+                                      navigator.clipboard
+                                        .writeText(msg.messages)
+                                        .then(() => {
+                                          toast.success(
+                                            "Message copied to clipboard!",
+                                            {
+                                              position: "bottom-right",
+                                            }
+                                          );
+                                        })
+                                        .catch((err) => {
+                                          console.log(err);
+                                        });
+                                    }}
+                                  >
+                                    Copy text
+                                  </Menu.Item>
+
+                                  {msg?.sender_id === userInfo?.id && (
+                                    <>
+                                      <Menu.Item
+                                        leftSection={<IconEdit size={14} />}
+                                        onClick={() => {
+                                          setEditConversationId(
+                                            msg.conversation_id
+                                          );
+                                          setEditText(msg.messages);
+                                          setNewMessage(msg.messages);
+                                          textareaRef.current?.focus();
+                                        }}
+                                      >
+                                        Edit
+                                      </Menu.Item>
+                                      <Menu.Item
+                                        leftSection={<IconTrash size={14} />}
+                                        onClick={() =>
+                                          handleMessageDelete(
+                                            msg?.conversation_id
+                                          )
+                                        }
+                                      >
+                                        Remove
+                                      </Menu.Item>
+                                    </>
+                                  )}
+                                </Menu.Dropdown>
+                              </Menu>
+                            </Box>
+                          )}
+                          <Avatar
+                            src={
+                              currentUser.length > 0 && !isSender
+                                ? currentUser[0]?.avatar_url
+                                : ""
+                            }
+                            alt={msg.sender_id}
+                            mb={3}
+                            size={"sm"}
+                            radius={"xl"}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
             {currentUser[0]?.therapist_status === "block" ? (
               <Divider
                 my="xs"
@@ -488,9 +710,25 @@ const ChatSection = ({ room_id, currentUser }: any) => {
                 : false
             }
             rightSection={
-              <ActionIcon variant="transparent" onClick={() => sendMessage}>
-                <IconSend color="#46A7B0" />
-              </ActionIcon>
+              <Flex>
+                <Popover position="top-end" withArrow shadow="md">
+                  <Popover.Target>
+                    <ActionIcon>
+                      <IconMoodSmile />
+                    </ActionIcon>
+                  </Popover.Target>
+                  <Popover.Dropdown>
+                    <EmojiPicker
+                      searchPlaceholder=""
+                      onEmojiClick={(emojiData) => handleEmojiClick(emojiData)}
+                    />
+                  </Popover.Dropdown>
+                </Popover>
+
+                <ActionIcon variant="transparent" onClick={sendMessage}>
+                  <IconSend color="#46A7B0" />
+                </ActionIcon>
+              </Flex>
             }
           />
         </div>
