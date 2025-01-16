@@ -34,8 +34,8 @@ import {
   IconTrash,
   IconUser,
 } from "@tabler/icons-react";
-import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import { toast } from "react-toastify";
+import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 
 type User = {
   id: string;
@@ -693,7 +693,7 @@ const ChatSection = ({ room_id, currentUser }: any) => {
             )}
           </ScrollArea>
         </Card>
-        <div className="flex items-center mt-6">
+        <div className="flex items-center mt-6 gap-2">
           <Textarea
             placeholder="Type a message..."
             value={newMessage}
@@ -710,27 +710,26 @@ const ChatSection = ({ room_id, currentUser }: any) => {
                 : false
             }
             rightSection={
-              <Flex>
-                <Popover position="top-end" withArrow shadow="md">
-                  <Popover.Target>
-                    <ActionIcon>
-                      <IconMoodSmile />
-                    </ActionIcon>
-                  </Popover.Target>
-                  <Popover.Dropdown>
-                    <EmojiPicker
-                      searchPlaceholder=""
-                      onEmojiClick={(emojiData) => handleEmojiClick(emojiData)}
-                    />
-                  </Popover.Dropdown>
-                </Popover>
-
-                <ActionIcon variant="transparent" onClick={sendMessage}>
-                  <IconSend color="#46A7B0" />
-                </ActionIcon>
-              </Flex>
+              <ActionIcon variant="transparent" onClick={sendMessage}>
+                <IconSend color="#46A7B0" />
+              </ActionIcon>
             }
           />
+          <Popover position="top-end" withArrow shadow="md">
+            <Popover.Target>
+              <ActionIcon variant="transparent" radius={"xl"}>
+                <IconMoodSmile />
+              </ActionIcon>
+            </Popover.Target>
+            <Popover.Dropdown>
+              <div>
+                <EmojiPicker
+                  skinTonesDisabled
+                  onEmojiClick={(emojiData) => handleEmojiClick(emojiData)}
+                />
+              </div>
+            </Popover.Dropdown>
+          </Popover>
         </div>
       </div>
     </div>
