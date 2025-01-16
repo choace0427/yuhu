@@ -17,21 +17,20 @@ export default function NotifcationsPage() {
 
   const [tabs, setTabs] = useState("booking");
 
-  const getNewNotications = async () => {
+  const getBookingNotications = async () => {
     setLoading(true);
     if (userInfo) {
       try {
-        const { data: therapist_list, error } = await supabase.rpc(
+        const { data: bookingNotificationData, error } = await supabase.rpc(
           "get_new_notifications",
           {
             input_therapist_id: userInfo.id,
           }
         );
-
         if (error) {
           console.error("Error fetching chat members:", error);
         } else {
-          setNotifications(therapist_list);
+          setNotifications(bookingNotificationData);
         }
       } catch (err) {
         console.error("Error executing RPC:", err);
@@ -112,7 +111,7 @@ export default function NotifcationsPage() {
   };
 
   useEffect(() => {
-    if (tabs === "booking") getNewNotications();
+    if (tabs === "booking") getBookingNotications();
     if (tabs === "others") getOtherNotifications();
   }, [userInfo, tabs]);
 
@@ -128,10 +127,8 @@ export default function NotifcationsPage() {
             table: "booking_list",
             filter: `therapist_id=eq.${userInfo?.id}`,
           },
-          (payload) => {
-            console.log("Database change detected:", payload);
-            getNewNotications();
-          }
+
+          getBookingNotications
         )
         .subscribe();
 
@@ -152,17 +149,18 @@ export default function NotifcationsPage() {
           table: "notifications",
           filter: `receiver_id=eq.${userInfo?.id}`,
         },
-        (payload) => {
-          console.log("Database change detected:", payload);
-          getOtherNotifications();
-        }
+        getOtherNotifications
+        // (payload) => {
+        //   console.log("Database change detected:", payload);
+        //   getOtherNotifications();
+        // }
       )
       .subscribe();
 
     return () => {
       othersnotificationsRealtime.unsubscribe();
     };
-  }, []);
+  }, [userInfo, tabs]);
 
   return (
     <div className="px-20 py-16 w-full max-w-[1000px] mx-auto min-h-[400px]">

@@ -23,6 +23,8 @@ export default function BookingPage(params: any) {
 
   const [therapistId, setTherapistId] = useState(params.params.therapist_id);
 
+  console.log("========", therapistId);
+
   const CalendarComponent = () => {
     const [value, setValue] = useState<Date | null>(null);
 
@@ -159,7 +161,7 @@ export default function BookingPage(params: any) {
             .insert([
               {
                 sender_id: userInfo?.id,
-                receiver_id: params.searchParams.therapist,
+                receiver_id: therapistId,
                 content: `${userInfo?.name} has rescheduled their appointment with you.`,
                 status: "",
               },
@@ -191,10 +193,10 @@ export default function BookingPage(params: any) {
             });
 
           if (insertError) {
-            console.log("-----------", insertError);
             toast.error("Failed to submit booking");
             return;
           }
+
           toast.success("Booking submitted successfully!");
           setMessage("");
           setShowTimeRanges(false);
@@ -206,7 +208,7 @@ export default function BookingPage(params: any) {
             .insert([
               {
                 sender_id: userInfo?.id,
-                receiver_id: params.searchParams.therapist,
+                receiver_id: therapistId,
                 content: `${userInfo?.name} has booked an appointment with you.`,
                 status: "",
               },
@@ -215,9 +217,9 @@ export default function BookingPage(params: any) {
             return;
           }
 
-          setTimeout(() => {
-            router.push("/booking/list");
-          }, 1000);
+          // setTimeout(() => {
+          //   router.push("/booking/list");
+          // }, 1000);
         } catch (error) {
           console.log("error", error);
         }

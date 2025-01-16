@@ -41,5 +41,6 @@ export const config = {
     "/services/:path*",
     "/team/:path*",
     "/contactus/:path*",
+    "/profile/:path*",
   ],
 };

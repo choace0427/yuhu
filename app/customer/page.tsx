@@ -52,7 +52,7 @@ export default function CustomerPage() {
                 Relax and rejuvenate with professional massage services.
               </span>
               <div className="grid grid-cols-4 gap-4 w-full pt-8">
-                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg bg-[#D9D9D9]">
+                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg ">
                   <Image
                     className="massage-responsive w-[230px] h-[150px]"
                     id="massage"
@@ -86,7 +86,7 @@ export default function CustomerPage() {
                     </button>
                   </div>
                 </div>
-                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg bg-[#D9D9D9]">
+                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg ">
                   <Image
                     className="massage-responsive w-[230px] h-[150px]"
                     id="massage"
@@ -120,7 +120,7 @@ export default function CustomerPage() {
                     </button>
                   </div>
                 </div>
-                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg bg-[#D9D9D9]">
+                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg ">
                   <Image
                     className="massage-responsive w-[230px] h-[150px]"
                     id="massage"
@@ -153,7 +153,7 @@ export default function CustomerPage() {
                     </button>
                   </div>
                 </div>
-                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg bg-[#D9D9D9]">
+                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg ">
                   <Image
                     className="massage-responsive w-[230px] h-[150px]"
                     id="massage"
@@ -187,7 +187,7 @@ export default function CustomerPage() {
                     </button>
                   </div>
                 </div>
-                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg bg-[#D9D9D9]">
+                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg">
                   <Image
                     className="massage-responsive w-[230px] h-[150px]"
                     id="massage"
@@ -221,7 +221,7 @@ export default function CustomerPage() {
                     </button>
                   </div>
                 </div>
-                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg bg-[#D9D9D9]">
+                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg ">
                   <Image
                     className="massage-responsive w-[230px] h-[150px] rounded-xl"
                     id="massage"
@@ -265,7 +265,7 @@ export default function CustomerPage() {
                 Relax and rejuvenate with professional massage services.
               </span>
               <div className="grid grid-cols-4 gap-4 w-full pt-8">
-                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg bg-[#D9D9D9]">
+                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg ">
                   <Image
                     className="massage-responsive w-[230px] h-[150px]"
                     id="massage"
@@ -300,7 +300,7 @@ export default function CustomerPage() {
                     </button>
                   </div>
                 </div>
-                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg bg-[#D9D9D9]">
+                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg ">
                   <Image
                     className="massage-responsive w-[230px] h-[150px]"
                     id="massage"
@@ -334,7 +334,7 @@ export default function CustomerPage() {
                     </button>
                   </div>
                 </div>
-                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg bg-[#D9D9D9]">
+                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg ">
                   <Image
                     className="massage-responsive w-[230px] h-[150px]"
                     id="massage"
@@ -368,7 +368,7 @@ export default function CustomerPage() {
                     </button>
                   </div>
                 </div>
-                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg bg-[#D9D9D9]">
+                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg ">
                   <Image
                     className="massage-responsive w-[230px] h-[150px]"
                     id="massage"
@@ -412,7 +412,7 @@ export default function CustomerPage() {
                 Relax and rejuvenate with professional massage services.
               </span>
               <div className="grid grid-cols-4 gap-4 w-full pt-8">
-                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg bg-[#D9D9D9]">
+                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg ">
                   <Image
                     className="massage-responsive w-[230px] h-[150px]"
                     id="massage"
@@ -445,7 +445,7 @@ export default function CustomerPage() {
                     </button>
                   </div>
                 </div>
-                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg bg-[#D9D9D9]">
+                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg ">
                   <Image
                     className="massage-responsive w-[230px] h-[150px]"
                     id="massage"
@@ -478,7 +478,7 @@ export default function CustomerPage() {
                     </button>
                   </div>
                 </div>
-                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg bg-[#D9D9D9]">
+                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg ">
                   <Image
                     className="massage-responsive w-[230px] h-[150px]"
                     id="massage"
@@ -511,7 +511,7 @@ export default function CustomerPage() {
                     </button>
                   </div>
                 </div>
-                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg bg-[#D9D9D9]">
+                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg ">
                   <Image
                     className="massage-responsive w-[230px] h-[150px] rounded-lg"
                     id="massage"
@@ -545,7 +545,7 @@ export default function CustomerPage() {
                     </button>
                   </div>
                 </div>
-                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg bg-[#D9D9D9]">
+                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg ">
                   <Image
                     className="massage-responsive w-[230px] h-[150px] rounded-lg"
                     id="massage"
@@ -580,7 +580,7 @@ export default function CustomerPage() {
                     </button>
                   </div>
                 </div>
-                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg bg-[#D9D9D9]">
+                <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 w-[280px] h-[400px] border lg:p-4 md:p-3 p-2 rounded-lg ">
                   <Image
                     className="massage-responsive w-[230px] h-[150px]"
                     id="massage"

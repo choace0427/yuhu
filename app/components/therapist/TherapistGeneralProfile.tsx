@@ -126,6 +126,8 @@ export default function TherapistGeneralProfile() {
         }
       }
 
+      console.log("========", file);
+
       const fileExt = file.name.split(".").pop();
       const fileName = `${userInfo.email}-${Math.random()}.${fileExt}`;
       const filePath = `avatars/${fileName}`;
@@ -174,17 +176,8 @@ export default function TherapistGeneralProfile() {
           className="relative group cursor-pointer"
           onClick={handleAvatarClick}
         >
-          <Avatar
-            // className="w-20 h-20"
-            size={"lg"}
-            src={avatarUrl}
-            alt="Profile Avatar"
-            //   imgProps={{
-            //     referrerPolicy: "no-referrer",
-            //   }}
-          />
+          <Avatar size={"lg"} src={avatarUrl} alt="Profile Avatar" />
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-            {/* <CiCamera className="w-8 h-8 text-white" /> */}
             <IconCamera className="w-8 h-8 text-white" />
           </div>
           <input

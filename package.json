@@ -12,6 +12,7 @@
     "@mantine/carousel": "^7.16.0",
     "@mantine/core": "^7.16.0",
     "@mantine/dates": "^7.16.0",
+    "@mantine/dropzone": "^7.16.0",
     "@mantine/form": "^7.16.0",
     "@mantine/hooks": "^7.16.0",
     "@supabase/auth-helpers-nextjs": "^0.10.0",

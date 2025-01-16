@@ -19,6 +19,7 @@ import {
   IconMessageCircle,
   IconServicemark,
   IconSettings,
+  IconUser,
 } from "@tabler/icons-react";
 import ThemeSwitch from "../themeSwitch";
 import { useAuthStore } from "@/app/_store/authStore";
@@ -30,7 +31,7 @@ const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [isInvisible, setIsInvisible] = useState(true);
+  const [isInvisible, setIsInvisible] = useState(false);
 
   const fetchNotifications = async () => {
     const { data: notificationData, error: notificationError } = await supabase
@@ -40,10 +41,13 @@ const Header = () => {
       .eq("status", "");
     if (notificationError) {
       console.log("error", notificationError);
+      return;
+    }
+    console.log(">>>>>>>>>>>>", notificationData);
+    if (notificationData.length > 0) {
+      setIsInvisible(true);
     } else {
-      if (notificationData && notificationData.length < 1)
-        setIsInvisible(false);
-      else setIsInvisible(true);
+      setIsInvisible(false);
     }
   };
 
@@ -56,10 +60,10 @@ const Header = () => {
     "pricing",
     "team",
     "about",
+    "profile",
   ];
 
   const isExcludedPath = excludedPaths.some((path) => pathname.includes(path));
-
   useEffect(() => {
     if (userInfo) {
       const notificationsRealtime = supabase
@@ -67,34 +71,32 @@ const Header = () => {
         .on(
           "postgres_changes",
           {
-            event: "INSERT",
+            event: "*",
             schema: "public",
             table: "notifications",
             filter: `receiver_id=eq.${userInfo?.id}`,
           },
-          (payload: any) => {
-            console.log("Database change detected:", payload);
-            fetchNotifications();
-          }
+          fetchNotifications
         )
         .subscribe();
       return () => {
         notificationsRealtime.unsubscribe();
       };
-    } else if (!isExcludedPath) {
-      setTimeout(() => {
-        router.push("/auth/login");
-      }, 500);
-      toast.warn("Authentication required. Please log in to continue.");
     }
+    // else {
+    //   if (!isExcludedPath) {
+    //     setTimeout(() => {
+    //       router.push("/auth/login");
+    //     }, 500);
+    //     toast.warn("Authentication required. Please log in to continue.");
+    //   }
+    // }
   }, [userInfo]);
 
   return (
     <div
       className={`w-full z-20 md:h-20 px-8 h-12 ${
-        colorScheme === "light"
-          ? "bg-white shadow-black"
-          : "bg-black shadow-white"
+        colorScheme === "light" ? " shadow-black" : " shadow-white"
       } flex justify-between top-0 sticky shadow-sm`}
     >
       <div className="flex flex-row gap-1 items-center">
@@ -125,9 +127,11 @@ const Header = () => {
           onClick={() => router.push("/")}
           variant=""
           className={`Poppins-font !font-semibold ${
-            pathname === "/"
+            pathname === "/home"
               ? "!text-[#46A7B0] border-b-2 border-[#46A7B0]"
-              : "!text-black"
+              : colorScheme === "light"
+              ? "!text-black"
+              : "!text-white"
           }`}
         >
           Home
@@ -138,7 +142,9 @@ const Header = () => {
           className={`Poppins-font !font-semibold  ${
             pathname === "/about"
               ? "!text-[#46A7B0] border-b-2 border-[#46A7B0]"
-              : "!text-black"
+              : colorScheme === "light"
+              ? "!text-black"
+              : "!text-white"
           }`}
         >
           About
@@ -149,7 +155,9 @@ const Header = () => {
           className={`Poppins-font !font-semibold ${
             pathname === "/services"
               ? "!text-[#46A7B0] border-b-2 border-[#46A7B0]"
-              : "!text-black"
+              : colorScheme === "light"
+              ? "!text-black"
+              : "!text-white"
           }`}
         >
           Our services
@@ -160,7 +168,9 @@ const Header = () => {
           className={`Poppins-font !font-semibold ${
             pathname === "/team"
               ? "!text-[#46A7B0] border-b-2 border-[#46A7B0]"
-              : "!text-black"
+              : colorScheme === "light"
+              ? "!text-black"
+              : "!text-white"
           }`}
         >
           Team
@@ -171,7 +181,9 @@ const Header = () => {
           className={`Poppins-font !font-semibold ${
             pathname === "/pricing"
               ? "!text-[#46A7B0] border-b-2 border-[#46A7B0]"
-              : "!text-black"
+              : colorScheme === "light"
+              ? "!text-black"
+              : "!text-white"
           }`}
         >
           Pricing
@@ -182,7 +194,9 @@ const Header = () => {
           className={`Poppins-font !font-semibold ${
             pathname === "/contactus"
               ? "!text-[#46A7B0] border-b-2 border-[#46A7B0]"
-              : "!text-black"
+              : colorScheme === "light"
+              ? "!text-black"
+              : "!text-white"
           }`}
         >
           Contact us
@@ -213,7 +227,7 @@ const Header = () => {
                 offset={5}
                 position="top-end"
                 color="red"
-                disabled={isInvisible}
+                disabled={!isInvisible}
               >
                 <Avatar
                   size={44}
@@ -252,6 +266,13 @@ const Header = () => {
                 onClick={() => router.push("/notifications")}
               >
                 Notifications
+              </Menu.Item>
+              <Menu.Divider />
+              <Menu.Item
+                leftSection={<IconUser size={14} />}
+                onClick={() => router.push("/profile")}
+              >
+                Profile
               </Menu.Item>
               <Menu.Divider />
               <Menu.Item
