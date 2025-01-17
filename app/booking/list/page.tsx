@@ -2,7 +2,23 @@
 
 import { useAuthStore } from "@/app/_store/authStore";
 import { supabase } from "@/supabase";
-import { Card, Divider, Image, Loader } from "@mantine/core";
+import {
+  Card,
+  Divider,
+  Title,
+  Image,
+  Loader,
+  Flex,
+  Stack,
+  Text,
+  Paper,
+  Group,
+  Badge,
+  Button,
+  Container,
+  Avatar,
+  Box,
+} from "@mantine/core";
 import {
   IconMessage,
   IconCalendar,
@@ -11,6 +27,7 @@ import {
   IconUser,
   IconX,
 } from "@tabler/icons-react";
+import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -19,7 +36,7 @@ export default function BookingList() {
   const router = useRouter();
 
   // const { therapistId, setTherapistId } = useTherapistContext();
-  const [type, setType] = useState("all");
+  const [type, setType] = useState("upcoming");
 
   const [bookingList, setBookingList] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -89,41 +106,21 @@ export default function BookingList() {
   const fetchBookings = async () => {
     setLoading(true);
     if (userInfo && userInfo.id) {
-      if (type === "all") {
-        const { data, error } = await supabase
-          .from("booking_list")
-          .select(
-            `
+      const { data, error } = await supabase
+        .from("booking_list")
+        .select(
+          `
            *,
             users (
               *
             )
           `
-          )
-          .eq("customer_id", userInfo?.id);
-        if (error) {
-          console.error("Error fetching bookings:", error);
-        } else {
-          setAllData(data);
-        }
+        )
+        .eq("customer_id", userInfo?.id);
+      if (error) {
+        console.error("Error fetching bookings:", error);
       } else {
-        const { data, error } = await supabase
-          .from("booking_list")
-          .select(
-            `
-           *,
-            users (
-              *
-            )
-          `
-          )
-          .eq("booking_status", type)
-          .eq("customer_id", userInfo?.id);
-        if (error) {
-          console.error("Error fetching bookings:", error);
-        } else {
-          setBookingList(data);
-        }
+        setBookingList(data);
       }
     }
     setLoading(false);
@@ -131,7 +128,7 @@ export default function BookingList() {
 
   useEffect(() => {
     fetchBookings();
-  }, [type, userInfo]);
+  }, [userInfo]);
 
   useEffect(() => {
     const bookingListRealtime = supabase
@@ -157,205 +154,212 @@ export default function BookingList() {
   }, [userInfo?.id]);
 
   return (
-    <div className="flex flex-col w-full justify-center items-center">
-      <div className="flex flex-col w-full items-center bg-[#46A7B0] py-10">
-        <div className="flex flex-row max-w-7xl w-full items-center justify-between">
-          <div
-            className={`w-[400px] h-[210px] ${
-              type === "upcoming" && "border-[#60E2EE] border-[4px]"
-            }  flex flex-row rounded-md bg-[#FFFFFF] p-4`}
-            onClick={() => setType("upcoming")}
-          >
-            <div className="flex flex-col gap-2">
-              <span className=" Poppins-font text-2xl font-bold">Upcoming</span>
-              <span className=" Poppins-font text-sm">
+    <Container size="xl" py="xl" my={"lg"}>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <Card
+          shadow="sm"
+          padding="xl"
+          radius="md"
+          withBorder
+          onClick={() => setType("upcoming")}
+          className={`${type === "upcoming" && "!border-teal-700"}`}
+        >
+          <Flex>
+            <Stack gap="xs">
+              <Title order={3}>Upcoming</Title>
+              <Text size="sm" c="dimmed">
                 You have{" "}
                 {
-                  allData.filter(
+                  bookingList.filter(
                     (item: any) => item.booking_status === "upcoming"
                   ).length
                 }{" "}
                 upcoming massage sessions
-              </span>
-              <span className="Poppins-font text-[#60E2EE] text-3xl">
+              </Text>
+              <Text size="48px" fw={700} className="text-teal-500">
                 {
-                  allData.filter(
+                  bookingList.filter(
                     (item: any) => item.booking_status === "upcoming"
                   ).length
                 }
-              </span>
-            </div>
+              </Text>
+            </Stack>
             <Image
               src="/img/booking_pending.png"
               alt="signup"
-              width={178}
-              height={178}
+              className="!w-[140px] !h-[140px]"
             />
-          </div>
-          <div
-            className={`w-[400px] h-[210px] ${
-              type === "accept" && "border-[#60E2EE] border-[4px]"
-            }  flex flex-row rounded-md bg-[#FFFFFF] p-4`}
-            onClick={() => setType("accept")}
-          >
-            <div className="flex flex-col gap-2">
-              <span className=" Poppins-font text-2xl font-bold">Accepted</span>
-              <span className="Poppins-font text-sm">
+          </Flex>
+        </Card>
+
+        <Card
+          shadow="sm"
+          padding="xl"
+          radius="md"
+          withBorder
+          onClick={() => setType("accept")}
+          className={`${type === "accept" && "!border-teal-700"}`}
+        >
+          <Flex>
+            <Stack gap="xs">
+              <Title order={3}>Accepted</Title>
+              <Text size="sm" c="dimmed">
                 You have{" "}
                 {
-                  allData.filter(
+                  bookingList.filter(
                     (item: any) => item.booking_status === "accept"
                   ).length
                 }{" "}
                 past massage sessions
-              </span>
-              <span className="Poppins-font text-[#60E2EE] text-3xl">
+              </Text>
+              <Text size="48px" fw={700} className="text-teal-500">
                 {
-                  allData.filter(
+                  bookingList.filter(
                     (item: any) => item.booking_status === "accept"
                   ).length
                 }
-              </span>
-            </div>
+              </Text>
+            </Stack>
             <Image
               src="/img/booking_past.png"
               alt="signup"
-              width={178}
-              height={178}
+              className="!w-[140px] !h-[140px]"
             />
-          </div>
-          <div
-            className={`w-[400px] h-[210px] ${
-              type === "cancelled" && "border-[#60E2EE] border-[4px]"
-            }  flex flex-row rounded-md bg-[#FFFFFF] p-4`}
-            onClick={() => setType("cancelled")}
-          >
-            <div className="flex flex-col gap-2">
-              <span className="Poppins-font text-2xl font-bold">Cancelled</span>
-              <span className="Poppins-font text-sm">
+          </Flex>
+        </Card>
+
+        <Card
+          shadow="sm"
+          padding="xl"
+          radius="md"
+          withBorder
+          onClick={() => setType("cancelled")}
+          className={`${type === "cancelled" && "!border-teal-700"}`}
+        >
+          <Flex>
+            <Stack gap="xs">
+              <Title order={3}>Cancelled</Title>
+              <Text size="sm" c="dimmed">
                 You have{" "}
                 {
-                  allData.filter(
+                  bookingList.filter(
                     (item: any) => item.booking_status === "cancelled"
                   ).length
                 }{" "}
                 cancelled massage sessions
-              </span>
-              <span className="Poppins-font text-[#60E2EE] text-3xl">
+              </Text>
+              <Text size="48px" fw={700} className="text-teal-500">
                 {
-                  allData.filter(
+                  bookingList.filter(
                     (item: any) => item.booking_status === "cancelled"
                   ).length
                 }
-              </span>
-            </div>
+              </Text>
+            </Stack>
             <Image
-              className="w-[178px] h-[150px] items-center"
               src="/img/booking_cancel.png"
+              className="!w-[140px] !h-[140px]"
               alt="signup"
-              width={178}
-              height={150}
             />
-          </div>
-        </div>
+          </Flex>
+        </Card>
       </div>
-      <div className="bg-[#777777]/10 w-full py-10">
-        <BookingTable
-          data={type === "all" ? allData : bookingList}
-          handleCancel={handleCancel}
-          handleChat={handleChat}
-        />
-      </div>
-    </div>
+      {loading ? (
+        <Paper withBorder p={"sm"} shadow="md">
+          <Flex justify={"center"} w={"100%"}>
+            <Loader size={"sm"} color="teal" my={"xl"} mx={"auto"} />
+          </Flex>
+        </Paper>
+      ) : bookingList &&
+        bookingList?.length > 0 &&
+        bookingList.filter((item: any) => item.booking_status === type).length >
+          0 ? (
+        bookingList
+          .filter((item: any) => item.booking_status === type)
+          .map((item, index) => {
+            return (
+              <Paper shadow="sm" radius="md" p="md" withBorder key={index}>
+                <Group gap="apart" align="center" justify="space-between">
+                  <Group gap="xl">
+                    <Group gap="xs">
+                      <Avatar
+                        src={item?.users?.avatar_url}
+                        name={item?.users?.name}
+                        size={"lg"}
+                      />
+                      <Stack gap={4}>
+                        <Text size="md" fw={500}>
+                          {item?.users?.name}
+                        </Text>
+                        <Badge color="teal" variant="light" radius="sm">
+                          Active
+                        </Badge>
+                      </Stack>
+                    </Group>
+                    <Group gap="xs">
+                      <Text size="sm" fw={500} c="dimmed">
+                        Booking Message:
+                      </Text>
+                      <Text size="sm">
+                        {item?.booking_message?.length > 35
+                          ? `${item.booking_message.slice(0, 35)}...`
+                          : item?.booking_message}
+                      </Text>
+                    </Group>
+                    <Group gap="xs">
+                      <Text size="sm" fw={500} c="dimmed">
+                        Booked On:
+                      </Text>
+                      <Text size="sm">
+                        {dayjs(item?.booking_date).format("YYYY-MM-DD")}
+                      </Text>
+                    </Group>
+
+                    <Group gap="xs">
+                      <Text size="sm" fw={500} c="dimmed">
+                        Therapist Hourly Rate:
+                      </Text>
+                      <Text size="sm">
+                        $ {item?.users?.hourly_rate || 100} / hr
+                      </Text>
+                    </Group>
+                  </Group>
+                  {item?.booking_status === "cancelled" && (
+                    <p className="font-semibold text-red-400">
+                      Booking Cancelled
+                    </p>
+                  )}
+                  {item?.booking_status === "upcoming" ? (
+                    <Button
+                      color="red"
+                      variant="light"
+                      radius={"md"}
+                      onClick={() => handleCancel(item.booking_id)}
+                    >
+                      Cancel Booking
+                    </Button>
+                  ) : item.booking_status === "accept" ? (
+                    <Button
+                      variant="light"
+                      color="teal"
+                      leftSection={<IconMessage size={16} />}
+                      radius="md"
+                      onClick={() => handleChat(item?.therapist_id)}
+                    >
+                      Chat
+                    </Button>
+                  ) : null}
+                </Group>
+              </Paper>
+            );
+          })
+      ) : (
+        <Paper withBorder p={"sm"} shadow="md">
+          <Text my={"xl"} ta="center">
+            No data
+          </Text>
+        </Paper>
+      )}
+    </Container>
   );
 }
-
-const BookingTable = (props: any) => {
-  const { data, loading, handleCancel, handleChat } = props;
-
-  return (
-    <Card
-      withBorder
-      radius={"sm"}
-      p={"xs"}
-      className="max-w-7xl max-h-[600px] mx-auto"
-    >
-      {loading ? (
-        <div className="w-full flex justify-center py-10 items-center">
-          <Loader />
-        </div>
-      ) : data && data.length > 0 ? (
-        data.map((item: any, key: number) => {
-          return (
-            <div
-              key={key}
-              className="bg-[#F0F8F9] mt-2 py-3 px-3 flex gap-4 justify-between items-center"
-            >
-              <div className="flex gap-2 items-center">
-                <IconUser color="#46A7B0" size={"1.2rem"} />
-                <p className="text-[#777777]">
-                  Practitioner:{" "}
-                  <span className="font-semibold text-black">
-                    {item?.users?.name}
-                  </span>
-                </p>
-              </div>
-              <Divider orientation="vertical" className="h-6" />
-              <div className="flex gap-2 items-center">
-                <IconCalendar size={"1.2rem"} color="#46A7B0" />
-                <p className="text-[#777777]">
-                  Booked On:{" "}
-                  <span className="font-semibold text-black">
-                    {item?.booking_date}
-                  </span>
-                </p>
-              </div>
-              <Divider orientation="vertical" className="h-6" />
-              <div className="flex gap-2 items-center">
-                <IconTarget size={"1.2rem"} color="#46A7B0" />
-                <p className="text-[#777777]">
-                  Status:{" "}
-                  <span className={`font-semibold text-[#46A7B0]`}>
-                    {"Active"}
-                  </span>
-                </p>
-              </div>
-              <Divider orientation="vertical" className="h-6" />
-              <div className="flex gap-2 items-center">
-                <IconMoneybag size={"1.2rem"} color="#46A7B0" />
-                <p className="text-[#777777]">
-                  Total Amount:{" "}
-                  <span className="font-semibold text-black">
-                    ${item?.users?.hourly_rate || "XXX"}
-                  </span>
-                </p>
-              </div>
-              {item?.booking_status === "cancelled" && (
-                <p className="font-semibold text-red-400">Booking Cancelled</p>
-              )}
-              {item?.booking_status === "upcoming" ? (
-                <button
-                  className="bg-[#46A7B0] text-white flex gap-1 items-center px-2 py-1 rounded"
-                  onClick={() => handleCancel(item.booking_id)}
-                >
-                  <IconX color="white" size={"1rem"} />
-                  Cancel Booking
-                </button>
-              ) : item.booking_status === "accept" ? (
-                <button
-                  className="bg-[#46A7B0] text-white flex gap-1 items-center px-2 py-1 rounded"
-                  onClick={() => handleChat(item?.therapist_id)}
-                >
-                  <IconMessage size={"1rem"} color="white" />
-                  Chat
-                </button>
-              ) : null}
-            </div>
-          );
-        })
-      ) : (
-        <p className="text-center text-gray-500 py-10">No Booking Data</p>
-      )}
-    </Card>
-  );
-};

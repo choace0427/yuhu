@@ -1,22 +1,44 @@
 "use client";
 
-import { Flex, Modal, Popover, Select, Textarea } from "@mantine/core";
-import { useAuthStore } from "../_store/authStore";
-import { useEffect, useState } from "react";
-import dayjs from "dayjs";
-import { Calendar, DatePicker, DateValue } from "@mantine/dates";
-import { Button, Card, Loader } from "@mantine/core";
-import TherapistGeneralProfile from "../components/therapist/TherapistGeneralProfile";
-import { supabase } from "@/supabase";
-import { toast } from "react-toastify";
+import { useEffect, useRef, useState } from "react";
 import {
-  IconCirclePlus,
+  Container,
+  Grid,
+  Paper,
+  Text,
+  Title,
+  Button,
+  TextInput,
+  Select,
+  Textarea,
+  Card,
+  Group,
+  ActionIcon,
+  Stack,
+  NumberInput,
+  Badge,
+  Avatar,
+  PasswordInput,
+  Flex,
+  Menu,
+  Loader,
+  Modal,
+} from "@mantine/core";
+import { DatePicker, DatePickerInput, DateValue } from "@mantine/dates";
+import {
+  IconPlus,
   IconDotsVertical,
+  IconCreditCard,
+  IconCamera,
   IconEdit,
-  IconInfoCircle,
   IconTrash,
 } from "@tabler/icons-react";
+import { useAuthStore } from "../_store/authStore";
 import { useDisclosure } from "@mantine/hooks";
+import dayjs from "dayjs";
+import { supabase } from "@/supabase";
+import { toast } from "react-toastify";
+import { useForm } from "@mantine/form";
 
 interface Service {
   category: string;
@@ -30,8 +52,8 @@ interface ServiceType {
   subcategory: string;
 }
 
-export default function Therapist() {
-  const { userInfo } = useAuthStore();
+export default function TherapistDashboard() {
+  const { userInfo, setUserInfo } = useAuthStore();
   const [openedAddService, { open: openAddService, close: closeAddService }] =
     useDisclosure(false);
   const [
@@ -273,12 +295,12 @@ export default function Therapist() {
             .from("services")
             .select(
               `
-              service_description,
-              service_type (
-                category_id,
-                subcategory
-              )
-            `
+                service_description,
+                service_type (
+                  category_id,
+                  subcategory
+                )
+              `
             )
             .eq("email", userInfo.email);
           if (!error && servicesData) {
@@ -324,205 +346,405 @@ export default function Therapist() {
     fetchSubCategories();
   }, [selectedCategory]);
 
-  return (
-    <>
-      {userInfo ? (
-        <div className="mx-auto flex flex-row max-w-7xl w-full py-10 gap-6">
-          <div className="flex flex-col w-4/5 gap-6">
-            <div className="flex w-full flex-col bg-[#46A7B0] px-10 py-6 rounded-lg gap-4 shadow-xl">
-              <span className="text-white text-3xl font-bold Poppins-font">
-                Welcome {userInfo?.name}
-              </span>
-              <span className="text-white text-xl Poppins-font">
-                Let&apos;s create something amazing today—start by managing your
-                schedule with ease!
-              </span>
-              <Button size="md" className="!text-black !bg-white !w-fit">
-                Start Now
-              </Button>
-            </div>
-            <div className="flex flex-row gap-6 w-full">
-              <div className="flex w-2/5">
-                <TherapistGeneralProfile />
-              </div>
-              <div className="w-3/5 flex border rounded-xl justify-center max-h-[730px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 shadow-xl">
-                <div className="flex flex-col gap-4 items-center px-10 py-8 mb-4">
-                  <span className="text-[#46A7B0] text-2xl font-bold Poppins-font">
-                    My Services
-                  </span>
-                  {loading ? (
-                    <Loader />
-                  ) : (
-                    <>
-                      <div
-                        className="flex flex-row border p-4 gap-2 items-center justify-center rounded-xl"
-                        onClick={openAddService}
-                      >
-                        <IconCirclePlus className="w-10 h-10" />
-                        <div className="flex flex-col">
-                          <span className="text-black text-xl font-semibold Poppins-font">
-                            Add a service
-                          </span>
-                          <span className="text-black text-base Poppins-font">
-                            Add a service to showcase your expertise and attract
-                            more clients.
-                          </span>
-                        </div>
-                      </div>
-                      {services.map((service, index) => (
-                        <div
-                          key={index}
-                          className="flex flex-col gap-2 w-full border border-[#46A7B0] rounded-xl p-4"
-                        >
-                          <div className="flex flex-row w-full justify-between Poppins-font items-center">
-                            <div className="flex flex-row gap-2 items-end">
-                              <span className="text-black font-medium text-xl">
-                                {service.category}
-                              </span>
-                              <span className="text-black text-base">
-                                {service.subcategory}
-                              </span>
-                            </div>
-                            <Popover
-                              width={200}
-                              position="bottom"
-                              withArrow
-                              shadow="md"
-                            >
-                              <Popover.Target>
-                                <IconDotsVertical size={"1.2rem"} />
-                              </Popover.Target>
-                              <Popover.Dropdown>
-                                <div className="px-1 py-2 flex flex-col gap-2">
-                                  <div
-                                    className="flex flex-row gap-2 items-center cursor-pointer"
-                                    onClick={() =>
-                                      handleEditClick(index, service)
-                                    }
-                                  >
-                                    <IconEdit className="w-4 h-4" />
-                                    <span className="text-black Poppins-font">
-                                      Edit
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="flex flex-row gap-2 items-center cursor-pointer"
-                                    onClick={() => handleDeleteService(index)}
-                                  >
-                                    <IconTrash className="w-4 h-4" />
-                                    <span className="text-black Poppins-font">
-                                      Delete
-                                    </span>
-                                  </div>
-                                </div>
-                              </Popover.Dropdown>
-                            </Popover>
-                          </div>
-                          <span className="text-black Poppins-font text-sm items-start text-justify">
-                            {service.description}
-                          </span>
-                        </div>
-                      ))}
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col w-1/5 Poppins-font gap-6 items-center">
-            {/* <Calendar
-                  value={value}
-                  onChange={handleDateSelect}
-                  className="rounded-lg"
-                /> */}
-            <Card radius={"sm"} shadow="md">
-              {/* <Calendar
-                getDayProps={(date) => ({
-                  selected: selected.some((s) => dayjs(date).isSame(s, "date")),
-                  onClick: () => handleSelect(date),
-                })}
-              /> */}
-              <DatePicker
-                key="outside"
-                value={value}
-                // onChange={(e) => handleDateSelect(e.target.value)}
-                mx={"auto"}
-                styles={{
-                  month: {
-                    width: "100%",
-                  },
-                  calendarHeader: {
-                    marginInline: "auto",
-                  },
-                }}
-              />
-            </Card>
-            {/* <Appointment />
-                <Reviews /> */}
-          </div>
-        </div>
-      ) : (
-        <div className="flex justify-center items-center w-full h-[calc(100vh-74px)]">
-          <Loader />
-        </div>
-      )}
-      <Modal
-        opened={openedAddService}
-        onClose={closeAddService}
-        title="Create a service"
-      >
-        <Select
-          w={"100%"}
-          mt={"sm"}
-          label="Category"
-          data={Categorys}
-          onChange={(value: any) => setSelectedCategory(value)}
-        />
-        {selectedCategory && (
-          <Select
-            w={"100%"}
-            mt={"sm"}
-            label="SubCategory"
-            data={subCategories.map((item: any) => ({
-              value: item?.id.toString(),
-              label: item?.subcategory,
-            }))}
-            onChange={(value: any) =>
-              setNewService({
-                ...newService,
-                service_type_id: value,
-              })
-            }
-          />
-        )}
+  //for Avatar Upload to supabase
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string>("");
 
-        <Textarea
-          name="description"
-          id="description"
-          label="Description"
-          w={"100%"}
-          mt={"sm"}
-          rows={4}
-          value={newService.description}
-          onChange={(e) =>
-            setNewService({
-              ...newService,
-              description: e.target.value,
-            })
-          }
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file || !userInfo?.email) return;
+
+    try {
+      setUploading(true);
+
+      if (avatarUrl) {
+        const oldFilePath = avatarUrl.split("/").pop();
+        if (oldFilePath) {
+          await supabase.storage
+            .from("avatars")
+            .remove([`avatars/${oldFilePath}`]);
+        }
+      }
+
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${userInfo.email}-${Math.random()}.${fileExt}`;
+      const filePath = `avatars/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(filePath, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("avatars").getPublicUrl(filePath);
+
+      const { error: updateError } = await supabase
+        .from("users")
+        .update({ avatar_url: publicUrl })
+        .eq("email", userInfo.email);
+
+      if (updateError) {
+        throw updateError;
+      }
+
+      setAvatarUrl(publicUrl + "?t=" + new Date().getTime());
+      setUserInfo({
+        ...userInfo,
+        avatar_url: publicUrl + "?t=" + new Date().getTime(),
+      });
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
+      toast.error("Failed to update profile avatar.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <Container size="xl" py="xl">
+      <Paper
+        radius="md"
+        p="xl"
+        mb="xl"
+        bg="var(--mantine-color-teal-6)"
+        c="white"
+      >
+        <Group align="flex-start">
+          <Stack gap="xs">
+            <Title order={1}>Welcome, Test_therapist</Title>
+            <Text size="lg">
+              Manage your schedule and services all in one place
+            </Text>
+            <Button
+              variant="white"
+              color="teal"
+              size="md"
+              mt="md"
+              style={{ width: "fit-content" }}
+            >
+              View Schedule
+            </Button>
+          </Stack>
+        </Group>
+      </Paper>
+
+      <Grid gutter="xl">
+        <Grid.Col span={{ base: 12, md: 8 }}>
+          <Paper shadow="sm" radius="md" p="xl" mb="xl" withBorder>
+            <Title order={3} mb="lg">
+              General Information
+            </Title>
+            <Stack gap="md">
+              <Flex gap={"xl"} align={"center"}>
+                <div
+                  className="relative group cursor-pointer w-fit"
+                  onClick={handleAvatarClick}
+                >
+                  <Avatar
+                    size={140}
+                    src={avatarUrl || userInfo?.avatar_url}
+                    alt="Profile Avatar"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                    <IconCamera className="w-8 h-8 text-white" />
+                  </div>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                  />
+                </div>
+                <Stack w={"100%"}>
+                  <NumberInput
+                    label="Hourly Rate ($)"
+                    placeholder="Enter your rate"
+                    defaultValue={0}
+                    min={0}
+                    prefix="$"
+                    hideControls
+                  />
+                  <TextInput
+                    label="Full Name"
+                    placeholder="Your name"
+                    defaultValue="Test_therapist"
+                  />
+                </Stack>
+              </Flex>
+              <TextInput
+                label="Phone"
+                placeholder="Your phone number"
+                defaultValue={userInfo?.phone || ""}
+              />
+              <Select
+                label="Location"
+                placeholder="Select your location"
+                defaultValue="US"
+                data={[
+                  { value: "US", label: "United States" },
+                  { value: "CA", label: "Canada" },
+                ]}
+              />
+              <DatePickerInput
+                label="Birthday"
+                placeholder="Pick date"
+                value={value}
+                onChange={setValue}
+              />
+              <Textarea
+                label="Professional Summary"
+                placeholder="Write a brief description about yourself"
+                maxRows={100}
+                rows={7}
+                defaultValue={userInfo?.summary || ""}
+              />
+            </Stack>
+            <Button fullWidth color="teal" mt="md" loading={loading}>
+              Update Information
+            </Button>
+          </Paper>
+          <ChangePasswordComponent />
+          <PaymentComponent />
+        </Grid.Col>
+
+        <Grid.Col span={{ base: 12, md: 4 }}>
+          <Paper shadow="sm" radius="md" p="xl" mb="xl" withBorder>
+            <DatePicker
+              //   value={selectedDate}
+              //   onChange={setSelectedDate}
+              //   fullWidth
+              minDate={new Date()}
+              styles={{
+                month: {
+                  width: "100%",
+                },
+                calendarHeader: {
+                  marginInline: "auto",
+                },
+              }}
+            />
+          </Paper>
+
+          <ServicesComponent
+            loading={loading}
+            services={services}
+            handleEditClick={handleEditClick}
+            handleDeleteService={handleDeleteService}
+            openedEditService={openedEditService}
+            closeEditService={closeEditService}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            Categorys={Categorys}
+            newService={newService}
+            subCategories={subCategories}
+            setNewService={setNewService}
+            handleUpdateService={handleUpdateService}
+            openedAddService={openedAddService}
+            closeAddService={closeAddService}
+            handleCreateService={handleCreateService}
+            openAddService={openAddService}
+          />
+        </Grid.Col>
+      </Grid>
+    </Container>
+  );
+}
+
+const ChangePasswordComponent = () => {
+  const passwordform = useForm({
+    mode: "uncontrolled",
+    initialValues: {
+      password: "",
+      confirmPassword: "",
+    },
+
+    validate: {
+      password: (value) =>
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/.test(value)
+          ? null
+          : "Password must include uppercase, lowercase, and a number",
+      confirmPassword: (value, values) =>
+        value === "" && value !== values.password
+          ? "Passwords did not match"
+          : null,
+    },
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  const handleChangePassword = async (values: any) => {
+    setLoading(true);
+    const { error } = await supabase.auth.updateUser({
+      password: values.password,
+    });
+
+    if (error) {
+      toast.error(error?.message);
+      passwordform.initialize({ password: "", confirmPassword: "" });
+      setLoading(false);
+      return;
+    }
+
+    passwordform.initialize({ password: "", confirmPassword: "" });
+    setLoading(false);
+    toast.success("Successfully changed password!");
+  };
+
+  return (
+    <form
+      onSubmit={passwordform.onSubmit((values) => handleChangePassword(values))}
+    >
+      <Paper shadow="sm" radius="md" p="xl" mb="xl" withBorder>
+        <Title order={3} mb="lg">
+          Change Password
+        </Title>
+        <Stack gap="md">
+          <PasswordInput
+            label="New Password"
+            placeholder="Enter your new password"
+            key={passwordform.key("password")}
+            {...passwordform.getInputProps("password")}
+          />
+          <PasswordInput
+            label="Confirm New Password"
+            placeholder="Confirm your new password"
+            key={passwordform.key("confirmPassword")}
+            {...passwordform.getInputProps("confirmPassword")}
+          />
+          <Button color="teal" mt="md" loading={loading} type="submit">
+            Update Password
+          </Button>
+        </Stack>
+      </Paper>
+    </form>
+  );
+};
+
+const PaymentComponent = () => {
+  return (
+    <Paper shadow="sm" radius="md" p="xl" withBorder>
+      <Title order={3} mb="lg">
+        Payment Information
+      </Title>
+      <Stack gap="md">
+        <TextInput
+          label="Card Number"
+          placeholder="1234 5678 9012 3456"
+          rightSection={<IconCreditCard size={16} />}
         />
-        <Flex gap={"sm"} justify={"end"} mt={"md"}>
-          <Button variant="outline" color="red" onClick={closeAddService}>
-            Close
-          </Button>
-          <Button
-            className="!bg-[#46A7B0] text-white"
-            onClick={handleCreateService}
-          >
-            Create Service
-          </Button>
-        </Flex>
-      </Modal>
+        <Group grow>
+          <TextInput label="Expiration Date" placeholder="MM/YY" />
+          <TextInput label="CVV" placeholder="123" />
+        </Group>
+        <TextInput label="Cardholder Name" placeholder="Name on card" />
+        <Button color="teal" mt="md">
+          Save Payment Method
+        </Button>
+      </Stack>
+    </Paper>
+  );
+};
+
+const ServicesComponent = ({
+  loading,
+  services,
+  handleEditClick,
+  handleDeleteService,
+  openedEditService,
+  closeEditService,
+  selectedCategory,
+  setSelectedCategory,
+  Categorys,
+  newService,
+  subCategories,
+  setNewService,
+  handleUpdateService,
+  openedAddService,
+  closeAddService,
+  handleCreateService,
+  openAddService,
+}: any) => {
+  return (
+    <Paper shadow="sm" radius="md" p="xl">
+      <Flex justify={"space-between"} mb="lg">
+        <Title order={3}>My Services</Title>
+        <Button
+          leftSection={<IconPlus size={16} />}
+          variant="light"
+          color="green"
+          onClick={openAddService}
+        >
+          Add Service
+        </Button>
+      </Flex>
+
+      <Stack gap="md">
+        {loading ? (
+          <div className="flex justify-center items-center">
+            <Loader size={"sm"} color="green" />
+          </div>
+        ) : (
+          <>
+            {services.map((service: any, index: number) => {
+              return (
+                <Card withBorder padding="md" key={index}>
+                  <Flex justify={"space-between"} align={"center"} mb="xs">
+                    <Text fw={500}>{service.category}</Text>
+                    <Menu
+                      shadow="md"
+                      width={150}
+                      position="bottom-end"
+                      offset={2}
+                      withArrow
+                    >
+                      <Menu.Target>
+                        <ActionIcon variant="transparent" color="green">
+                          <IconDotsVertical size={16} />
+                        </ActionIcon>
+                      </Menu.Target>
+
+                      <Menu.Dropdown>
+                        <Menu.Item
+                          leftSection={<IconEdit size={14} />}
+                          onClick={() => handleEditClick(index, service)}
+                        >
+                          Edit
+                        </Menu.Item>
+                        <Menu.Item
+                          color="red"
+                          leftSection={<IconTrash size={14} />}
+                          onClick={() => handleDeleteService(index)}
+                        >
+                          Delete
+                        </Menu.Item>
+                      </Menu.Dropdown>
+                    </Menu>
+                  </Flex>
+                  <Text size="sm" c="dimmed" mb="xs">
+                    {service.description}
+                  </Text>
+
+                  <Badge color="green" variant="light">
+                    {service.subcategory}
+                  </Badge>
+                </Card>
+              );
+            })}
+          </>
+        )}
+      </Stack>
       <Modal
         opened={openedEditService}
         onClose={closeEditService}
@@ -574,14 +796,65 @@ export default function Therapist() {
           <Button variant="outline" color="red" onClick={closeEditService}>
             Close
           </Button>
-          <Button
-            className="!bg-[#46A7B0] text-white"
-            onClick={handleUpdateService}
-          >
+          <Button variant="light" color="green" onClick={handleUpdateService}>
             Update Service
           </Button>
         </Flex>
       </Modal>
-    </>
+      <Modal
+        opened={openedAddService}
+        onClose={closeAddService}
+        title="Create a service"
+      >
+        <Select
+          w={"100%"}
+          mt={"sm"}
+          label="Category"
+          data={Categorys}
+          onChange={(value: any) => setSelectedCategory(value)}
+        />
+        {selectedCategory && (
+          <Select
+            w={"100%"}
+            mt={"sm"}
+            label="SubCategory"
+            data={subCategories.map((item: any) => ({
+              value: item?.id.toString(),
+              label: item?.subcategory,
+            }))}
+            onChange={(value: any) =>
+              setNewService({
+                ...newService,
+                service_type_id: value,
+              })
+            }
+          />
+        )}
+
+        <Textarea
+          name="description"
+          id="description"
+          label="Description"
+          w={"100%"}
+          mt={"sm"}
+          rows={4}
+          value={newService.description}
+          onChange={(e) =>
+            setNewService({
+              ...newService,
+              description: e.target.value,
+            })
+          }
+        />
+        <Flex gap={"sm"} justify={"end"} mt={"md"}>
+          <Button variant="outline" color="red" onClick={closeAddService}>
+            Close
+          </Button>
+          <Button variant="light" color="green" onClick={handleCreateService}>
+            Create Service
+          </Button>
+        </Flex>
+      </Modal>
+    </Paper>
   );
-}
+};

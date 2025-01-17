@@ -1,28 +1,28 @@
 "use client";
 
+import { useRef, useState } from "react";
 import {
-  Box,
   Container,
-  Flex,
+  Paper,
   TextInput,
-  Title,
   Button,
   Avatar,
   Tabs,
-  Group,
+  Stack,
   PasswordInput,
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { IconCamera, IconSettings, IconUser } from "@tabler/icons-react";
-import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { IconUser, IconLock, IconCamera } from "@tabler/icons-react";
 import { useAuthStore } from "../_store/authStore";
-import { toast } from "react-toastify";
-import { DatePickerInput } from "@mantine/dates";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/supabase";
+import { toast } from "react-toastify";
+import { useForm } from "@mantine/form";
 import dayjs from "dayjs";
+import { DatePickerInput } from "@mantine/dates";
 
-export default function ProfilePage() {
+export default function ProfileSettings() {
+  const [activeTab, setActiveTab] = useState<string | null>("general");
+
   const { userInfo, setUserInfo } = useAuthStore();
   const router = useRouter();
 
@@ -92,114 +92,49 @@ export default function ProfilePage() {
   };
 
   return (
-    <Container size="md" py={"lg"}>
-      <Flex
-        direction={{ base: "column-reverse", sm: "row" }}
-        align={"start"}
-        mt={"lg"}
-        gap={{ base: 20, sm: 60 }}
-      >
-        <Box w={"fit"}>
-          <div
-            className="relative group cursor-pointer"
-            onClick={handleAvatarClick}
-          >
-            <Avatar
-              size={140}
-              src={avatarUrl || userInfo?.avatar_url}
-              alt="Profile Avatar"
-            />
-            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-              <IconCamera className="w-8 h-8 text-white" />
-            </div>
-            <input
-              type="file"
-              ref={fileInputRef}
-              className="hidden"
-              accept="image/*"
-              onChange={handleFileChange}
-            />
-          </div>
-          {/* <Dropzone
-            onDrop={handleImageUpload}
-            onReject={(files) => console.log("rejected files", files)}
-            maxSize={5 * 1024 ** 2}
-            accept={IMAGE_MIME_TYPE}
-            radius={"xl"}
-            styles={{
-              root: {
-                padding: "0px",
-                width: "fit-content",
-                borderRadius: "100%",
-              },
-            }}
-          >
-            {avatar ? (
-              <Avatar src={avatar} size={160} radius={"xl"} />
-            ) : (
-              <>
-                <Dropzone.Accept>
-                  <IconUpload
-                    style={{
-                      width: rem(52),
-                      height: rem(52),
-                      color: "var(--mantine-color-blue-6)",
-                    }}
-                    stroke={1.5}
-                  />
-                </Dropzone.Accept>
-                <Dropzone.Reject>
-                  <IconX
-                    style={{
-                      width: rem(52),
-                      height: rem(52),
-                      color: "var(--mantine-color-red-6)",
-                    }}
-                    stroke={1.5}
-                  />
-                </Dropzone.Reject>
-                <Dropzone.Idle>
-                  <Avatar
-                    size={160}
-                    radius="xl"
-                    name={userInfo?.name}
-                    color="initials"
-                    src={userInfo?.avatar_url}
-                  />
-                </Dropzone.Idle>
-              </>
-            )}
-          </Dropzone> */}
-        </Box>
-        <Tabs
-          defaultValue="general"
-          w={"100%"}
-          styles={{
-            list: {
-              width: "fit-content",
-            },
-          }}
+    <Container size="sm" py="xl">
+      <Paper radius="md" p={"md"} shadow="sm">
+        <div
+          className="relative group cursor-pointer w-fit mx-auto mb-8"
+          onClick={handleAvatarClick}
         >
-          <Tabs.List>
-            <Tabs.Tab value="general" leftSection={<IconUser size={"1rem"} />}>
+          <Avatar
+            size={140}
+            src={avatarUrl || userInfo?.avatar_url}
+            alt="Profile Avatar"
+          />
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+            <IconCamera className="w-8 h-8 text-white" />
+          </div>
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept="image/*"
+            onChange={handleFileChange}
+          />
+        </div>
+        <Tabs value={activeTab} onChange={setActiveTab} variant="outline">
+          <Tabs.List grow>
+            <Tabs.Tab value="general" leftSection={<IconUser size={16} />}>
               General Profile
             </Tabs.Tab>
-            <Tabs.Tab
-              value="settings"
-              leftSection={<IconSettings size={"1rem"} />}
-            >
+            <Tabs.Tab value="password" leftSection={<IconLock size={16} />}>
               Change Password
             </Tabs.Tab>
           </Tabs.List>
 
-          <Tabs.Panel value="general" pb="xs">
-            <GeneralProfile />
-          </Tabs.Panel>
-          <Tabs.Panel value="settings" pb="xs">
-            <PasswordComponent />
-          </Tabs.Panel>
+          <div className="p-8">
+            <Tabs.Panel value="general">
+              <GeneralProfile />
+            </Tabs.Panel>
+
+            <Tabs.Panel value="password">
+              <ChangePasswordComponent />
+            </Tabs.Panel>
+          </div>
         </Tabs>
-      </Flex>
+      </Paper>
     </Container>
   );
 }
@@ -251,36 +186,29 @@ const GeneralProfile = () => {
         handleProfileUpdate(values)
       )}
     >
-      <Box w={"100%"} mt={"xl"} px={"sm"}>
+      <Stack gap="md">
         <TextInput
           label="Full Name"
-          placeholder="Full Name"
-          size="md"
+          placeholder="Your full name"
           key={generalform.key("name")}
           {...generalform.getInputProps("name")}
           defaultValue={userInfo?.name}
         />
         <TextInput
-          mt="sm"
           label="Email"
-          size="md"
+          placeholder="your.email@example.com"
           disabled
-          placeholder="Email"
           defaultValue={userInfo?.email}
         />
         <TextInput
-          mt="sm"
-          size="md"
           label="Location"
-          placeholder="Location"
+          placeholder="Your location"
           key={generalform.key("location")}
           {...generalform.getInputProps("location")}
           defaultValue={userInfo?.location}
         />
         <DatePickerInput
           label="Birthday"
-          mt="sm"
-          size="md"
           placeholder="Pick your birthday"
           // defaultValue={
           //   new Date(new Date(userInfo?.birthday).getTime() + 86400000)
@@ -288,23 +216,15 @@ const GeneralProfile = () => {
           value={birthday}
           onChange={setBirthday}
         />
-
-        <Group justify="flex-end" mt="md">
-          <Button
-            w={{ base: "100%", sm: 180 }}
-            type="submit"
-            loading={loading}
-            className="!bg-[#46A7B0]"
-          >
-            Update
-          </Button>
-        </Group>
-      </Box>
+        <Button fullWidth color="teal" mt="md" type="submit" loading={loading}>
+          Update Profile
+        </Button>
+      </Stack>
     </form>
   );
 };
 
-const PasswordComponent = () => {
+const ChangePasswordComponent = () => {
   const passwordform = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -328,11 +248,12 @@ const PasswordComponent = () => {
 
   const handleChangePassword = async (values: any) => {
     setLoading(true);
-    const { data, error } = await supabase.auth.updateUser({
+    const { error } = await supabase.auth.updateUser({
       password: values.password,
     });
 
     if (error) {
+      console.log("=======");
       toast.error(error?.message);
       passwordform.initialize({ password: "", confirmPassword: "" });
       setLoading(false);
@@ -348,34 +269,23 @@ const PasswordComponent = () => {
     <form
       onSubmit={passwordform.onSubmit((values) => handleChangePassword(values))}
     >
-      <Box w={"100%"} mt={"xl"} px={"sm"}>
+      <Stack gap="md">
         <PasswordInput
           label="New Password"
-          placeholder="Password"
-          size="md"
+          placeholder="Enter your new password"
           key={passwordform.key("password")}
           {...passwordform.getInputProps("password")}
         />
-
         <PasswordInput
-          mt="sm"
-          label="Confirm password"
-          placeholder="Confirm password"
-          size="md"
+          label="Confirm New Password"
+          placeholder="Confirm your new password"
           key={passwordform.key("confirmPassword")}
           {...passwordform.getInputProps("confirmPassword")}
         />
-        <Group justify="flex-end" mt="md">
-          <Button
-            w={{ base: "100%", sm: 180 }}
-            type="submit"
-            loading={loading}
-            className="!bg-[#46A7B0]"
-          >
-            Change Password
-          </Button>
-        </Group>
-      </Box>
+        <Button color="teal" mt="md" loading={loading} type="submit">
+          Update Password
+        </Button>
+      </Stack>
     </form>
   );
 };
