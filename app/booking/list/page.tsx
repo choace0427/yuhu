@@ -2,7 +2,7 @@
 
 import { useAuthStore } from "@/app/_store/authStore";
 import { supabase } from "@/supabase";
-import { Divider, Image, Loader } from "@mantine/core";
+import { Card, Divider, Image, Loader } from "@mantine/core";
 import {
   IconMessage,
   IconCalendar,
@@ -167,10 +167,8 @@ export default function BookingList() {
             onClick={() => setType("upcoming")}
           >
             <div className="flex flex-col gap-2">
-              <span className="text-black Poppins-font text-2xl font-bold">
-                Upcoming
-              </span>
-              <span className="text-black Poppins-font text-sm">
+              <span className=" Poppins-font text-2xl font-bold">Upcoming</span>
+              <span className=" Poppins-font text-sm">
                 You have{" "}
                 {
                   allData.filter(
@@ -201,10 +199,8 @@ export default function BookingList() {
             onClick={() => setType("accept")}
           >
             <div className="flex flex-col gap-2">
-              <span className="text-black Poppins-font text-2xl font-bold">
-                Accepted
-              </span>
-              <span className="text-black Poppins-font text-sm">
+              <span className=" Poppins-font text-2xl font-bold">Accepted</span>
+              <span className="Poppins-font text-sm">
                 You have{" "}
                 {
                   allData.filter(
@@ -235,10 +231,8 @@ export default function BookingList() {
             onClick={() => setType("cancelled")}
           >
             <div className="flex flex-col gap-2">
-              <span className="text-black Poppins-font text-2xl font-bold">
-                Cancelled
-              </span>
-              <span className="text-black Poppins-font text-sm">
+              <span className="Poppins-font text-2xl font-bold">Cancelled</span>
+              <span className="Poppins-font text-sm">
                 You have{" "}
                 {
                   allData.filter(
@@ -280,7 +274,12 @@ const BookingTable = (props: any) => {
   const { data, loading, handleCancel, handleChat } = props;
 
   return (
-    <div className="rounded-sm px-3 py-2 bg-white max-w-7xl max-h-[600px] w-full mx-auto overflow-y-auto">
+    <Card
+      withBorder
+      radius={"sm"}
+      p={"xs"}
+      className="max-w-7xl max-h-[600px] mx-auto"
+    >
       {loading ? (
         <div className="w-full flex justify-center py-10 items-center">
           <Loader />
@@ -357,6 +356,6 @@ const BookingTable = (props: any) => {
       ) : (
         <p className="text-center text-gray-500 py-10">No Booking Data</p>
       )}
-    </div>
+    </Card>
   );
 };

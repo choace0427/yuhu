@@ -16,8 +16,9 @@ import {
   TextInput,
   LoadingOverlay,
   Textarea,
+  Loader,
 } from "@mantine/core";
-import { IconSend } from "@tabler/icons-react";
+import { IconSend, IconX } from "@tabler/icons-react";
 import { IconNotification } from "@tabler/icons-react";
 import { IconUser } from "@tabler/icons-react";
 import { IconDotsVertical } from "@tabler/icons-react";
@@ -111,6 +112,8 @@ export default function ChatPage() {
         chatMembers={chatMembers}
         selectChatUser={selectChatUser}
         chatMembersLoading={chatMembersLoading}
+        setChatMembersLoading={setChatMembersLoading}
+        setChatMembers={setChatMembers}
       />
       <ChatSection />
     </div>
@@ -121,6 +124,8 @@ const TherapistList = ({
   chatMembers,
   selectChatUser,
   chatMembersLoading,
+  fetchChatMembers,
+  setChatMembersLoading,
 }: any) => {
   const [unreadCounts, setUnreadCounts] = useState<{ [key: string]: number }>(
     {}
@@ -129,9 +134,44 @@ const TherapistList = ({
 
   let skeletions_count = 8;
 
+  const [searchMembers, setSearchMembers] = useState("");
+  const handleMemberSearch = async (e: any) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      setChatMembersLoading(true);
+      await fetchChatMembers(searchMembers);
+      setChatMembersLoading(false);
+    }
+  };
+
   return (
     <div className="max-w-[350px] w-full p-4 border-r">
-      <h2 className="text-xl font-bold mb-4">Therapists</h2>
+      <TextInput
+        placeholder="Search members"
+        leftSection={<IconSearch size={"1.2rem"} />}
+        rightSection={
+          searchMembers.trim() !== "" ? (
+            chatMembersLoading ? (
+              <Loader size={"sm"} />
+            ) : (
+              <IconX
+                size={"1.2rem"}
+                className="hover:cursor-pointer"
+                onClick={() => {
+                  fetchChatMembers("");
+                  setSearchMembers("");
+                }}
+              />
+            )
+          ) : (
+            <></>
+          )
+        }
+        mb={"sm"}
+        value={searchMembers}
+        onChange={(e: any) => setSearchMembers(e.target.value)}
+        onKeyDown={handleMemberSearch}
+      />
       <ul>
         {chatMembersLoading &&
           Array.from({ length: skeletions_count }).map((_, index) => {

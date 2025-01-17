@@ -15,6 +15,7 @@ import {
 import { Group } from "@mantine/core";
 import {
   IconBell,
+  IconBrandBooking,
   IconLogout,
   IconMessageCircle,
   IconServicemark,
@@ -95,9 +96,9 @@ const Header = () => {
 
   return (
     <div
-      className={`w-full z-20 md:h-20 px-8 h-12 ${
-        colorScheme === "light" ? " shadow-black" : " shadow-white"
-      } flex justify-between top-0 sticky shadow-sm`}
+      className={`w-full z-20 md:h-20 px-8 h-12 flex justify-between top-0 sticky shadow-sm ${
+        colorScheme === "light" ? "bg-white/80" : "bg-black/80"
+      }`}
     >
       <div className="flex flex-row gap-1 items-center">
         <Image src="/img/logo.png" alt="logo" width={30} height={30} />
@@ -219,9 +220,10 @@ const Header = () => {
               >
                 <Avatar
                   size={44}
-                  variant="outline"
                   radius="xl"
-                  src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-1.png"
+                  name={userInfo?.name}
+                  color="initials"
+                  src={userInfo?.avatar_url}
                 />
               </Indicator>
             </Menu.Target>
@@ -229,10 +231,10 @@ const Header = () => {
             <Menu.Dropdown>
               {userInfo?.role === "therapist" ? (
                 <Menu.Item
-                  leftSection={<IconSettings size={14} />}
+                  leftSection={<IconUser size={14} />}
                   onClick={() => router.push("/therapist")}
                 >
-                  Therapist
+                  Profile
                 </Menu.Item>
               ) : (
                 <Menu.Item
@@ -255,14 +257,25 @@ const Header = () => {
               >
                 Notifications
               </Menu.Item>
-              <Menu.Divider />
-              <Menu.Item
-                leftSection={<IconUser size={14} />}
-                onClick={() => router.push("/profile")}
-              >
-                Profile
-              </Menu.Item>
-              <Menu.Divider />
+              {userInfo?.role === "customer" && (
+                <>
+                  <Menu.Item
+                    leftSection={<IconBrandBooking size={14} />}
+                    onClick={() => router.push("/booking/list")}
+                  >
+                    Booking List
+                  </Menu.Item>
+                  <Menu.Divider />
+
+                  <Menu.Item
+                    leftSection={<IconUser size={14} />}
+                    onClick={() => router.push("/profile")}
+                  >
+                    Profile
+                  </Menu.Item>
+                  <Menu.Divider />
+                </>
+              )}
               <Menu.Item
                 color="red"
                 leftSection={<IconLogout size={14} />}

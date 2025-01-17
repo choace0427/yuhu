@@ -114,6 +114,7 @@ export default function BookingPage(params: any) {
     };
 
     const handleSubmit = async (newBooking: any) => {
+      setIsSubmitting(true);
       if (!value || myselectedTimeRanges.length === 0) {
         toast.error("Please select a date and at least one time range.");
         return;
@@ -133,7 +134,7 @@ export default function BookingPage(params: any) {
 
       if (data && data.length > 0) {
         try {
-          const { data, error } = await supabase
+          const { error } = await supabase
             .from("booking_list")
             .update({
               booking_message: message,
@@ -173,6 +174,7 @@ export default function BookingPage(params: any) {
           setTimeout(() => {
             router.push("/booking/list");
           }, 1000);
+          setIsSubmitting(false);
         } catch (error) {
           console.log(error);
         }
@@ -193,7 +195,7 @@ export default function BookingPage(params: any) {
             });
 
           if (insertError) {
-            toast.error("Failed to submit booking");
+            console.log(insertError);
             return;
           }
 
@@ -214,18 +216,18 @@ export default function BookingPage(params: any) {
               },
             ]);
           if (notificationError) {
-            return;
+            console.log(notificationError);
           }
 
-          // setTimeout(() => {
-          //   router.push("/booking/list");
-          // }, 1000);
+          setTimeout(() => {
+            router.push("/booking/list");
+          }, 1000);
+          setIsSubmitting(false);
         } catch (error) {
           console.log("error", error);
         }
       }
 
-      setIsSubmitting(true);
       //   if (newBooking === "") {
       //     try {
       //       const { data, error } = await supabase.from("booking_list").insert({
@@ -324,7 +326,8 @@ export default function BookingPage(params: any) {
           <Textarea
             label="Message"
             placeholder="Enter your message to therapist"
-            minRows={6}
+            rows={6}
+            maxRows={10}
             defaultValue={message}
             onChange={(e) => setMessage(e.target.value)}
           />
@@ -397,12 +400,19 @@ export default function BookingPage(params: any) {
   return (
     <>
       <div className="mx-auto max-w-7xl w-full justify-between pt-10 pb-20">
-        <div className="flex justify-center items-center">
-          <div className="flex flex-col gap-8 w-full lg:px-10 md:px-8 px-6">
-            <span className="lg:text-5xl md:text-4xl text-3xl text-black Poppins-font text-center">
-              Request an Appointment
-            </span>
-            <CalendarComponent />
+        <div className="flex flex-col gap-8 w-full lg:px-10 md:px-8 px-6">
+          <span className="lg:text-5xl md:text-4xl text-3xl text-black Poppins-font text-center">
+            Request an Appointment
+          </span>
+          <CalendarComponent />
+          <div className="mt-10 w-full flex justify-end">
+            <Button
+              variant="outline"
+              color="red"
+              onClick={() => router.push("/customer")}
+            >
+              Cancel Booking
+            </Button>
           </div>
         </div>
       </div>

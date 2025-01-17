@@ -4,122 +4,123 @@ import {
   Box,
   Container,
   Flex,
-  Image,
-  NumberInput,
-  rem,
-  Text,
-  Textarea,
   TextInput,
   Title,
   Button,
   Avatar,
-  CloseButton,
   Tabs,
   Group,
   PasswordInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import {
-  IconCircleLetterX,
-  IconCircleX,
-  IconPhoto,
-  IconSettings,
-  IconUser,
-} from "@tabler/icons-react";
-import { IconX } from "@tabler/icons-react";
-import { IconUpload } from "@tabler/icons-react";
+import { IconCamera, IconSettings, IconUser } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { useAuthStore } from "../_store/authStore";
 import { toast } from "react-toastify";
-import { IMAGE_MIME_TYPE } from "@mantine/dropzone";
-import { Dropzone } from "@mantine/dropzone";
-import { DatePicker, DatePickerInput } from "@mantine/dates";
+import { DatePickerInput } from "@mantine/dates";
 import { supabase } from "@/supabase";
 import dayjs from "dayjs";
 
 export default function ProfilePage() {
-  const { userInfo } = useAuthStore();
+  const { userInfo, setUserInfo } = useAuthStore();
   const router = useRouter();
 
   const [avatar, setAvatar] = useState<any>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
 
-  const generalform = useForm({
-    mode: "uncontrolled",
-    initialValues: { name: "", email: "", age: 0 },
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
 
-    // functions will be used to validate values at corresponding key
-    validate: {
-      name: (value) =>
-        value.length < 2 ? "Name must have at least 2 letters" : null,
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
-      age: (value) =>
-        value < 18 ? "You must be at least 18 to register" : null,
-    },
-  });
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file || !userInfo?.email) return;
 
-  const passwordform = useForm({
-    mode: "uncontrolled",
-    initialValues: {
-      password: "secret",
-      confirmPassword: "sevret",
-    },
+    try {
+      setUploading(true);
 
-    validate: {
-      confirmPassword: (value, values) =>
-        value !== values.password ? "Passwords did not match" : null,
-    },
-  });
+      if (avatarUrl) {
+        const oldFilePath = avatarUrl.split("/").pop();
+        if (oldFilePath) {
+          await supabase.storage
+            .from("avatars")
+            .remove([`avatars/${oldFilePath}`]);
+        }
+      }
 
-  //   useEffect(() => {
-  //     const fetchFilmData = async () => {
-  //       const response = await fetch(`/api/films/edit/${film_id}`);
-  //       const { data, error } = await response.json();
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${userInfo.email}-${Math.random()}.${fileExt}`;
+      const filePath = `avatars/${fileName}`;
 
-  //       if (error) {
-  //         console.error("Error fetching film data:", error);
-  //       } else {
-  //         setAvatar(data.poster_img);
-  //         form.setValues({
-  //           title: data.title,
-  //           publishYear: data.publish_year,
-  //           description: data.description,
-  //         });
-  //       }
-  //     };
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(filePath, file);
 
-  //     if (film_id) {
-  //       fetchFilmData();
-  //     }
-  //   }, [film_id]);
+      if (uploadError) {
+        throw uploadError;
+      }
 
-  const handleImageUpload = (files: any) => {
-    const file = files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      setAvatar(reader.result);
-    };
-    reader.onerror = (error) => {
-      console.error("Error converting image to base64:", error);
-    };
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("avatars").getPublicUrl(filePath);
 
-    console.log("=========", avatar);
+      const { error: updateError } = await supabase
+        .from("users")
+        .update({ avatar_url: publicUrl })
+        .eq("email", userInfo.email);
+
+      if (updateError) {
+        throw updateError;
+      }
+
+      setAvatarUrl(publicUrl + "?t=" + new Date().getTime());
+      setUserInfo({
+        ...userInfo,
+        avatar_url: publicUrl + "?t=" + new Date().getTime(),
+      });
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
+      toast.error("Failed to update profile avatar.");
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
-    <Container size="md">
-      <Title order={2} mb="lg" className="text-white">
-        Edit Film
-      </Title>
-
+    <Container size="md" py={"lg"}>
       <Flex
         direction={{ base: "column-reverse", sm: "row" }}
         align={"start"}
+        mt={"lg"}
         gap={{ base: 20, sm: 60 }}
       >
         <Box w={"fit"}>
-          <Dropzone
+          <div
+            className="relative group cursor-pointer"
+            onClick={handleAvatarClick}
+          >
+            <Avatar
+              size={140}
+              src={avatarUrl || userInfo?.avatar_url}
+              alt="Profile Avatar"
+            />
+            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+              <IconCamera className="w-8 h-8 text-white" />
+            </div>
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+          </div>
+          {/* <Dropzone
             onDrop={handleImageUpload}
             onReject={(files) => console.log("rejected files", files)}
             maxSize={5 * 1024 ** 2}
@@ -134,7 +135,7 @@ export default function ProfilePage() {
             }}
           >
             {avatar ? (
-              <Avatar src={avatar} size={160} />
+              <Avatar src={avatar} size={160} radius={"xl"} />
             ) : (
               <>
                 <Dropzone.Accept>
@@ -158,11 +159,17 @@ export default function ProfilePage() {
                   />
                 </Dropzone.Reject>
                 <Dropzone.Idle>
-                  <Avatar src={userInfo?.avatar} size={160} />
+                  <Avatar
+                    size={160}
+                    radius="xl"
+                    name={userInfo?.name}
+                    color="initials"
+                    src={userInfo?.avatar_url}
+                  />
                 </Dropzone.Idle>
               </>
             )}
-          </Dropzone>
+          </Dropzone> */}
         </Box>
         <Tabs
           defaultValue="general"
@@ -205,52 +212,37 @@ const GeneralProfile = () => {
       name: userInfo?.name || "",
       location: userInfo?.location || "",
     },
-
-    validate: {
-      name: (value) => {
-        if (value.trim().length === 0) return "Name is required";
-        if (value.trim().length < 2) return "Name must have at least 2 letters";
-        return null;
-      },
-      location: (value) => {
-        if (value.trim().length === 0) return "Location is required";
-        if (value.trim().length < 2)
-          return "Location must have at least 2 letters";
-        return null;
-      },
-    },
   });
 
   const [birthday, setBirthday] = useState<any>();
   const [loading, setLoading] = useState(false);
 
   const handleProfileUpdate = async (values: any) => {
-    console.log("=======", values);
-    // if (userInfo) {
-    //   setLoading(true);
-    //   const { data, error } = await supabase
-    //     .from("users")
-    //     .update({
-    //       name: values.name,
-    //       location: values.location,
-    //       birthday: dayjs(birthday).format("YYYY-MM-DD"),
-    //     })
-    //     .eq("id", userInfo?.id)
-    //     .select();
-    //   if (error) {
-    //     console.log("error", error);
-    //     toast.error("Failed to update profile");
-    //     generalform.initialize({
-    //       name: userInfo?.name,
-    //       location: userInfo?.location,
-    //     });
-    //   }
-    //   if (data) {
-    //     setUserInfo(data[0]);
-    //     toast.success("Successfullly updated profile");
-    //   }
-    //   setLoading(false);
-    // }
+    if (userInfo) {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("users")
+        .update({
+          name: values.name,
+          location: values.location,
+          birthday: dayjs(birthday).format("YYYY-MM-DD"),
+        })
+        .eq("id", userInfo?.id)
+        .select();
+      if (error) {
+        console.log("error", error);
+        toast.error("Failed to update profile");
+        generalform.initialize({
+          name: userInfo?.name,
+          location: userInfo?.location,
+        });
+      }
+      if (data) {
+        setUserInfo(data[0]);
+        toast.success("Successfullly updated profile");
+      }
+      setLoading(false);
+    }
   };
 
   return (
@@ -259,7 +251,7 @@ const GeneralProfile = () => {
         handleProfileUpdate(values)
       )}
     >
-      <Box w={"100%"} mt={"md"} px={"sm"}>
+      <Box w={"100%"} mt={"xl"} px={"sm"}>
         <TextInput
           label="Full Name"
           placeholder="Full Name"
@@ -281,6 +273,8 @@ const GeneralProfile = () => {
           size="md"
           label="Location"
           placeholder="Location"
+          key={generalform.key("location")}
+          {...generalform.getInputProps("location")}
           defaultValue={userInfo?.location}
         />
         <DatePickerInput
@@ -288,9 +282,9 @@ const GeneralProfile = () => {
           mt="sm"
           size="md"
           placeholder="Pick your birthday"
-          //   defaultValue={
-          //     new Date(new Date(userInfo?.birthday).getTime() + 86400000)
-          //   }
+          // defaultValue={
+          //   new Date(new Date(userInfo?.birthday).getTime() + 86400000)
+          // }
           value={birthday}
           onChange={setBirthday}
         />
@@ -354,7 +348,7 @@ const PasswordComponent = () => {
     <form
       onSubmit={passwordform.onSubmit((values) => handleChangePassword(values))}
     >
-      <Box w={"100%"} mt={"md"} px={"sm"}>
+      <Box w={"100%"} mt={"xl"} px={"sm"}>
         <PasswordInput
           label="New Password"
           placeholder="Password"

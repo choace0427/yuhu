@@ -185,9 +185,8 @@ export default function TherapistDetailPage(params: any) {
                 {reviews &&
                   reviews.map((item, index) => {
                     return (
-                      <Carousel.Slide my={"auto"}>
+                      <Carousel.Slide my={"auto"} key={index}>
                         <div
-                          key={index}
                           className={`flex flex-col w-[300px] h-[150px] border rounded-md shadow-md ${
                             colorScheme === "light" ? "bg-[#F0F8F9]" : ""
                           } p-4 gap-4`}

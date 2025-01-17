@@ -32,7 +32,7 @@ export default function TherapistGeneralProfile() {
   const [name, setName] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [location, setLocation] = useState<string>("");
-  const [birthday, setBirthday] = useState<DateValue | null>(null);
+  const [birthday, setBirthday] = useState<any>(null);
   const [hourlyRate, setHourlyRate] = useState("100");
   const [changedHourlyRate, setChangedHourlyRate] = useState(hourlyRate);
   const [summary, setSummary] = useState<string>("");
@@ -58,7 +58,7 @@ export default function TherapistGeneralProfile() {
             setHourlyRate(userData[0].hourly_rate);
             setSummary(userData[0].summary || "");
             if (userData[0].birthday) {
-              setBirthday(userData[0].birthday);
+              setBirthday(dayjs(new Date(userData[0]?.birthday)));
             }
             if (userData[0].avatar_url) {
               setAvatarUrl(userData[0].avatar_url);
@@ -96,7 +96,7 @@ export default function TherapistGeneralProfile() {
         phone: phone,
         location: location,
         hourly_rate: hourlyRate,
-        birthday: birthday ? birthday.toString() : null,
+        birthday: dayjs(birthday).format("YYYY-MM-DD"),
         summary: summary,
       })
       .eq("email", userInfo.email);
@@ -125,8 +125,6 @@ export default function TherapistGeneralProfile() {
             .remove([`avatars/${oldFilePath}`]);
         }
       }
-
-      console.log("========", file);
 
       const fileExt = file.name.split(".").pop();
       const fileName = `${userInfo.email}-${Math.random()}.${fileExt}`;
@@ -198,10 +196,6 @@ export default function TherapistGeneralProfile() {
               ${hourlyRate}/hr
             </span>
             <IconEdit className="w-5 h-5 cursor-pointer" onClick={open} />
-            {/* <CiEdit
-                    className="w-5 h-5 cursor-pointer"
-                    onClick={onRateEditOpen}
-                  /> */}
           </div>
         </div>
         <div className="flex flex-col gap-2 w-full items-center justify-center">
@@ -252,6 +246,9 @@ export default function TherapistGeneralProfile() {
                 placeholder="Pick your birthday"
                 value={birthday}
                 onChange={setBirthday}
+                defaultValue={
+                  new Date(new Date(userInfo?.birthday).getTime() + 86400000)
+                }
                 w={"100%"}
                 size="md"
               />

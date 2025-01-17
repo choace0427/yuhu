@@ -666,7 +666,7 @@ const ChatSection = ({ room_id, currentUser }: any) => {
             scrollbarSize={6}
             scrollHideDelay={2500}
             py={"sm"}
-            px={50}
+            px={30}
             styles={{
               root: {
                 height: "calc(100vh - 230px)",
@@ -683,7 +683,6 @@ const ChatSection = ({ room_id, currentUser }: any) => {
               Object.keys(groupedMessages).map((date) => (
                 <div key={date}>
                   <div className="text-center my-4 text-gray-500 text-sm">
-                    {dayjs(date).format("MMMM DD, YYYY")}
                     {(() => {
                       const messageDate = dayjs(date);
                       const today = dayjs();
@@ -694,7 +693,7 @@ const ChatSection = ({ room_id, currentUser }: any) => {
                       } else if (messageDate.isSame(yesterday, "day")) {
                         return "Yesterday";
                       } else {
-                        return messageDate.format("DD/MM/YYYY");
+                        return messageDate.format("YYYY-MM-DD");
                       }
                     })()}
                   </div>
@@ -715,14 +714,14 @@ const ChatSection = ({ room_id, currentUser }: any) => {
                         <div
                           className={`flex mb-3 relative ${
                             isSender ? "flex-row" : "flex-row-reverse"
-                          } gap-2 items-end`}
+                          } gap-2 items-start`}
                         >
-                          <div className="relative">
-                            <div
-                              className={`flex gap-1 items-end ${
-                                isSender ? "flex-row-reverse" : ""
-                              }`}
-                            >
+                          <div
+                            className={`relative flex items-end ${
+                              !isSender ? "" : "flex-row-reverse"
+                            }`}
+                          >
+                            <div className={`flex gap-1 items-end flex-col`}>
                               <div
                                 className={`p-[6px] max-w-[450px] relative break-words whitespace-pre-wrap rounded-md ${
                                   isSender
@@ -732,11 +731,27 @@ const ChatSection = ({ room_id, currentUser }: any) => {
                               >
                                 {msg.messages}
                               </div>
-                              {msg?.status === "edited" && (
-                                <Text size="xs">(edited)</Text>
-                              )}
+                              <Text
+                                size="xs"
+                                mt={"3"}
+                                className={`${
+                                  isSender ? "text-start" : "text-end"
+                                }`}
+                              >
+                                {dayjs(msg.created_at).format("hh:mm A")}
+                              </Text>
                             </div>
-                            <Text
+                            {msg?.status === "edited" && (
+                              <Text
+                                size="xs"
+                                mb={24}
+                                ml={isSender ? "" : "sm"}
+                                mr={isSender ? "sm" : ""}
+                              >
+                                (edited)
+                              </Text>
+                            )}
+                            {/* <Text
                               size="xs"
                               mt={"3"}
                               className={`${
@@ -744,7 +759,7 @@ const ChatSection = ({ room_id, currentUser }: any) => {
                               }`}
                             >
                               {dayjs(msg.created_at).format("hh:mm A")}
-                            </Text>
+                            </Text> */}
                           </div>
                           {hoveredMessage === msg.conversation_id && (
                             <Box
@@ -822,11 +837,11 @@ const ChatSection = ({ room_id, currentUser }: any) => {
                             src={
                               currentUser.length > 0 && !isSender
                                 ? currentUser[0]?.avatar_url
-                                : ""
+                                : userInfo?.avatar_url
                             }
                             alt={msg.sender_id}
                             mb={3}
-                            size={"sm"}
+                            size={"md"}
                             radius={"xl"}
                           />
                         </div>
@@ -874,7 +889,17 @@ const ChatSection = ({ room_id, currentUser }: any) => {
               </ActionIcon>
             }
           />
-          <Popover position="top-end" withArrow shadow="md">
+          <Popover
+            position="top-end"
+            withArrow
+            shadow="md"
+            styles={{
+              dropdown: {
+                padding: "0px",
+                borderRadius: "0px",
+              },
+            }}
+          >
             <Popover.Target>
               <ActionIcon variant="transparent" radius={"xl"}>
                 <IconMoodSmile />
