@@ -791,7 +791,12 @@ const PaymentComponent = () => {
         </Group> */}
       </Stack>
       {userInfo?.card_status === "false" && (
-        <Button color="green" variant="light" loading={loading}>
+        <Button
+          color="green"
+          variant="light"
+          loading={loading}
+          onClick={() => createStripeAccount()}
+        >
           Create Stripe Account
         </Button>
       )}
