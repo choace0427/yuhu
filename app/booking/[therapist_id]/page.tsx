@@ -1,8 +1,8 @@
 "use client";
 
 import { supabase } from "@/supabase";
-import { range, useDisclosure } from "@mantine/hooks";
-import { use, useState } from "react";
+import { useDisclosure } from "@mantine/hooks";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import {
@@ -16,14 +16,21 @@ import {
 import { DatePicker } from "@mantine/dates";
 import dayjs from "dayjs";
 import { useAuthStore } from "@/app/_store/authStore";
+import {
+  CardCvcElement,
+  CardExpiryElement,
+  CardNumberElement,
+  Elements,
+  useElements,
+  useStripe,
+} from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 
 export default function BookingPage(params: any) {
   const { userInfo } = useAuthStore();
   const router = useRouter();
 
   const [therapistId, setTherapistId] = useState(params.params.therapist_id);
-
-  console.log("========", therapistId);
 
   const CalendarComponent = () => {
     const [value, setValue] = useState<Date | null>(null);
@@ -397,6 +404,11 @@ export default function BookingPage(params: any) {
       </div>
     );
   };
+
+  const stripePromise = loadStripe(
+    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
+  );
+
   return (
     <>
       <div className="mx-auto max-w-7xl w-full justify-between pt-10 pb-20">
@@ -415,7 +427,80 @@ export default function BookingPage(params: any) {
             </Button>
           </div>
         </div>
+        <Elements stripe={stripePromise}>
+          <Paymentcomponent />
+        </Elements>
       </div>
     </>
   );
 }
+
+const Paymentcomponent = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const elements = useElements();
+  const cardElement = elements?.getElement(CardNumberElement);
+  const stripe = useStripe();
+
+  const createPayment = async () => {
+    if (!stripe || !cardElement) return;
+
+    try {
+      setIsLoading(true);
+      const paymentMethod = await stripe.createPaymentMethod({
+        type: "card",
+        card: cardElement,
+      });
+      console.log(paymentMethod);
+    } catch (error) {
+      console.error("Error creating payment method:", error);
+      // Handle any errors
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const cardStyle = {
+    base: {
+      fontSize: "16px",
+      color: "var(--foreground)",
+      "::placeholder": {
+        color: "var(--muted-foreground)",
+      },
+      backgroundColor: "white",
+    },
+  };
+
+  return (
+    <>
+      <Card className="w-full max-w-md mx-auto">
+        Payment Details
+        <div className="space-y-4">
+          <div className="rounded-md border border-input bg-background p-3">
+            <CardNumberElement
+              options={{
+                style: cardStyle,
+                showIcon: true,
+                iconStyle: "default",
+              }}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="rounded-md border border-input bg-background p-3">
+              <CardExpiryElement options={{ style: cardStyle }} />
+            </div>
+            <div className="rounded-md border border-input bg-background p-3">
+              <CardCvcElement options={{ style: cardStyle }} />
+            </div>
+          </div>
+          <Button
+            className="w-full"
+            onClick={createPayment}
+            disabled={isLoading}
+          >
+            {isLoading ? "Processing..." : "Create Payment Method"}
+          </Button>
+        </div>
+      </Card>
+    </>
+  );
+};

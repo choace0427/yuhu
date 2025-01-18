@@ -31,10 +31,11 @@ export default function LoginPage() {
     setLoading(true);
     try {
       signUp(values.name, values.email, values.password, router);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.log("error", error);
     }
-    setLoading(false);
   };
 
   return (

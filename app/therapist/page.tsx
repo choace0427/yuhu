@@ -48,6 +48,8 @@ import {
   CardExpiryElement,
   CardNumberElement,
   Elements,
+  useElements,
+  useStripe,
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { type, userInfo } from "os";
@@ -155,9 +157,11 @@ export default function TherapistDashboard() {
       } = supabase.storage.from("avatars").getPublicUrl(filePath);
 
       const { error: updateError } = await supabase
-        .from("users")
+        .from(
+          userInfo?.role === "therapist" ? "therapist_list" : "customers_list"
+        )
         .update({ avatar_url: publicUrl })
-        .eq("email", userInfo.email);
+        .eq("id", userInfo?.id);
 
       if (updateError) {
         throw updateError;
@@ -179,14 +183,14 @@ export default function TherapistDashboard() {
   const handleProfileUpdate = async () => {
     setProfileLoading(true);
     const { data, error } = await supabase
-      .from("users")
+      .from("therapist_list")
       .update({
         name: name || userInfo?.name,
         hourly_rate: hourlyRate || userInfo?.hourly_rate,
         phone: phone || userInfo?.phone,
         location: location || userInfo?.location,
         summary: summary || userInfo?.summary,
-        birthday: dayjs(value).format("YYYY-MM-DD"),
+        birthday: dayjs(value).format("YYYY-MM-DD") || "",
       })
       .eq("id", userInfo?.id)
       .select();
@@ -572,8 +576,6 @@ export default function TherapistDashboard() {
           <Suspense>
             <PaymentComponent />
           </Suspense>
-          {/* <Elements stripe={stripePromise}>
-          </Elements> */}
         </Grid.Col>
 
         <Grid.Col span={{ base: 12, md: 4 }}>
@@ -696,7 +698,6 @@ const PaymentComponent = () => {
   const [loading, setLoading] = useState(false);
 
   const handleInsertCard = async () => {
-    console.log("---------", searchParams.get("account_id"));
     try {
       setLoading(true);
 
@@ -728,7 +729,7 @@ const PaymentComponent = () => {
         throw new Error("Failed to insert new card.");
       }
       const { data: userUpdateData, error: userUpdateError } = await supabase
-        .from("users")
+        .from("therapist_list")
         .update({ card_status: "true" })
         .eq("id", userInfo?.id)
         .select();
@@ -816,17 +817,6 @@ const PaymentComponent = () => {
           </Text>
         )}
       </Flex>
-      <Stack gap="md">
-        {/* <div style={{ border: "1px solid black", padding: "5px 10px" }}>
-          <CardNumberElement
-            options={{ showIcon: true, iconStyle: "default" }}
-          />
-        </div>
-        <Group grow>
-          <CardExpiryElement />
-          <CardCvcElement />
-        </Group> */}
-      </Stack>
       {userInfo?.card_status === "false" && (
         <Button
           color="green"

@@ -42,7 +42,8 @@ export default function NotifcationsPage() {
         const { data: bookingNotificationData, error } = await supabase.rpc(
           "get_new_notifications",
           {
-            input_therapist_id: userInfo.id,
+            input_therapist_id: userInfo?.id,
+            input_role: userInfo?.role,
           }
         );
         if (error) {

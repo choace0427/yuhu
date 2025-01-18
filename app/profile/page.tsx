@@ -70,9 +70,9 @@ export default function ProfileSettings() {
       } = supabase.storage.from("avatars").getPublicUrl(filePath);
 
       const { error: updateError } = await supabase
-        .from("users")
+        .from("customers_list")
         .update({ avatar_url: publicUrl })
-        .eq("email", userInfo.email);
+        .eq("id", userInfo?.id);
 
       if (updateError) {
         throw updateError;
@@ -101,6 +101,7 @@ export default function ProfileSettings() {
           <Avatar
             size={140}
             src={avatarUrl || userInfo?.avatar_url}
+            name={userInfo?.name}
             alt="Profile Avatar"
           />
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
@@ -141,25 +142,20 @@ export default function ProfileSettings() {
 
 const GeneralProfile = () => {
   const { userInfo, setUserInfo } = useAuthStore();
-  const generalform = useForm({
-    mode: "uncontrolled",
-    initialValues: {
-      name: userInfo?.name || "",
-      location: userInfo?.location || "",
-    },
-  });
 
+  const [name, setName] = useState("");
+  const [location, setLocation] = useState("");
   const [birthday, setBirthday] = useState<any>();
   const [loading, setLoading] = useState(false);
 
-  const handleProfileUpdate = async (values: any) => {
+  const handleProfileUpdate = async () => {
     if (userInfo) {
       setLoading(true);
       const { data, error } = await supabase
-        .from("users")
+        .from("customers_list")
         .update({
-          name: values.name,
-          location: values.location,
+          name: name,
+          location: location,
           birthday: dayjs(birthday).format("YYYY-MM-DD"),
         })
         .eq("id", userInfo?.id)
@@ -167,12 +163,9 @@ const GeneralProfile = () => {
       if (error) {
         console.log("error", error);
         toast.error("Failed to update profile");
-        generalform.initialize({
-          name: userInfo?.name,
-          location: userInfo?.location,
-        });
       }
       if (data) {
+        console.log("======", data[0]);
         setUserInfo(data[0]);
         toast.success("Successfullly updated profile");
       }
@@ -181,46 +174,44 @@ const GeneralProfile = () => {
   };
 
   return (
-    <form
-      onSubmit={generalform.onSubmit((values: any) =>
-        handleProfileUpdate(values)
-      )}
-    >
-      <Stack gap="md">
-        <TextInput
-          label="Full Name"
-          placeholder="Your full name"
-          key={generalform.key("name")}
-          {...generalform.getInputProps("name")}
-          defaultValue={userInfo?.name}
-        />
-        <TextInput
-          label="Email"
-          placeholder="your.email@example.com"
-          disabled
-          defaultValue={userInfo?.email}
-        />
-        <TextInput
-          label="Location"
-          placeholder="Your location"
-          key={generalform.key("location")}
-          {...generalform.getInputProps("location")}
-          defaultValue={userInfo?.location}
-        />
-        <DatePickerInput
-          label="Birthday"
-          placeholder="Pick your birthday"
-          // defaultValue={
-          //   new Date(new Date(userInfo?.birthday).getTime() + 86400000)
-          // }
-          value={birthday}
-          onChange={setBirthday}
-        />
-        <Button fullWidth color="teal" mt="md" type="submit" loading={loading}>
-          Update Profile
-        </Button>
-      </Stack>
-    </form>
+    <Stack gap="md">
+      <TextInput
+        label="Full Name"
+        placeholder="Your full name"
+        defaultValue={userInfo?.name}
+        onChange={(e) => setName(e.target.value)}
+      />
+      <TextInput
+        label="Email"
+        placeholder="your.email@example.com"
+        disabled
+        defaultValue={userInfo?.email}
+      />
+      <TextInput
+        label="Location"
+        placeholder="Your location"
+        defaultValue={userInfo?.location}
+        onChange={(e) => setLocation(e.target.value)}
+      />
+      <DatePickerInput
+        label="Birthday"
+        placeholder="Pick your birthday"
+        // defaultValue={
+        //   new Date(new Date(userInfo?.birthday).getTime() + 86400000)
+        // }
+        value={birthday}
+        onChange={setBirthday}
+      />
+      <Button
+        fullWidth
+        color="teal"
+        mt="md"
+        loading={loading}
+        onClick={() => handleProfileUpdate()}
+      >
+        Update Profile
+      </Button>
+    </Stack>
   );
 };
 

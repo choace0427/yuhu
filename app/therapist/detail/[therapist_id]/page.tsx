@@ -278,7 +278,7 @@ export default function Home(params: any) {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from("users")
+        .from("therapist_list")
         .select(
           `
               id,
@@ -354,7 +354,7 @@ export default function Home(params: any) {
                 </Box>
               </Group>
 
-              <Text mt="xl" size="lg" c="dimmed">
+              <Text mt="xl" size="lg" c="dimmed" lineClamp={3}>
                 {userData?.summary || "Unknown"}
               </Text>
 

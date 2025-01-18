@@ -3,40 +3,90 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-// import { FaRegUser } from "react-icons/fa6";
-// import { TbMassage } from "react-icons/tb";
 import { supabase } from "@/supabase";
 import { useAuthStore } from "../_store/authStore";
 import { toast } from "react-toastify";
 import { IconMassage, IconUser } from "@tabler/icons-react";
-// import { useUserContext } from "@/contexts/userContext";
-// import { useToastContext } from "@/contexts/toastContext";
 
 export default function UserRole() {
-  const { setUserInfo, setIsAuth, userInfo } = useAuthStore();
-  const [selectedRole, setSelectedRole] = useState("");
+  const [selectedRole, setSelectedRole] = useState("customer");
   const router = useRouter();
   const [userData, setUserData] = useState<any>();
 
-  const handleCreateAccount = async () => {
-    const { data, error } = await supabase
-      .from("users")
-      .update({ role: selectedRole })
-      .eq("id", userData.id)
-      .select();
+  const handleCustomerCreateAccount = async () => {
+    const response = await fetch("/api/create-customer", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: userData?.full_name,
+        email: userData?.email,
+      }),
+    });
 
-    if (error) {
-      console.log("error", error);
-    } else {
-      setIsAuth(true);
-      setUserInfo(data[0]);
-      localStorage.setItem("userInfo", JSON.stringify(data[0]));
-      if (selectedRole === "customer") {
-        router.push("/customer");
-      } else if (selectedRole === "therapist") {
-        router.push("/therapist");
+    const data = await response.json();
+    if (response.ok) {
+      const { error: userError } = await supabase
+        .from("customers_list")
+        .select("*")
+        .eq("id", userData?.sub)
+        .single();
+
+      if (userError) {
+        const { error: CustomerError } = await supabase
+          .from("customers_list")
+          .insert([
+            {
+              id: userData?.sub,
+              email: userData?.email,
+              name: userData?.full_name,
+              stripe_customer_id: data?.customer?.id,
+            },
+          ]);
+
+        if (CustomerError) {
+          toast.error("Error saving user data. Please contact support!");
+          return;
+        }
+
+        toast.success("Sign-up successful!");
+        setTimeout(() => {
+          router.push("/auth/login");
+        }, 1000);
       }
-      toast.success("Sign up successful!");
+    } else {
+      console.error("Error creating customer:");
+    }
+  };
+
+  const handleTherapistCreateAccount = async () => {
+    const { error: userError } = await supabase
+      .from("therapist_list")
+      .select("*")
+      .eq("id", userData?.sub)
+      .single();
+
+    if (userError) {
+      const { error: CustomerError } = await supabase
+        .from("therapist_list")
+        .insert([
+          {
+            id: userData?.sub,
+            email: userData?.email,
+            name: userData?.full_name,
+          },
+        ]);
+
+      if (CustomerError) {
+        toast.error("Error saving user data. Please contact support!");
+        return;
+      }
+
+      toast.success("Sign-up successful!");
+      setTimeout(() => {
+        router.push("/auth/login");
+      }, 1000);
     }
   };
 
@@ -46,9 +96,11 @@ export default function UserRole() {
         data: { user },
         error: userError,
       } = await supabase.auth.getUser();
+
       if (userError) {
         console.log(userError);
-      } else setUserData(user);
+        return;
+      } else setUserData(user?.user_metadata);
     };
     handleGetUser();
   }, []);
@@ -66,7 +118,6 @@ export default function UserRole() {
           onClick={() => setSelectedRole("customer")}
         >
           <IconUser size={"1.6rem"} />
-          {/* <FaRegUser className="lg:w-10 lg:h-10 md:w-8 md:h-8 w-6 h-6" /> */}
           <span className="text-black text-center lg:text-xl md:text-lg text-base Poppins-font">
             I&apos;m a Customer, Searching for a Service
           </span>
@@ -78,7 +129,6 @@ export default function UserRole() {
           onClick={() => setSelectedRole("therapist")}
         >
           <IconMassage size={"1.6rem"} />
-          {/* <TbMassage className="lg:w-10 lg:h-10 md:w-8 md:h-8 w-6 h-6" /> */}
           <span className="text-black text-center lg:text-xl md:text-lg text-base Poppins-font">
             I&apos;m a Therapist, Looking for Work
           </span>
@@ -87,7 +137,11 @@ export default function UserRole() {
       <button
         className="font-bold Poppins-font border-b-2 border-[#46A7B0] text-black animate-pulse"
         disabled={selectedRole === ""}
-        onClick={handleCreateAccount}
+        onClick={
+          selectedRole === "customer"
+            ? handleCustomerCreateAccount
+            : handleTherapistCreateAccount
+        }
       >
         <span className="text-[#46A7B0] md:text-lg sm:text-base Poppins-font">
           C

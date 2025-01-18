@@ -5,13 +5,16 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 interface AuthState {
+  session: any | null;
   isAuthenticated: boolean;
   userInfo: any;
+  user: any | null;
   signIn: (email: string, password: string, router: any) => void;
   signOut: (router: any) => Promise<void>;
   setIsAuth: (isAuth: boolean) => void;
   setUserInfo: (userInfo: any) => void;
   signUp: (name: string, email: string, password: string, router: any) => void;
+  checkAuthState: () => Promise<void>;
 }
 
 export const useAuthStore = create(
@@ -21,7 +24,7 @@ export const useAuthStore = create(
       user: null,
       isAuthenticated: false,
       userInfo: null,
-      signIn: async (email, password, router) => {
+      signIn: async (email: string, password: string, router: any) => {
         try {
           const { data, error } = await supabase.auth.signInWithPassword({
             email,
@@ -29,51 +32,46 @@ export const useAuthStore = create(
           });
 
           if (error) {
-            if (error.message === "Invalid login credentials") {
-              toast.error("Invalid email or password. Please try again.");
-            } else {
-              toast.error("An error occurred during login. Please try again.");
-            }
-            return;
-          }
-
-          const userId = data?.user?.id;
-
-          if (!userId) {
             toast.error(
-              "Unable to retrieve user information. Please try again."
+              error.message === "Invalid login credentials"
+                ? "Invalid email or password. Please try again."
+                : "An error occurred during login. Please try again."
             );
             return;
           }
 
-          const { data: userData, error: userError } = await supabase
-            .from("users")
+          const { data: customerData, error: customerError } = await supabase
+            .from("customers_list")
             .select("*")
-            .eq("id", userId)
+            .eq("id", data?.user?.id)
             .single();
 
-          if (userError || !userData) {
-            toast.info("Please complete your profile.");
-            router.push("/role");
-            return;
-          }
+          if (customerError || !customerData) {
+            const { data: therapistData, error: therapistError } =
+              await supabase
+                .from("therapist_list")
+                .select("*")
+                .eq("id", data?.user?.id)
+                .single();
 
-          set({ userInfo: userData, isAuthenticated: true });
+            if (therapistError || !therapistData) {
+              toast.error(
+                "Unable to retrieve user role information. Please try again."
+              );
+              return;
+            }
 
-          const userRole = userData.role;
-
-          if (userRole === "customer") {
-            router.push("/customer");
-          } else if (userRole === "therapist") {
+            set({ userInfo: therapistData, isAuthenticated: true });
             router.push("/therapist");
           } else {
-            router.push("/role");
+            set({ userInfo: customerData, isAuthenticated: true });
+            router.push("/customer");
           }
+
           toast.success("You have successfully logged in!");
-        } catch (err) {
-          console.error("Unexpected error during login:", err);
-        } finally {
-          console.error("Unexpected error during login:");
+        } catch (error) {
+          console.error("Sign in error:", error);
+          toast.error("An unexpected error occurred. Please try again.");
         }
       },
       signUp: async (name, email, password, router) => {
@@ -91,35 +89,38 @@ export const useAuthStore = create(
             return;
           }
 
-          const userId = data?.user?.id;
-
-          if (userId) {
-            const { error: userError } = await supabase
-              .from("users")
-              .select("*")
-              .eq("id", userId)
-              .single();
-
-            if (userError) {
-              const { error: insertError } = await supabase
-                .from("users")
-                .insert({
-                  id: userId,
-                  email: data?.user?.email,
-                  card_status: "false",
-                });
-
-              if (insertError) {
-                toast.error("Error saving user data. Please contact support!");
-                return;
-              }
-            }
-            toast.success("Sign-up successful!");
-
-            setTimeout(() => {
-              router.push("/auth/login");
-            }, 1000);
+          if (data) {
+            router.push("/role");
           }
+
+          // if (userId) {
+          //   const { error: userError } = await supabase
+          //     .from("users")
+          //     .select("*")
+          //     .eq("id", userId)
+          //     .single();
+
+          //   if (userError) {
+          //     const { error: insertError } = await supabase
+          //       .from("users")
+          //       .insert({
+          //         id: userId,
+          //         name: data?.user?.user_metadata?.full_name,
+          //         email: data?.user?.email,
+          //         card_status: "false",
+          //       });
+
+          //     if (insertError) {
+          //       toast.error("Error saving user data. Please contact support!");
+          //       return;
+          //     }
+          //   }
+          //   toast.success("Sign-up successful!");
+
+          //   setTimeout(() => {
+          //     router.push("/auth/login");
+          //   }, 1000);
+          // }
         } catch (err) {
           console.error("Unexpected error during login:", err);
         } finally {
@@ -131,6 +132,10 @@ export const useAuthStore = create(
           localStorage.removeItem("userInfo");
           set({ userInfo: null, isAuthenticated: false });
           await supabase.auth.signOut();
+          set({
+            isAuthenticated: false,
+            userInfo: null,
+          });
           router.push("/");
         } catch (err) {
           console.error("Error during sign-out:", err);
@@ -138,6 +143,50 @@ export const useAuthStore = create(
       },
       setIsAuth: (isAuth) => set({ isAuthenticated: isAuth }),
       setUserInfo: (userInfo) => set({ userInfo: userInfo }),
+      checkAuthState: async () => {
+        const { data } = await supabase.auth.getSession();
+
+        if (data?.session) {
+          const user = data.session.user;
+
+          if (user) {
+            const userId = user.id;
+
+            const { data: customerData } = await supabase
+              .from("customers_list")
+              .select("*")
+              .eq("id", userId)
+              .single();
+
+            if (customerData) {
+              set({ userInfo: customerData, isAuthenticated: true });
+            } else {
+              const { data: therapistData } = await supabase
+                .from("therapist_list")
+                .select("*")
+                .eq("id", userId)
+                .single();
+
+              if (therapistData) {
+                set({ userInfo: therapistData, isAuthenticated: true });
+              }
+            }
+
+            set({
+              session: data.session,
+              user,
+              isAuthenticated: true,
+            });
+          }
+        } else {
+          set({
+            session: null,
+            user: null,
+            isAuthenticated: false,
+            userInfo: null,
+          });
+        }
+      },
     }),
     {
       name: "userInfo",

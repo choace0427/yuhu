@@ -26,6 +26,7 @@ import {
   IconTarget,
   IconUser,
   IconX,
+  IconPaywall,
 } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
@@ -111,7 +112,7 @@ export default function BookingList() {
         .select(
           `
            *,
-            users (
+            therapist_list (
               *
             )
           `
@@ -283,13 +284,13 @@ export default function BookingList() {
                   <Group gap="xl">
                     <Group gap="xs">
                       <Avatar
-                        src={item?.users?.avatar_url}
-                        name={item?.users?.name}
+                        src={item?.therapist_list?.avatar_url}
+                        name={item?.therapist_list?.name}
                         size={"lg"}
                       />
                       <Stack gap={4}>
                         <Text size="md" fw={500}>
-                          {item?.users?.name}
+                          {item?.therapist_list?.name}
                         </Text>
                         <Badge color="teal" variant="light" radius="sm">
                           Active
@@ -320,7 +321,7 @@ export default function BookingList() {
                         Therapist Hourly Rate:
                       </Text>
                       <Text size="sm">
-                        $ {item?.users?.hourly_rate || 100} / hr
+                        ${item?.therapist_list?.hourly_rate || 100}/hr
                       </Text>
                     </Group>
                   </Group>
@@ -339,15 +340,24 @@ export default function BookingList() {
                       Cancel Booking
                     </Button>
                   ) : item.booking_status === "accept" ? (
-                    <Button
-                      variant="light"
-                      color="teal"
-                      leftSection={<IconMessage size={16} />}
-                      radius="md"
-                      onClick={() => handleChat(item?.therapist_id)}
-                    >
-                      Chat
-                    </Button>
+                    <Flex gap={"sm"}>
+                      <Button
+                        radius="md"
+                        variant="light"
+                        leftSection={<IconMoneybag size={16} />}
+                      >
+                        Pay
+                      </Button>
+                      <Button
+                        variant="light"
+                        color="teal"
+                        leftSection={<IconMessage size={16} />}
+                        radius="md"
+                        onClick={() => handleChat(item?.therapist_id)}
+                      >
+                        Chat
+                      </Button>
+                    </Flex>
                   ) : null}
                 </Group>
               </Paper>
