@@ -3,8 +3,26 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/supabase";
 import dayjs from "dayjs";
-import { IconCheck, IconX } from "@tabler/icons-react";
-import { ActionIcon, Card, Divider, Flex, Loader, Tabs } from "@mantine/core";
+import {
+  IconBell,
+  IconCalendarEvent,
+  IconCheck,
+  IconX,
+} from "@tabler/icons-react";
+import {
+  ActionIcon,
+  AppShell,
+  Avatar,
+  Box,
+  Group,
+  Paper,
+  rem,
+  Skeleton,
+  Stack,
+  Tabs,
+  Text,
+  Title,
+} from "@mantine/core";
 import { useAuthStore } from "../_store/authStore";
 import { toast } from "react-toastify";
 
@@ -132,141 +150,164 @@ export default function NotifcationsPage() {
         )
         .subscribe();
 
+      const othersnotificationsRealtime = supabase
+        .channel("othernotifications-db-changes")
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "notifications",
+            filter: `receiver_id=eq.${userInfo?.id}`,
+          },
+          getOtherNotifications
+        )
+        .subscribe();
+
       return () => {
         notificationRealtime.unsubscribe();
+        othersnotificationsRealtime.unsubscribe();
       };
     }
   }, [userInfo, tabs]);
 
-  useEffect(() => {
-    const othersnotificationsRealtime = supabase
-      .channel("notifications-db-changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "notifications",
-          filter: `receiver_id=eq.${userInfo?.id}`,
-        },
-        getOtherNotifications
-        // (payload) => {
-        //   console.log("Database change detected:", payload);
-        //   getOtherNotifications();
-        // }
-      )
-      .subscribe();
-
-    return () => {
-      othersnotificationsRealtime.unsubscribe();
-    };
-  }, [userInfo, tabs]);
-
   return (
-    <div className="px-20 py-16 w-full max-w-[1000px] mx-auto min-h-[400px]">
-      <Tabs
-        color="teal"
-        defaultValue="booking"
-        onChange={(value: any) => setTabs(value)}
-        styles={{
-          list: {
-            width: "fit-content",
-          },
-        }}
-      >
-        <Tabs.List>
-          <Tabs.Tab value="booking">Booking</Tabs.Tab>
-          <Tabs.Tab value="others" color="blue">
-            Others
-          </Tabs.Tab>
-        </Tabs.List>
+    <AppShell>
+      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "2rem" }}>
+        <Tabs
+          color="teal"
+          defaultValue="booking"
+          onChange={(value: any) => setTabs(value)}
+        >
+          <Tabs.List>
+            <Tabs.Tab
+              value="booking"
+              leftSection={<IconCalendarEvent style={{ width: rem(16) }} />}
+            >
+              Booking
+            </Tabs.Tab>
+            <Tabs.Tab
+              value="others"
+              color="blue"
+              leftSection={<IconBell style={{ width: rem(16) }} />}
+            >
+              Notifications
+            </Tabs.Tab>
+          </Tabs.List>
 
-        <Tabs.Panel value="booking" pt="xs">
-          <Flex direction={"column"} gap={"md"}>
-            {notifications.length > 0 ? (
-              notifications.map((item: any, index) => (
-                <Card shadow="md" radius={"sm"} p={"md"} w={"100%"} key={index}>
-                  <Flex align={"center"} justify={"space-between"}>
-                    <div className="flex items-center gap-4">
-                      <img
-                        src={item?.avatar || "/placeholder-avatar.png"}
-                        alt={item?.name || "Unknown name"}
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                      <div>
-                        <div className="font-semibold">Booking Invitation</div>
-                        <div className="">{item?.name || "Unknown"}</div>
-                        <div className="text-sm">
-                          {item?.booking_date
-                            ? new Date(item?.booking_date).toLocaleDateString()
-                            : "Date not available"}
+          <Tabs.Panel value="booking" pt="xs">
+            <Stack mt="xl">
+              <Title order={2} mb="md">
+                Active Bookings
+              </Title>
+              {loading ? (
+                Array.from({ length: 5 }).map((_, index) => (
+                  <Paper withBorder p="md" radius="md">
+                    <Group justify="space-between" align="center">
+                      <Group gap="sm">
+                        <Skeleton circle height={40} />
+                        <Box>
+                          <Skeleton height={16} width={120} mb={6} />
+                          <Skeleton height={12} width={80} />
+                        </Box>
+                      </Group>
+                      <Group gap="xs">
+                        <Skeleton circle height={24} />
+                        <Skeleton circle height={24} />
+                      </Group>
+                    </Group>
+                  </Paper>
+                ))
+              ) : notifications.length > 0 ? (
+                notifications.map((item: any, index) => (
+                  <Paper key={index} shadow="xs" p="md" withBorder>
+                    <Group justify="space-between">
+                      <Group>
+                        <Avatar
+                          size={"lg"}
+                          radius={"xl"}
+                          src={item?.avatar}
+                          name={item?.name}
+                        />
+                        <div>
+                          <Title order={4}>{item?.name}</Title>
+                          <Text size="sm" c="dimmed">
+                            {item?.booking_date
+                              ? new Date(
+                                  item?.booking_date
+                                ).toLocaleDateString()
+                              : "Date not available"}
+                          </Text>
                         </div>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <ActionIcon
-                        variant="outline"
-                        radius={"xl"}
-                        className="!text-[#46A7B0] border-[#46A7B0]"
-                        onClick={() => handleAccept(item?.booking_id)}
-                      >
-                        <IconCheck size={"1rem"} color="#46A7B0" />
-                      </ActionIcon>
-                      <ActionIcon
-                        variant="outline"
-                        radius={"xl"}
-                        color="red"
-                        onClick={() => handleDecline(item?.booking_id)}
-                      >
-                        <IconX size={"1rem"} />
-                      </ActionIcon>
-                    </div>
-                  </Flex>
-                </Card>
-              ))
-            ) : (
-              <div className="text-center min-h-[400px] flex items-center justify-center text-black">
-                No New Booking
-              </div>
-            )}
-          </Flex>
-        </Tabs.Panel>
-
-        <Tabs.Panel value="others" pt="xs">
-          {othersNotifications.length > 0 ? (
-            othersNotifications.map((item: any, index) => (
-              <div key={index} className="ml-4 mt-4">
-                <div className="flex justify-between">
-                  <div>
-                    <p className="text-[16px] font-semibold flex items-center">
-                      New Notications:{" "}
-                      <span className="text-[#46A7B0] text-[20px] ml-2">
-                        {item?.content}
-                      </span>
-                    </p>
-                    <span className=" text-[12px]">
-                      {dayjs(item?.created_at).format("YYYY-MM-DD HH:MM A")}
-                    </span>
-                  </div>
-                  <IconX
-                    size={"1.4rem"}
-                    color="black"
-                    className="hover:cursor-pointer mt-2"
-                    onClick={() =>
-                      handleRemoveOtherNotifications(item.notification_id)
-                    }
-                  />
+                      </Group>
+                      <Group>
+                        <ActionIcon
+                          variant="light"
+                          color="green"
+                          size="lg"
+                          aria-label="Accept"
+                          onClick={() => handleAccept(item?.booking_id)}
+                        >
+                          <IconCheck style={{ width: rem(20) }} />
+                        </ActionIcon>
+                        <ActionIcon
+                          variant="light"
+                          color="red"
+                          size="lg"
+                          aria-label="Decline"
+                          onClick={() => handleDecline(item?.booking_id)}
+                        >
+                          <IconX style={{ width: rem(20) }} />
+                        </ActionIcon>
+                      </Group>
+                    </Group>
+                  </Paper>
+                ))
+              ) : (
+                <div className="text-center min-h-[400px] flex items-center justify-center text-black">
+                  No New Booking
                 </div>
-                <Divider />
-              </div>
-            ))
-          ) : (
-            <div className="text-center min-h-[400px] flex items-center justify-center text-black">
-              No New Notifications
-            </div>
-          )}
-        </Tabs.Panel>
-      </Tabs>
-    </div>
+              )}
+            </Stack>
+          </Tabs.Panel>
+
+          <Tabs.Panel value="others" pt="xs">
+            <Stack mt="xl">
+              <Title order={2} mb="md">
+                Recent Notifications
+              </Title>
+              {loading ? (
+                Array.from({ length: 5 }).map((_, index) => (
+                  <Paper key={index} withBorder p="md" radius="md">
+                    <Stack gap="xs">
+                      <Skeleton height={16} width="70%" />
+                      <Skeleton height={12} width={100} />
+                    </Stack>
+                  </Paper>
+                ))
+              ) : othersNotifications.length > 0 ? (
+                othersNotifications.map((item: any, index) => (
+                  <Paper key={index} shadow="xs" p="md" withBorder>
+                    <Text size="sm" mb={4}>
+                      {item?.content}
+                    </Text>
+                    <Text size="xs" c="dimmed">
+                      {dayjs(item?.created_at).format("YYYY-MM-DD HH:MM A")}
+                    </Text>
+                    {/* onClick={() =>
+                            handleRemoveOtherNotifications(item.notification_id)
+                          } */}
+                  </Paper>
+                ))
+              ) : (
+                <div className="text-center min-h-[400px] flex items-center justify-center text-black">
+                  No New Notifications
+                </div>
+              )}
+            </Stack>
+          </Tabs.Panel>
+        </Tabs>
+      </div>
+    </AppShell>
   );
 }

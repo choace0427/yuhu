@@ -329,8 +329,7 @@ export default function Home() {
 
       <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
         {loading
-          ? // Show 3 skeleton cards while loading
-            Array.from({ length: 3 }).map((_, index) => (
+          ? Array.from({ length: 3 }).map((_, index) => (
               <TherapistCardSkeleton key={index} />
             ))
           : services.map((therapist, index) => (

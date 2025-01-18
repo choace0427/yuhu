@@ -50,7 +50,7 @@ import {
   Elements,
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { userInfo } from "os";
+import { type, userInfo } from "os";
 
 interface Service {
   category: string;
@@ -86,6 +86,11 @@ export default function TherapistDashboard() {
   const [value, setValue] = useState<any>(
     dayjs(new Date().toISOString().split("T")[0])
   );
+  const [hourlyRate, setHourlyRate] = useState<any>();
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [location, setLocation] = useState("");
+  const [summary, setSummary] = useState("");
 
   const [selected, setSelected] = useState<Service[]>([]);
 
@@ -103,6 +108,98 @@ export default function TherapistDashboard() {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [subCategories, setSubCategories] = useState<ServiceType[]>([]);
   const [availability, setAvailability] = useState<string>("");
+
+  //for Avatar Upload to supabase
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string>("");
+
+  const [profileLoading, setProfileLoading] = useState(false);
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file || !userInfo?.email) return;
+
+    try {
+      setUploading(true);
+
+      if (avatarUrl) {
+        const oldFilePath = avatarUrl.split("/").pop();
+        if (oldFilePath) {
+          await supabase.storage
+            .from("avatars")
+            .remove([`avatars/${oldFilePath}`]);
+        }
+      }
+
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${userInfo.email}-${Math.random()}.${fileExt}`;
+      const filePath = `avatars/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(filePath, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("avatars").getPublicUrl(filePath);
+
+      const { error: updateError } = await supabase
+        .from("users")
+        .update({ avatar_url: publicUrl })
+        .eq("email", userInfo.email);
+
+      if (updateError) {
+        throw updateError;
+      }
+
+      setAvatarUrl(publicUrl + "?t=" + new Date().getTime());
+      setUserInfo({
+        ...userInfo,
+        avatar_url: publicUrl + "?t=" + new Date().getTime(),
+      });
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
+      toast.error("Failed to update profile avatar.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleProfileUpdate = async () => {
+    setProfileLoading(true);
+    const { data, error } = await supabase
+      .from("users")
+      .update({
+        name: name || userInfo?.name,
+        hourly_rate: hourlyRate || userInfo?.hourly_rate,
+        phone: phone || userInfo?.phone,
+        location: location || userInfo?.location,
+        summary: summary || userInfo?.summary,
+        birthday: dayjs(value).format("YYYY-MM-DD"),
+      })
+      .eq("id", userInfo?.id)
+      .select();
+    if (error) {
+      console.log("error", error);
+      toast.error("Failed to update profile");
+    }
+    if (data) {
+      setUserInfo(data[0]);
+      toast.success("Successful to update profile");
+    }
+    setProfileLoading(false);
+  };
 
   const getCategoryLabel = (categoryId: number) => {
     const category = Categorys.find(
@@ -362,71 +459,6 @@ export default function TherapistDashboard() {
     fetchSubCategories();
   }, [selectedCategory]);
 
-  //for Avatar Upload to supabase
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [uploading, setUploading] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState<string>("");
-
-  const handleAvatarClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file || !userInfo?.email) return;
-
-    try {
-      setUploading(true);
-
-      if (avatarUrl) {
-        const oldFilePath = avatarUrl.split("/").pop();
-        if (oldFilePath) {
-          await supabase.storage
-            .from("avatars")
-            .remove([`avatars/${oldFilePath}`]);
-        }
-      }
-
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${userInfo.email}-${Math.random()}.${fileExt}`;
-      const filePath = `avatars/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("avatars")
-        .upload(filePath, file);
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("avatars").getPublicUrl(filePath);
-
-      const { error: updateError } = await supabase
-        .from("users")
-        .update({ avatar_url: publicUrl })
-        .eq("email", userInfo.email);
-
-      if (updateError) {
-        throw updateError;
-      }
-
-      setAvatarUrl(publicUrl + "?t=" + new Date().getTime());
-      setUserInfo({
-        ...userInfo,
-        avatar_url: publicUrl + "?t=" + new Date().getTime(),
-      });
-    } catch (error) {
-      console.error("Error uploading avatar:", error);
-      toast.error("Failed to update profile avatar.");
-    } finally {
-      setUploading(false);
-    }
-  };
-
   return (
     <Container size="xl" py="xl">
       <Paper
@@ -484,18 +516,18 @@ export default function TherapistDashboard() {
                   />
                 </div>
                 <Stack w={"100%"}>
-                  <NumberInput
+                  <TextInput
                     label="Hourly Rate ($)"
                     placeholder="Enter your rate"
-                    defaultValue={0}
-                    min={0}
+                    defaultValue={userInfo?.hourly_rate || 0}
                     prefix="$"
-                    hideControls
+                    onChange={(e) => setHourlyRate(e.target.value)}
                   />
                   <TextInput
                     label="Full Name"
                     placeholder="Your name"
-                    defaultValue="Test_therapist"
+                    defaultValue={userInfo?.name || ""}
+                    onChange={(e) => setName(e.target.value)}
                   />
                 </Stack>
               </Flex>
@@ -503,15 +535,13 @@ export default function TherapistDashboard() {
                 label="Phone"
                 placeholder="Your phone number"
                 defaultValue={userInfo?.phone || ""}
+                onChange={(e) => setPhone(e.target.value)}
               />
-              <Select
+              <TextInput
                 label="Location"
-                placeholder="Select your location"
-                defaultValue="US"
-                data={[
-                  { value: "US", label: "United States" },
-                  { value: "CA", label: "Canada" },
-                ]}
+                placeholder="Your location"
+                defaultValue={userInfo?.location || ""}
+                onChange={(e) => setLocation(e.target.value)}
               />
               <DatePickerInput
                 label="Birthday"
@@ -525,9 +555,16 @@ export default function TherapistDashboard() {
                 maxRows={100}
                 rows={7}
                 defaultValue={userInfo?.summary || ""}
+                onChange={(e) => setSummary(e.target.value)}
               />
             </Stack>
-            <Button fullWidth color="teal" mt="md" loading={loading}>
+            <Button
+              fullWidth
+              color="teal"
+              mt="md"
+              loading={profileLoading}
+              onClick={() => handleProfileUpdate()}
+            >
               Update Information
             </Button>
           </Paper>
