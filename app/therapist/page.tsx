@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import {
   Container,
   Grid,
@@ -32,6 +32,7 @@ import {
   IconCamera,
   IconEdit,
   IconTrash,
+  IconCircleCheck,
 } from "@tabler/icons-react";
 import { useAuthStore } from "../_store/authStore";
 import { useDisclosure } from "@mantine/hooks";
@@ -39,6 +40,17 @@ import dayjs from "dayjs";
 import { supabase } from "@/supabase";
 import { toast } from "react-toastify";
 import { useForm } from "@mantine/form";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
+import {
+  CardCvcElement,
+  CardElement,
+  CardExpiryElement,
+  CardNumberElement,
+  Elements,
+} from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import { userInfo } from "os";
 
 interface Service {
   category: string;
@@ -53,6 +65,10 @@ interface ServiceType {
 }
 
 export default function TherapistDashboard() {
+  const stripePromise = loadStripe(
+    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
+  );
+
   const { userInfo, setUserInfo } = useAuthStore();
   const [openedAddService, { open: openAddService, close: closeAddService }] =
     useDisclosure(false);
@@ -74,7 +90,7 @@ export default function TherapistDashboard() {
   const [selected, setSelected] = useState<Service[]>([]);
 
   const [services, setServices] = useState<Service[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [newService, setNewService] = useState({
     service_type_id: "",
     description: "",
@@ -289,6 +305,7 @@ export default function TherapistDashboard() {
 
   useEffect(() => {
     const fetchServices = async () => {
+      setLoading(true);
       if (userInfo?.email) {
         try {
           const { data: servicesData, error } = await supabase
@@ -315,10 +332,9 @@ export default function TherapistDashboard() {
           }
         } catch (error) {
           toast.error("Failed to fetch services.");
-        } finally {
-          setLoading(false);
         }
       }
+      setLoading(false);
     };
 
     fetchServices();
@@ -516,7 +532,11 @@ export default function TherapistDashboard() {
             </Button>
           </Paper>
           <ChangePasswordComponent />
-          <PaymentComponent />
+          <Suspense>
+            <PaymentComponent />
+          </Suspense>
+          {/* <Elements stripe={stripePromise}>
+          </Elements> */}
         </Grid.Col>
 
         <Grid.Col span={{ base: 12, md: 4 }}>
@@ -633,26 +653,148 @@ const ChangePasswordComponent = () => {
 };
 
 const PaymentComponent = () => {
+  const { userInfo, setUserInfo } = useAuthStore();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const handleInsertCard = async () => {
+    console.log("---------", searchParams.get("account_id"));
+    try {
+      setLoading(true);
+
+      const { data: selectCardData, error: selectCardError } = await supabase
+        .from("credit_card")
+        .select()
+        .eq("account_id", searchParams.get("account_id"))
+        .eq("user_id", userInfo?.id);
+
+      if (selectCardError) {
+        console.error(selectCardError);
+        throw new Error("Failed to fetch existing card data.");
+      }
+
+      if (selectCardData.length > 0) {
+        toast.warn("You created account already!");
+        return;
+      }
+
+      const { error: insertCardError } = await supabase
+        .from("credit_card")
+        .insert({
+          account_id: searchParams.get("account_id"),
+          user_id: userInfo?.id,
+        });
+
+      if (insertCardError) {
+        console.error(insertCardError);
+        throw new Error("Failed to insert new card.");
+      }
+      const { data: userUpdateData, error: userUpdateError } = await supabase
+        .from("users")
+        .update({ card_status: "true" })
+        .eq("id", userInfo?.id)
+        .select();
+      if (userUpdateError) {
+        console.error(userUpdateError);
+        throw new Error("Failed to update user card status.");
+      }
+      setUserInfo(userUpdateData[0]);
+      toast.success("Created your account successfully!");
+    } catch (error) {
+      console.error("An unexpected error occurred.");
+    } finally {
+      setLoading(false);
+      router.push("/therapist");
+    }
+  };
+
+  const createStripeAccount = async () => {
+    try {
+      const response = await fetch("/api/create-express-account", {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create Stripe account");
+      }
+
+      const data = await response.json();
+      if (data) {
+        try {
+          const response = await fetch("/api/create-account-link", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              connectedAccountId: data.account.id,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to create account link");
+          }
+
+          const accountLinkResponse = await response.json();
+          console.log("Account link created:", accountLinkResponse.accountLink);
+          toast.success("You create stripe account link successfully.");
+          toast.success("Please complete your account now");
+
+          window.location.href = accountLinkResponse.accountLink?.url;
+        } catch (error) {
+          console.error("Error creating account link:", error);
+          toast.error("An error occurred while creating the account link.");
+        }
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("An error occurred while creating the account.");
+    }
+  };
+
+  useEffect(() => {
+    if (
+      userInfo?.card_status === "false" &&
+      userInfo?.id &&
+      searchParams.get("account_id")
+    ) {
+      handleInsertCard();
+    }
+  }, [userInfo]);
+
   return (
     <Paper shadow="sm" radius="md" p="xl" withBorder>
-      <Title order={3} mb="lg">
-        Payment Information
-      </Title>
+      <Flex
+        gap={"sm"}
+        align={"center"}
+        mb={userInfo?.card_status === "false" ? "lg" : ""}
+        justify={"space-between"}
+      >
+        <Title order={3}>Payment</Title>
+        {userInfo?.card_status === "true" && (
+          <Text color="green" className="flex gap-2" fw={600}>
+            Verified
+            <IconCircleCheck size={"1.2rem"} color="green" />
+          </Text>
+        )}
+      </Flex>
       <Stack gap="md">
-        <TextInput
-          label="Card Number"
-          placeholder="1234 5678 9012 3456"
-          rightSection={<IconCreditCard size={16} />}
-        />
+        {/* <div style={{ border: "1px solid black", padding: "5px 10px" }}>
+          <CardNumberElement
+            options={{ showIcon: true, iconStyle: "default" }}
+          />
+        </div>
         <Group grow>
-          <TextInput label="Expiration Date" placeholder="MM/YY" />
-          <TextInput label="CVV" placeholder="123" />
-        </Group>
-        <TextInput label="Cardholder Name" placeholder="Name on card" />
-        <Button color="teal" mt="md">
-          Save Payment Method
-        </Button>
+          <CardExpiryElement />
+          <CardCvcElement />
+        </Group> */}
       </Stack>
+      {userInfo?.card_status === "false" && (
+        <Button color="green" variant="light" loading={loading}>
+          Create Stripe Account
+        </Button>
+      )}
     </Paper>
   );
 };

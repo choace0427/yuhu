@@ -103,7 +103,11 @@ export const useAuthStore = create(
             if (userError) {
               const { error: insertError } = await supabase
                 .from("users")
-                .insert({ id: userId, email: data?.user?.email });
+                .insert({
+                  id: userId,
+                  email: data?.user?.email,
+                  card_status: "false",
+                });
 
               if (insertError) {
                 toast.error("Error saving user data. Please contact support!");
