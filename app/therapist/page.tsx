@@ -313,8 +313,6 @@ export default function TherapistDashboard() {
         (item: ServiceType) => item.subcategory === service.subcategory
       );
 
-      console.log("=========", data);
-
       if (serviceType) {
         setNewService({
           service_type_id: serviceType.id.toString(),
@@ -698,7 +696,6 @@ const PaymentComponent = () => {
   const [loading, setLoading] = useState(false);
 
   const handleInsertCard = async () => {
-    console.log("---------");
     try {
       setLoading(true);
 

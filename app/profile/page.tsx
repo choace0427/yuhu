@@ -165,7 +165,6 @@ const GeneralProfile = () => {
         toast.error("Failed to update profile");
       }
       if (data) {
-        console.log("======", data[0]);
         setUserInfo(data[0]);
         toast.success("Successfullly updated profile");
       }
@@ -244,7 +243,6 @@ const ChangePasswordComponent = () => {
     });
 
     if (error) {
-      console.log("=======");
       toast.error(error?.message);
       passwordform.initialize({ password: "", confirmPassword: "" });
       setLoading(false);

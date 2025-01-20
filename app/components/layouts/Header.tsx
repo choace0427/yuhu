@@ -44,7 +44,6 @@ const Header = () => {
       console.log("error", notificationError);
       return;
     }
-    console.log(">>>>>>>>>>>>", notificationData);
     if (notificationData.length > 0) {
       setIsInvisible(true);
     } else {

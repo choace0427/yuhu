@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuthStore } from "@/app/_store/authStore";
+import ReviewPage from "@/app/components/review/ReviewLeft";
 import { supabase } from "@/supabase";
 import {
   Card,
@@ -18,7 +19,13 @@ import {
   Container,
   Avatar,
   Box,
+  Drawer,
+  Modal,
+  Textarea,
+  Rating,
 } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
 import { useStripe } from "@stripe/react-stripe-js";
 import {
   IconMessage,
@@ -34,6 +41,11 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
+interface ReviewForm {
+  rating: number;
+  review: string;
+}
+
 export default function BookingList() {
   const { userInfo } = useAuthStore();
   const router = useRouter();
@@ -44,6 +56,8 @@ export default function BookingList() {
   const [bookingList, setBookingList] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [allData, setAllData] = useState<any[]>([]);
+
+  const [opened, { open, close }] = useDisclosure(false);
 
   const handleCancel = async (booking_id: string) => {
     const { error } = await supabase
@@ -190,6 +204,116 @@ export default function BookingList() {
     };
   }, [userInfo?.id]);
 
+  const [selectedBook, setSelectedBook] = useState<any>({});
+  const [submitted, setSubmitted] = useState(false);
+
+  const form = useForm<ReviewForm>({
+    initialValues: {
+      rating: 0,
+      review: "",
+    },
+    validate: {
+      rating: (value) => (value === 0 ? "Please select a rating" : null),
+      review: (value) =>
+        value.length < 10 ? "Review must be at least 10 characters" : null,
+    },
+  });
+
+  const handleSubmit = async (values: ReviewForm) => {
+    setSubmitted(true);
+    const { error } = await supabase.from("review_list").insert({
+      customer_id: userInfo?.id,
+      therapist_id: selectedBook?.therapist_id,
+      rating: values.rating,
+      review_content: values.review,
+      booking_id: selectedBook?.booking_id,
+    });
+    if (error) {
+      form.setValues({ rating: 0, review: "" });
+      toast.error("Failed to submit review");
+      return;
+    }
+
+    const { error: bookingError } = await supabase
+      .from("booking_list")
+      .update({ booking_status: "completed" })
+      .eq("booking_id", selectedBook?.booking_id)
+      .select();
+
+    if (bookingError) {
+      toast.error("Failed to update booking");
+      return;
+    }
+
+    const { data: CardData, error: CardError } = await supabase
+      .from("credit_card")
+      .select()
+      .eq("user_id", selectedBook?.therapist_id);
+    if (CardError) {
+      console.log("error", CardError);
+      return;
+    }
+
+    const response = await fetch("/api/transfer-create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        amount:
+          selectedBook?.therapist_list?.hourly_rate *
+          selectedBook?.b_date?.range?.length,
+        currency: "eur",
+        destination: CardData[0]?.account_id,
+      }),
+    });
+    const { transfer } = await response.json();
+
+    if (transfer) {
+      const { error: insertTransactionError } = await supabase
+        .from("transaction_list")
+        .insert([
+          {
+            transaction_id: transfer?.id,
+            customer_id: userInfo.id,
+            status: "transfered",
+            booking_id: selectedBook?.booking_id,
+          },
+        ]);
+
+      if (insertTransactionError) {
+        throw new Error("Failed to save transaction to the database");
+      }
+    }
+
+    const { data: customerData, error: customerError } = await supabase
+      .from("booking_list")
+      .select(
+        `
+           *,
+            customers_list (
+              *
+            )
+          `
+      )
+      .eq("customer_id", userInfo.id);
+    if (customerError) {
+      console.error("Error fetching bookings:", error);
+    } else {
+      setAllData(customerData);
+    }
+
+    form.setValues({ rating: 0, review: "" });
+    toast.success("Successfully review submit");
+    setSubmitted(false);
+    close();
+  };
+
+  const handleReviewSubmit = (bookData: any) => {
+    setSelectedBook(bookData);
+    open();
+  };
+
   return (
     <Container size="xl" py="xl" my={"lg"}>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -199,7 +323,9 @@ export default function BookingList() {
           radius="md"
           withBorder
           onClick={() => setType("upcoming")}
-          className={`${type === "upcoming" && "!border-teal-700"}`}
+          className={`${
+            type === "upcoming" && "!border-teal-700"
+          }  hover:cursor-pointer`}
         >
           <Flex>
             <Stack gap="xs">
@@ -235,7 +361,9 @@ export default function BookingList() {
           radius="md"
           withBorder
           onClick={() => setType("accept")}
-          className={`${type === "accept" && "!border-teal-700"}`}
+          className={`${
+            type === "accept" && "!border-teal-700"
+          }  hover:cursor-pointer`}
         >
           <Flex>
             <Stack gap="xs">
@@ -271,7 +399,9 @@ export default function BookingList() {
           radius="md"
           withBorder
           onClick={() => setType("cancelled")}
-          className={`${type === "cancelled" && "!border-teal-700"}`}
+          className={`${
+            type === "cancelled" && "!border-teal-700"
+          } hover:cursor-pointer`}
         >
           <Flex>
             <Stack gap="xs">
@@ -388,8 +518,9 @@ export default function BookingList() {
                         radius="md"
                         variant="light"
                         leftSection={<IconMoneybag size={16} />}
+                        onClick={() => handleReviewSubmit(item)}
                       >
-                        Pay
+                        Complete
                       </Button>
                       <Button
                         variant="light"
@@ -413,6 +544,53 @@ export default function BookingList() {
           </Text>
         </Paper>
       )}
+      <Modal
+        opened={opened}
+        onClose={close}
+        title={<Title order={3}>Share Your Experience</Title>}
+        size="lg"
+        centered
+      >
+        <form onSubmit={form.onSubmit(handleSubmit)}>
+          <Stack gap="xl">
+            <Stack gap="xs">
+              <Text size="sm" fw={500}>
+                Overall Rating
+              </Text>
+              <Rating size="xl" count={5} {...form.getInputProps("rating")} />
+              {form.errors.rating && (
+                <Text size="xs" c="red">
+                  {form.errors.rating}
+                </Text>
+              )}
+            </Stack>
+
+            <Textarea
+              label="Your Review"
+              placeholder="Tell us about your experience..."
+              minRows={5}
+              autosize
+              maxRows={10}
+              {...form.getInputProps("review")}
+            />
+
+            <Group justify="flex-end">
+              <Button
+                variant="light"
+                onClick={() => {
+                  form.setValues({ rating: 0, review: "" });
+                  close();
+                }}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" loading={submitted}>
+                Submit Review
+              </Button>
+            </Group>
+          </Stack>
+        </form>
+      </Modal>
     </Container>
   );
 }

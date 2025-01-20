@@ -53,8 +53,6 @@ export default function ChatPage(params: any) {
   const { userInfo } = useAuthStore();
   const router = useRouter();
 
-  console.log("========", params.params?.room_id);
-
   const [selectedTherapist, setSelectedTherapist] = useState<Therapist | null>(
     null
   );

@@ -16,7 +16,6 @@ export async function POST(request: Request) {
         allow_redirects: "never",
       },
     });
-    console.log("paymentIntent=> ", paymentIntent);
     return NextResponse.json({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
     return NextResponse.json(

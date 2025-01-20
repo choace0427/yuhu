@@ -90,45 +90,6 @@ export default function NotifcationsPage() {
       if (error) {
         console.error("Error updating booking:", error);
       } else {
-        const { data: CardData, error: CardError } = await supabase
-          .from("credit_card")
-          .select()
-          .eq("user_id", userInfo?.id);
-        if (CardError) {
-          console.log("error", CardError);
-          return;
-        }
-
-        const response = await fetch("/api/transfer-create", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            amount:
-              userInfo?.hourly_rate * notifications[0]?.b_date?.range?.length,
-            currency: "eur",
-            destination: CardData[0]?.account_id,
-          }),
-        });
-        const { transfer } = await response.json();
-
-        if (transfer) {
-          const { error: insertTransactionError } = await supabase
-            .from("transaction_list")
-            .insert([
-              {
-                transaction_id: transfer?.id,
-                customer_id: userInfo.id,
-                status: "transfered",
-                booking_id: booking_id,
-              },
-            ]);
-
-          if (insertTransactionError) {
-            throw new Error("Failed to save transaction to the database");
-          }
-        }
         setNotifications(data);
         toast.success("You accepted the booking!");
       }
