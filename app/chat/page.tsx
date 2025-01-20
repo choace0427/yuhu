@@ -77,32 +77,32 @@ export default function ChatPage() {
     }
   };
 
-  useEffect(() => {
-    const fetchChatMembers = async () => {
-      setChatMembersLoading(true);
-      if (userInfo) {
-        try {
-          const { data: therapist_list, error } = await supabase.rpc(
-            "chat_members",
-            {
-              input_member_id: userInfo.id,
-              input_role: userInfo.role,
-              input_search_text: "",
-            }
-          );
-
-          if (error) {
-            console.error("Error fetching chat members:", error);
-          } else {
-            setChatMembers(therapist_list);
+  const fetchChatMembers = async () => {
+    setChatMembersLoading(true);
+    if (userInfo) {
+      try {
+        const { data: therapist_list, error } = await supabase.rpc(
+          "chat_members",
+          {
+            input_member_id: userInfo.id,
+            input_role: userInfo.role,
+            input_search_text: "",
           }
-        } catch (err) {
-          console.error("Error executing RPC:", err);
-        }
-      }
-      setChatMembersLoading(false);
-    };
+        );
 
+        if (error) {
+          console.error("Error fetching chat members:", error);
+        } else {
+          setChatMembers(therapist_list);
+        }
+      } catch (err) {
+        console.error("Error executing RPC:", err);
+      }
+    }
+    setChatMembersLoading(false);
+  };
+
+  useEffect(() => {
     fetchChatMembers();
   }, [userInfo]);
 
@@ -114,6 +114,7 @@ export default function ChatPage() {
         chatMembersLoading={chatMembersLoading}
         setChatMembersLoading={setChatMembersLoading}
         setChatMembers={setChatMembers}
+        fetchChatMembers={fetchChatMembers}
       />
       <ChatSection />
     </div>
@@ -188,28 +189,46 @@ const TherapistList = ({
             );
           })}
         {chatMembers &&
+          chatMembers.length > 0 &&
           chatMembers.map((member: any, index: number) => (
             <li
               key={index}
               onClick={() =>
-                selectChatUser(userInfo?.id, member?.id, userInfo?.role)
+                selectChatUser(
+                  userInfo?.id,
+                  userInfo?.role === "customer"
+                    ? member?.therapist_id
+                    : member?.customer_id,
+                  userInfo?.role
+                )
               }
-              className={`flex items-center cursor-pointer rounded-lg transition-colors duration-200 `}
+              className="flex hover:cursor-pointer hover:bg-green-400"
             >
               <Avatar
-                src={member?.avatar}
-                alt={member?.name}
+                src={
+                  userInfo?.role === "customer"
+                    ? member?.therapist_avatar_url
+                    : member?.customer_avatar_url
+                }
+                alt={
+                  userInfo?.role === "customer"
+                    ? member?.therapist_name
+                    : member?.customer_name
+                }
                 radius={"xl"}
                 size={46}
               />
               <Flex direction={"column"} ml={"sm"}>
                 <Text size="md" fw={600}>
-                  {member?.name}
+                  {userInfo?.role === "customer"
+                    ? member?.therapist_name
+                    : member?.customer_name}
                 </Text>
                 <Text size="xs" fw={500}>
                   {member?.name || "asdfasd"}
                 </Text>
               </Flex>
+
               {unreadCounts[member.id] > 0 && (
                 <div className="ml-2 text-sm text-red-500 font-medium">
                   {unreadCounts[member.id]} unread

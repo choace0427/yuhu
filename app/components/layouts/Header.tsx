@@ -247,16 +247,19 @@ const Header = () => {
 
               <Menu.Item
                 leftSection={<IconMessageCircle size={14} />}
-                onClick={() => router.push("/chat")}
+                onClick={() => router.push("/chat/'")}
               >
                 Message
               </Menu.Item>
-              <Menu.Item
-                leftSection={<IconBell size={14} />}
-                onClick={() => router.push("/notifications")}
-              >
-                Notifications
-              </Menu.Item>
+              {userInfo?.role === "therapist" && (
+                <Menu.Item
+                  leftSection={<IconBell size={14} />}
+                  onClick={() => router.push("/notifications")}
+                >
+                  Notifications
+                </Menu.Item>
+              )}
+
               {userInfo?.role === "customer" && (
                 <>
                   <Menu.Item

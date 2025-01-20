@@ -53,6 +53,8 @@ export default function ChatPage(params: any) {
   const { userInfo } = useAuthStore();
   const router = useRouter();
 
+  console.log("========", params.params?.room_id);
+
   const [selectedTherapist, setSelectedTherapist] = useState<Therapist | null>(
     null
   );
@@ -224,86 +226,256 @@ const TherapistList = ({
   };
 
   return (
-    <div className="max-w-[350px] w-full p-4 border-r">
-      <TextInput
-        placeholder="Search members"
-        leftSection={<IconSearch size={"1.2rem"} />}
-        rightSection={
-          searchMembers.trim() !== "" ? (
-            chatMembersLoading ? (
-              <Loader size={"sm"} />
+    <div className="w-[440px] border-r bg-white">
+      <div className="p-4 border-b">
+        <TextInput
+          placeholder="Search members"
+          leftSection={<IconSearch size={"1.2rem"} />}
+          size="md"
+          rightSection={
+            searchMembers.trim() !== "" ? (
+              chatMembersLoading ? (
+                <Loader size={"sm"} />
+              ) : (
+                <IconX
+                  size={"1.2rem"}
+                  className="hover:cursor-pointer"
+                  onClick={() => {
+                    fetchChatMembers("");
+                    setSearchMembers("");
+                  }}
+                />
+              )
             ) : (
-              <IconX
-                size={"1.2rem"}
-                className="hover:cursor-pointer"
-                onClick={() => {
-                  fetchChatMembers("");
-                  setSearchMembers("");
-                }}
-              />
+              <></>
             )
-          ) : (
-            <></>
-          )
-        }
-        mb={"sm"}
-        value={searchMembers}
-        onChange={(e: any) => setSearchMembers(e.target.value)}
-        onKeyDown={handleMemberSearch}
-      />
-      <ul>
-        {chatMembersLoading &&
-          Array.from({ length: skeletions_count }).map((_, index) => {
-            return (
-              <div key={index} className="flex gap-2 p-2">
-                <div>
-                  <Skeleton height={50} circle />
+          }
+          value={searchMembers}
+          onChange={(e: any) => setSearchMembers(e.target.value)}
+          onKeyDown={handleMemberSearch}
+        />
+      </div>
+      <ScrollArea className="h-[calc(100vh-73px)]" p={0}>
+        {chatMembersLoading
+          ? Array.from({ length: skeletions_count }).map((_, index) => {
+              return (
+                <div key={index} className="flex gap-2 p-2">
+                  <div>
+                    <Skeleton height={50} circle />
+                  </div>
+                  <div className="w-full flex flex-col justify-evenly">
+                    <Skeleton height={8} radius="xl" />
+                    <Skeleton height={8} radius="xl" />
+                  </div>
                 </div>
-                <div className="w-full flex flex-col justify-evenly">
-                  <Skeleton height={8} radius="xl" />
-                  <Skeleton height={8} radius="xl" />
-                </div>
+              );
+            })
+          : chatMembers &&
+            chatMembers.length > 0 && (
+              <div className="p-2 flex flex-col gap-2">
+                {chatMembers.map((member: any, index: number) => {
+                  return (
+                    <Card
+                      key={index}
+                      bg={
+                        userInfo?.role === "customer"
+                          ? currentUser[0]?.therapist_id ===
+                            member?.therapist_id
+                            ? "#F3F3F3"
+                            : "#ffffff"
+                          : userInfo?.role === "therapist"
+                          ? currentUser[0]?.customer_id === member?.customer_id
+                            ? "#F3F3F3"
+                            : "#ffffff"
+                          : "white"
+                      }
+                      withBorder
+                      p={"xs"}
+                      className={`${
+                        userInfo?.role === "customer"
+                          ? currentUser[0]?.therapist_id ===
+                            member?.therapist_id
+                            ? "!border-l-4 !border-l-black"
+                            : ""
+                          : userInfo?.role === "therapist"
+                          ? currentUser[0]?.customer_id === member?.customer_id
+                            ? "!border-l-4 !border-l-black"
+                            : ""
+                          : "white"
+                      } transition-colors cursor-pointer`}
+                      onClick={() =>
+                        selectChatUser(
+                          userInfo?.id,
+                          userInfo?.role === "customer"
+                            ? member?.therapist_id
+                            : member?.customer_id,
+                          userInfo?.role
+                        )
+                      }
+                    >
+                      <div className="flex items-center space-x-3">
+                        <Avatar
+                          src={
+                            userInfo?.role === "customer"
+                              ? member?.therapist_avatar_url
+                              : member?.customer_avatar_url
+                          }
+                          name={
+                            userInfo?.role === "customer"
+                              ? member?.therapist_name
+                              : member?.customer_name
+                          }
+                          color="initials"
+                          radius={"xl"}
+                          size={46}
+                        />
+                        <div className="flex-1">
+                          <h3 className="font-semibold">
+                            {userInfo?.role === "customer"
+                              ? member?.therapist_name
+                              : member?.customer_name}
+                          </h3>
+                          <p className="text-sm text-muted-foreground">
+                            Online
+                          </p>
+                        </div>
+                      </div>
+                    </Card>
+                  );
+                })}
               </div>
-            );
-          })}
-
-        {chatMembers &&
-          chatMembers.length > 0 &&
-          chatMembers.map((member: any, index: number) => (
-            <li
-              key={index}
-              onClick={() =>
-                selectChatUser(userInfo?.id, member?.id, userInfo?.role)
-              }
-              className={`flex items-center p-2 cursor-pointer rounded-lg transition-colors duration-200 ${
-                currentUser[0]?.user_id === member.id ? "bg-[#46A7B0]" : ""
-              }`}
-            >
-              {/* userInfo?.role === "customer" ?  */}
-              <Avatar
-                src={member?.avatar}
-                alt={member?.name}
-                radius={"xl"}
-                size={46}
-              />
-              <Flex direction={"column"} ml={"sm"}>
-                <Text size="md" fw={600}>
-                  {member?.name}
-                </Text>
-                <Text size="xs" fw={500}>
-                  {member?.name || "asdfasd"}
-                </Text>
-              </Flex>
-
-              {unreadCounts[member.id] > 0 && (
-                <div className="ml-2 text-sm text-red-500 font-medium">
-                  {unreadCounts[member.id]} unread
-                </div>
-              )}
-            </li>
-          ))}
-      </ul>
+            )}
+      </ScrollArea>
     </div>
+    // <div className="max-w-[350px] w-full p-4 border-r">
+    //   <TextInput
+    //     placeholder="Search members"
+    //     leftSection={<IconSearch size={"1.2rem"} />}
+    //     rightSection={
+    //       searchMembers.trim() !== "" ? (
+    //         chatMembersLoading ? (
+    //           <Loader size={"sm"} />
+    //         ) : (
+    //           <IconX
+    //             size={"1.2rem"}
+    //             className="hover:cursor-pointer"
+    //             onClick={() => {
+    //               fetchChatMembers("");
+    //               setSearchMembers("");
+    //             }}
+    //           />
+    //         )
+    //       ) : (
+    //         <></>
+    //       )
+    //     }
+    //     mb={"sm"}
+    //     value={searchMembers}
+    //     onChange={(e: any) => setSearchMembers(e.target.value)}
+    //     onKeyDown={handleMemberSearch}
+    //   />
+    //   <ScrollArea className="h-[calc(100vh-73px)]">
+    //     <div className="p-2">
+    //       {chatMembersLoading &&
+    //         Array.from({ length: skeletions_count }).map((_, index) => {
+    //           return (
+    //             <div key={index} className="flex gap-2 p-2">
+    //               <div>
+    //                 <Skeleton height={50} circle />
+    //               </div>
+    //               <div className="w-full flex flex-col justify-evenly">
+    //                 <Skeleton height={8} radius="xl" />
+    //                 <Skeleton height={8} radius="xl" />
+    //               </div>
+    //             </div>
+    //           );
+    //         })}
+
+    //     </div>
+    //   </ScrollArea>
+    //   <ul>
+    //     {chatMembers &&
+    //       chatMembers.length > 0 &&
+    //       chatMembers.map((member: any, index: number) => (
+    //         <Card className="p-3 bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer">
+    //           <div className="flex items-center space-x-3">
+    //             <Avatar
+    //               src={
+    //                 userInfo?.role === "customer"
+    //                   ? member?.therapist_avatar_url
+    //                   : member?.customer_avatar_url
+    //               }
+    //               alt={
+    //                 userInfo?.role === "customer"
+    //                   ? member?.therapist_name
+    //                   : member?.customer_name
+    //               }
+    //               radius={"xl"}
+    //               size={46}
+    //             />
+    //             <Avatar
+    //               src={
+    //                 userInfo?.role === "customer"
+    //                   ? member?.therapist_avatar_url
+    //                   : member?.customer_avatar_url
+    //               }
+    //               alt={
+    //                 userInfo?.role === "customer"
+    //                   ? member?.therapist_name
+    //                   : member?.customer_name
+    //               }
+    //               radius={"xl"}
+    //               size={46}
+    //             />
+    //             <div className="flex-1">
+    //               <h3 className="font-semibold">Therapist 1</h3>
+    //               <p className="text-sm text-muted-foreground">Online</p>
+    //             </div>
+    //           </div>
+    //         </Card>
+    //         // <li
+    //         //   key={index}
+    //         //   onClick={() =>
+    //         //     selectChatUser(userInfo?.id, member?.id, userInfo?.role)
+    //         //   }
+    //         //   className={`flex items-center p-2 cursor-pointer rounded-lg transition-colors duration-200 ${
+    //         //     currentUser[0]?.user_id === member.id ? "bg-[#46A7B0]" : ""
+    //         //   }`}
+    //         // >
+    //         //   <Avatar
+    //         //     src={
+    //         //       userInfo?.role === "customer"
+    //         //         ? member?.therapist_avatar_url
+    //         //         : member?.customer_avatar_url
+    //         //     }
+    //         //     alt={
+    //         //       userInfo?.role === "customer"
+    //         //         ? member?.therapist_name
+    //         //         : member?.customer_name
+    //         //     }
+    //         //     radius={"xl"}
+    //         //     size={46}
+    //         //   />
+    //         //   <Flex direction={"column"} ml={"sm"}>
+    //         //     <Text size="md" fw={600}>
+    //         //       {userInfo?.role === "customer"
+    //         //         ? member?.therapist_name
+    //         //         : member?.customer_name}
+    //         //     </Text>
+    //         //     <Text size="xs" fw={500}>
+    //         //       {member?.name || "asdfasd"}
+    //         //     </Text>
+    //         //   </Flex>
+
+    //         //   {unreadCounts[member.id] > 0 && (
+    //         //     <div className="ml-2 text-sm text-red-500 font-medium">
+    //         //       {unreadCounts[member.id]} unread
+    //         //     </div>
+    //         //   )}
+    //         // </li>
+    //       ))}
+    //   </ul>
+    // </div>
   );
 };
 const ChatSection = ({ room_id, currentUser }: any) => {
@@ -450,30 +622,30 @@ const ChatSection = ({ room_id, currentUser }: any) => {
     return acc;
   }, {});
 
-  const handleSearchChat = async () => {
-    setSearchChatLoading(true);
+  // const handleSearchChat = async () => {
+  //   setSearchChatLoading(true);
 
-    try {
-      const { data, error } = await supabase.rpc("search_chats", {
-        input_room_id: room_id,
-        input_search_text: searchChat,
-      });
+  //   try {
+  //     const { data, error } = await supabase.rpc("search_chats", {
+  //       input_room_id: room_id,
+  //       input_search_text: searchChat,
+  //     });
 
-      if (error) {
-        console.error("Error searching chats:", error.message);
-        setSearchChatData([]);
-      } else {
-        console.log("Search results:", data);
-        setSearchChatData(data || []);
-        setShowSearchResults(true);
-      }
-    } catch (err) {
-      console.error("Unexpected error:", err);
-      setSearchChatData([]);
-    } finally {
-      setSearchChatLoading(false);
-    }
-  };
+  //     if (error) {
+  //       console.error("Error searching chats:", error.message);
+  //       setSearchChatData([]);
+  //     } else {
+  //       console.log("Search results:", data);
+  //       setSearchChatData(data || []);
+  //       setShowSearchResults(true);
+  //     }
+  //   } catch (err) {
+  //     console.error("Unexpected error:", err);
+  //     setSearchChatData([]);
+  //   } finally {
+  //     setSearchChatLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
     fetchMessages();
@@ -569,8 +741,8 @@ const ChatSection = ({ room_id, currentUser }: any) => {
   }, []);
 
   return (
-    <div className="w-full p-4">
-      <Flex align={"center"} gap={"sm"} mb={"sm"}>
+    <div className="w-full">
+      {/* <Flex align={"center"} gap={"sm"} mb={"sm"}>
         <div
           ref={searchContainerRef}
           className="flex flex-col items-center relative w-full"
@@ -630,6 +802,35 @@ const ChatSection = ({ room_id, currentUser }: any) => {
             )
           )}
         </div>
+        
+      </Flex> */}
+
+      <div className="p-4 border-b bg-white flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <Avatar
+            src={
+              userInfo?.role === "customer"
+                ? currentUser[0]?.therapist_avatar_url
+                : currentUser[0]?.customer_avatar_url
+            }
+            name={
+              userInfo?.role === "customer"
+                ? currentUser[0]?.therapist_name
+                : currentUser[0]?.customer_name
+            }
+            color="initials"
+            radius={"xl"}
+            size={46}
+          />
+          <div className="flex-1">
+            <h3 className="font-semibold">
+              {userInfo?.role === "customer"
+                ? currentUser[0]?.therapist_name
+                : currentUser[0]?.customer_name}
+            </h3>
+            <p className="text-sm text-muted-foreground">Online</p>
+          </div>
+        </div>
         <Menu shadow="md" width={200} position="bottom-end" styles={{}}>
           <Menu.Target>
             <IconDotsVertical
@@ -655,103 +856,90 @@ const ChatSection = ({ room_id, currentUser }: any) => {
             </Menu.Item>
           </Menu.Dropdown>
         </Menu>
-      </Flex>
+      </div>
 
-      {error && <p className="text-red-500 mb-4">{error}</p>}
-      <div>
-        <Card shadow="sm" withBorder p={0}>
-          <ScrollArea
-            className="!h-[calc(100vh - 230px)] relative"
-            offsetScrollbars
-            scrollbarSize={6}
-            scrollHideDelay={2500}
-            py={"sm"}
-            px={30}
-            styles={{
-              root: {
-                height: "calc(100vh - 230px)",
-              },
-            }}
-          >
-            <LoadingOverlay
-              visible={loading}
-              zIndex={1000}
-              overlayProps={{ radius: "sm", blur: 2 }}
-            />
+      <ScrollArea
+        // className="!h-[calc(100vh - 230px)] relative bg-gray-100"
+        offsetScrollbars
+        scrollbarSize={6}
+        scrollHideDelay={2500}
+        py={"sm"}
+        px={30}
+        styles={{
+          root: {
+            height: "calc(100vh - 230px)",
+          },
+        }}
+      >
+        <LoadingOverlay
+          visible={loading}
+          zIndex={1000}
+          overlayProps={{ radius: "sm", blur: 2 }}
+        />
 
-            {userInfo &&
-              Object.keys(groupedMessages).map((date) => (
-                <div key={date}>
-                  <div className="text-center my-4 text-gray-500 text-sm">
-                    {(() => {
-                      const messageDate = dayjs(date);
-                      const today = dayjs();
-                      const yesterday = dayjs().subtract(1, "day");
+        {userInfo &&
+          Object.keys(groupedMessages).map((date) => (
+            <div key={date}>
+              <div className="text-center my-4 text-gray-500 text-sm">
+                {(() => {
+                  const messageDate = dayjs(date);
+                  const today = dayjs();
+                  const yesterday = dayjs().subtract(1, "day");
 
-                      if (messageDate.isSame(today, "day")) {
-                        return "Today";
-                      } else if (messageDate.isSame(yesterday, "day")) {
-                        return "Yesterday";
-                      } else {
-                        return messageDate.format("YYYY-MM-DD");
-                      }
-                    })()}
-                  </div>
+                  if (messageDate.isSame(today, "day")) {
+                    return "Today";
+                  } else if (messageDate.isSame(yesterday, "day")) {
+                    return "Yesterday";
+                  } else {
+                    return messageDate.format("YYYY-MM-DD");
+                  }
+                })()}
+              </div>
 
-                  {groupedMessages[date].map((msg: any, index: number) => {
-                    const isSender = msg.sender_id === userInfo.id;
-                    return (
+              {groupedMessages[date].map((msg: any, index: number) => {
+                const isSender = msg.sender_id === userInfo.id;
+                return (
+                  <div
+                    key={msg.conversation_id || index}
+                    className={`w-full flex mb-2 ${
+                      isSender ? "items-end" : "items-start"
+                    } flex-col`}
+                    onMouseEnter={() => setHoveredMessage(msg.conversation_id)}
+                    onMouseLeave={() => setHoveredMessage(null)}
+                  >
+                    <div
+                      className={`flex mb-3 relative ${
+                        isSender ? "flex-row" : "flex-row-reverse"
+                      } gap-2 items-start`}
+                    >
                       <div
-                        key={msg.conversation_id || index}
-                        className={`w-full flex mb-2 ${
-                          isSender ? "items-end" : "items-start"
-                        } flex-col`}
-                        onMouseEnter={() =>
-                          setHoveredMessage(msg.conversation_id)
-                        }
-                        onMouseLeave={() => setHoveredMessage(null)}
+                        className={`relative flex items-end ${
+                          !isSender ? "" : "flex-row-reverse"
+                        }`}
                       >
-                        <div
-                          className={`flex mb-3 relative ${
-                            isSender ? "flex-row" : "flex-row-reverse"
-                          } gap-2 items-start`}
-                        >
+                        <div className={`flex gap-1 items-end flex-col`}>
                           <div
-                            className={`relative flex items-end ${
-                              !isSender ? "" : "flex-row-reverse"
+                            className={`p-[12px] max-w-[450px] relative break-words whitespace-pre-wrap rounded-md ${
+                              isSender
+                                ? "text-white bg-black"
+                                : "text-black bg-[#E6E6E6]"
                             }`}
                           >
-                            <div className={`flex gap-1 items-end flex-col`}>
-                              <div
-                                className={`p-[6px] max-w-[450px] relative break-words whitespace-pre-wrap rounded-md ${
-                                  isSender
-                                    ? "text-white bg-[#46A7B0]"
-                                    : "text-black bg-[#E6E6E6]"
-                                }`}
-                              >
-                                {msg.messages}
-                              </div>
-                              <Text
-                                size="xs"
-                                mt={"3"}
-                                className={`${
-                                  isSender ? "text-start" : "text-end"
-                                }`}
-                              >
+                            {msg.messages}
+                            <Flex align={"center"} gap={"sm"}>
+                              <Text size="xs" mt={"3"}>
                                 {dayjs(msg.created_at).format("hh:mm A")}
                               </Text>
-                            </div>
-                            {msg?.status === "edited" && (
-                              <Text
-                                size="xs"
-                                mb={24}
-                                ml={isSender ? "" : "sm"}
-                                mr={isSender ? "sm" : ""}
-                              >
-                                (edited)
-                              </Text>
-                            )}
-                            {/* <Text
+                              {msg?.status === "edited" && (
+                                <Text size="xs" mt={2}>
+                                  (edited)
+                                </Text>
+                              )}
+                            </Flex>
+                          </div>
+                        </div>
+
+                        {/* <Text
                               size="xs"
                               mt={"3"}
                               className={`${
@@ -760,161 +948,144 @@ const ChatSection = ({ room_id, currentUser }: any) => {
                             >
                               {dayjs(msg.created_at).format("hh:mm A")}
                             </Text> */}
-                          </div>
-                          {hoveredMessage === msg.conversation_id && (
-                            <Box
-                              className={`absolute top-[10px] ${
-                                isSender ? "left-[-50px]" : "right-[-10px]"
-                              }  transform translate-x-full -translate-y-1/2`}
-                            >
-                              <Menu
-                                shadow="md"
-                                width={200}
-                                position={
-                                  isSender ? "bottom-end" : "bottom-start"
-                                }
-                              >
-                                <Menu.Target>
-                                  <ActionIcon size="xs" variant="transparent">
-                                    <IconDotsVertical size={16} color="gray" />
-                                  </ActionIcon>
-                                </Menu.Target>
+                      </div>
+                      {hoveredMessage === msg.conversation_id && (
+                        <Box
+                          className={`absolute top-[10px] ${
+                            isSender ? "left-[-50px]" : "right-[-10px]"
+                          }  transform translate-x-full -translate-y-1/2`}
+                        >
+                          <Menu
+                            shadow="md"
+                            width={200}
+                            position={isSender ? "bottom-end" : "bottom-start"}
+                          >
+                            <Menu.Target>
+                              <ActionIcon size="xs" variant="transparent">
+                                <IconDotsVertical size={16} color="gray" />
+                              </ActionIcon>
+                            </Menu.Target>
 
-                                <Menu.Dropdown>
+                            <Menu.Dropdown>
+                              <Menu.Item
+                                leftSection={<IconCopy size={14} />}
+                                onClick={() => {
+                                  navigator.clipboard
+                                    .writeText(msg.messages)
+                                    .then(() => {
+                                      toast.success(
+                                        "Message copied to clipboard!",
+                                        {
+                                          position: "bottom-right",
+                                        }
+                                      );
+                                    })
+                                    .catch((err) => {
+                                      console.log(err);
+                                    });
+                                }}
+                              >
+                                Copy text
+                              </Menu.Item>
+
+                              {msg?.sender_id === userInfo?.id && (
+                                <>
                                   <Menu.Item
-                                    leftSection={<IconCopy size={14} />}
+                                    leftSection={<IconEdit size={14} />}
                                     onClick={() => {
-                                      navigator.clipboard
-                                        .writeText(msg.messages)
-                                        .then(() => {
-                                          toast.success(
-                                            "Message copied to clipboard!",
-                                            {
-                                              position: "bottom-right",
-                                            }
-                                          );
-                                        })
-                                        .catch((err) => {
-                                          console.log(err);
-                                        });
+                                      setEditConversationId(
+                                        msg.conversation_id
+                                      );
+                                      setEditText(msg.messages);
+                                      setNewMessage(msg.messages);
+                                      textareaRef.current?.focus();
                                     }}
                                   >
-                                    Copy text
+                                    Edit
                                   </Menu.Item>
-
-                                  {msg?.sender_id === userInfo?.id && (
-                                    <>
-                                      <Menu.Item
-                                        leftSection={<IconEdit size={14} />}
-                                        onClick={() => {
-                                          setEditConversationId(
-                                            msg.conversation_id
-                                          );
-                                          setEditText(msg.messages);
-                                          setNewMessage(msg.messages);
-                                          textareaRef.current?.focus();
-                                        }}
-                                      >
-                                        Edit
-                                      </Menu.Item>
-                                      <Menu.Item
-                                        leftSection={<IconTrash size={14} />}
-                                        onClick={() =>
-                                          handleMessageDelete(
-                                            msg?.conversation_id
-                                          )
-                                        }
-                                      >
-                                        Remove
-                                      </Menu.Item>
-                                    </>
-                                  )}
-                                </Menu.Dropdown>
-                              </Menu>
-                            </Box>
-                          )}
-                          <Avatar
-                            src={
-                              currentUser.length > 0 && !isSender
-                                ? currentUser[0]?.avatar_url
-                                : userInfo?.avatar_url
-                            }
-                            alt={msg.sender_id}
-                            mb={3}
-                            size={"md"}
-                            radius={"xl"}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ))}
-            {currentUser[0]?.therapist_status === "block" ? (
-              <Divider
-                my="xs"
-                variant="dashed"
-                label="You blocked this user"
-                labelPosition="center"
-                styles={{
-                  label: {
-                    color: "red",
-                  },
-                }}
-              />
-            ) : (
-              <></>
-            )}
-          </ScrollArea>
-        </Card>
-        <div className="flex items-center mt-6 gap-2">
-          <Textarea
-            placeholder="Type a message..."
-            value={newMessage}
-            ref={textareaRef}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyDown={handleKeyDown}
-            w={"100%"}
-            rows={1}
-            size="md"
-            disabled={
-              currentUser.length > 0 &&
-              currentUser[0].therapist_status === "block"
-                ? true
-                : false
-            }
-            rightSection={
-              <ActionIcon variant="transparent" onClick={sendMessage}>
-                <IconSend color="#46A7B0" />
-              </ActionIcon>
-            }
-          />
-          <Popover
-            position="top-end"
-            withArrow
-            shadow="md"
+                                  <Menu.Item
+                                    leftSection={<IconTrash size={14} />}
+                                    onClick={() =>
+                                      handleMessageDelete(msg?.conversation_id)
+                                    }
+                                  >
+                                    Remove
+                                  </Menu.Item>
+                                </>
+                              )}
+                            </Menu.Dropdown>
+                          </Menu>
+                        </Box>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        {currentUser[0]?.therapist_status === "block" ? (
+          <Divider
+            my="xs"
+            variant="dashed"
+            label="You blocked this user"
+            labelPosition="center"
             styles={{
-              dropdown: {
-                padding: "0px",
-                borderRadius: "0px",
+              label: {
+                color: "red",
               },
             }}
-          >
-            <Popover.Target>
-              <ActionIcon variant="transparent" radius={"xl"}>
-                <IconMoodSmile />
-              </ActionIcon>
-            </Popover.Target>
-            <Popover.Dropdown>
-              <div>
-                <EmojiPicker
-                  skinTonesDisabled
-                  onEmojiClick={(emojiData) => handleEmojiClick(emojiData)}
-                />
-              </div>
-            </Popover.Dropdown>
-          </Popover>
-        </div>
+          />
+        ) : (
+          <></>
+        )}
+      </ScrollArea>
+      <div className="flex items-center mx-4 mt-6 gap-2 h-[30px]">
+        <Popover
+          position="top-end"
+          withArrow
+          shadow="md"
+          styles={{
+            dropdown: {
+              padding: "0px",
+              borderRadius: "0px",
+            },
+          }}
+        >
+          <Popover.Target>
+            <ActionIcon variant="transparent" radius={"xl"}>
+              <IconMoodSmile />
+            </ActionIcon>
+          </Popover.Target>
+          <Popover.Dropdown>
+            <div>
+              <EmojiPicker
+                skinTonesDisabled
+                onEmojiClick={(emojiData) => handleEmojiClick(emojiData)}
+              />
+            </div>
+          </Popover.Dropdown>
+        </Popover>
+        <Textarea
+          placeholder="Type a message..."
+          value={newMessage}
+          ref={textareaRef}
+          onChange={(e) => setNewMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
+          w={"100%"}
+          rows={1}
+          size="md"
+          disabled={
+            currentUser.length > 0 &&
+            currentUser[0].therapist_status === "block"
+              ? true
+              : false
+          }
+          rightSection={
+            <ActionIcon variant="transparent" onClick={sendMessage}>
+              <IconSend color="#46A7B0" />
+            </ActionIcon>
+          }
+        />
       </div>
     </div>
   );

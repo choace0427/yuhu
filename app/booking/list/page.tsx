@@ -19,6 +19,7 @@ import {
   Avatar,
   Box,
 } from "@mantine/core";
+import { useStripe } from "@stripe/react-stripe-js";
 import {
   IconMessage,
   IconCalendar,
@@ -31,6 +32,7 @@ import {
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 export default function BookingList() {
   const { userInfo } = useAuthStore();
@@ -44,25 +46,59 @@ export default function BookingList() {
   const [allData, setAllData] = useState<any[]>([]);
 
   const handleCancel = async (booking_id: string) => {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("booking_list")
       .update({ booking_status: "cancelled" })
       .eq("booking_id", booking_id)
       .select();
     if (error) {
-      console.error("Error fetching bookings:", error);
+      toast.error("Failed to update booking");
+      return;
+    }
+    const { data: transactionData, error: transactionError } = await supabase
+      .from("transaction_list")
+      .select()
+      .eq("booking_id", booking_id);
+
+    if (transactionError) {
+      console.error("Error fetching bookings:", transactionError);
     } else {
+      const response = await fetch("/api/refund-create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          paymentIntent: transactionData[0].transaction_id,
+        }),
+      });
+
+      const { refund } = await response.json();
+
+      const { error: insertTransactionError } = await supabase
+        .from("transaction_list")
+        .insert({
+          transaction_id: refund?.id,
+          customer_id: userInfo.id,
+          status: "refunded",
+          booking_id: booking_id,
+        });
+
+      if (insertTransactionError) {
+        throw new Error("Failed to save transaction to the database");
+      }
+
       const { data, error } = await supabase
         .from("booking_list")
         .select(
           `
              *,
-              users (
+              customers_list (
                 *
               )
             `
         )
-        .eq("customer_id", userInfo.id);
+        .eq("id", userInfo.id);
       if (error) {
         console.error("Error fetching bookings:", error);
       } else {
@@ -279,7 +315,14 @@ export default function BookingList() {
           .filter((item: any) => item.booking_status === type)
           .map((item, index) => {
             return (
-              <Paper shadow="sm" radius="md" p="md" withBorder key={index}>
+              <Paper
+                shadow="sm"
+                radius="md"
+                p="md"
+                withBorder
+                key={index}
+                mt={"sm"}
+              >
                 <Group gap="apart" align="center" justify="space-between">
                   <Group gap="xl">
                     <Group gap="xs">

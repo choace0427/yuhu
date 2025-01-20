@@ -79,8 +79,8 @@ export default function BookingPage(params: any) {
         .from("booking_list")
         .select("*")
         .eq("therapist_id", therapistId)
-        .eq("b_date->>date", dayjs(date).format("YYYY-MM-DD"));
-
+        .eq("b_date->>date", dayjs(date).format("YYYY-MM-DD"))
+        .neq("booking_status", "cancelled");
       if (error) throw new Error(error.message);
 
       if (!bookingData || bookingData.length === 0) {
@@ -139,7 +139,8 @@ export default function BookingPage(params: any) {
       .select("*")
       .eq("therapist_id", therapistId)
       .eq("customer_id", userInfo?.id)
-      .eq("b_date->>date", dayjs(value).format("YYYY-MM-DD"));
+      .eq("b_date->>date", dayjs(value).format("YYYY-MM-DD"))
+      .neq("booking_status", "cancelled");
 
     if (error) {
       console.log("errro", error);
@@ -155,14 +156,14 @@ export default function BookingPage(params: any) {
             booking_status: "upcoming",
             b_date: {
               date: dayjs(value).format("YYYY-MM-DD"),
-              range: myselectedTimeRanges,
+              range: myselectedTimeRanges || [],
             },
           })
           .eq("booking_id", newBooking)
           .select();
 
         if (error) {
-          toast.error("Failed to submit booking");
+          toast.error("Failed to submit booking1");
           return;
         }
 
@@ -237,97 +238,6 @@ export default function BookingPage(params: any) {
         console.log("error", error);
       }
     }
-
-    //   if (newBooking === "") {
-    //     try {
-    //       const { data, error } = await supabase.from("booking_list").insert({
-    //         therapist_id: params.searchParams.therapist,
-    //         booking_message: message,
-    //         booking_date: value,
-    //         booking_status: "upcoming",
-    //         customer_id: userInfo.id,
-    //         b_date: {
-    //           date: dayjs(value).format("YYYY-MM-DD"),
-    //           range: selectedTimeRanges,
-    //         },
-    //       });
-
-    //       if (error) {
-    //         toast.error("Failed to submit booking");
-    //         return;
-    //       }
-    //       toast.success("Booking submitted successfully!");
-    //       setMessage("");
-    //       setShowTimeRanges(false);
-    //       setSelectedTimeRanges([]);
-    //       onclose;
-
-    //       const { error: notificationError } = await supabase
-    //         .from("notifications")
-    //         .insert([
-    //           {
-    //             sender_id: userInfo?.id,
-    //             receiver_id: params.searchParams.therapist,
-    //             content: `${userInfo?.name} has booked an appointment with you.`,
-    //             status: "",
-    //           },
-    //         ]);
-    //       if (notificationError) {
-    //         return;
-    //       }
-
-    //       setTimeout(() => {
-    //         router.push("/booking/list");
-    //       }, 1000);
-    //     } catch (error) {
-    //       console.log("error", error);
-    //     }
-    //   } else {
-    //     try {
-    //       const { data, error } = await supabase
-    //         .from("booking_list")
-    //         .update({
-    //           booking_message: message,
-    //           booking_status: "upcoming",
-    //           b_date: {
-    //             date: dayjs(value).format("YYYY-MM-DD"),
-    //             range: selectedTimeRanges,
-    //           },
-    //         })
-    //         .eq("booking_id", newBooking);
-
-    //       if (error) {
-    //         toast.error("Failed to submit booking");
-    //         return;
-    //       }
-
-    //       toast.success("Booking updated successfully!");
-    //       setMessage("");
-    //       setShowTimeRanges(false);
-    //       setSelectedTimeRanges([]);
-    //       onclose;
-
-    //       const { error: notificationError } = await supabase
-    //         .from("notifications")
-    //         .insert([
-    //           {
-    //             sender_id: userInfo?.id,
-    //             receiver_id: params.searchParams.therapist,
-    //             content: `${userInfo?.name} has rescheduled their appointment with you.`,
-    //             status: "",
-    //           },
-    //         ]);
-    //       if (notificationError) {
-    //         return;
-    //       }
-
-    //       setTimeout(() => {
-    //         router.push("/booking/list");
-    //       }, 1000);
-    //     } catch (error) {
-    //       console.log(error);
-    //     }
-    //   }
   };
 
   const stripePromise = loadStripe(
