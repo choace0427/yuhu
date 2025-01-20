@@ -698,6 +698,7 @@ const PaymentComponent = () => {
   const [loading, setLoading] = useState(false);
 
   const handleInsertCard = async () => {
+    console.log("---------");
     try {
       setLoading(true);
 
@@ -779,7 +780,9 @@ const PaymentComponent = () => {
           toast.success("You create stripe account link successfully.");
           toast.success("Please complete your account now");
 
-          window.location.href = accountLinkResponse.accountLink?.url;
+          setTimeout(() => {
+            window.location.href = accountLinkResponse.accountLink?.url;
+          }, 1000);
         } catch (error) {
           console.error("Error creating account link:", error);
           toast.error("An error occurred while creating the account link.");
