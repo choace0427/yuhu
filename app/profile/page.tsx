@@ -27,7 +27,7 @@ export default function ProfileSettings() {
   const router = useRouter();
 
   const [avatar, setAvatar] = useState<any>(null);
-  const [avatarUrl, setAvatarUrl] = useState<string>("");
+  const [avatarUrl, setAvatarUrl] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -100,8 +100,9 @@ export default function ProfileSettings() {
         >
           <Avatar
             size={140}
-            src={avatarUrl || userInfo?.avatar_url}
+            src={avatarUrl ? avatarUrl : userInfo?.avatar_url}
             name={userInfo?.name}
+            color="initials"
             alt="Profile Avatar"
           />
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">

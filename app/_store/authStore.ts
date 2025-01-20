@@ -15,6 +15,7 @@ interface AuthState {
   setUserInfo: (userInfo: any) => void;
   signUp: (name: string, email: string, password: string, router: any) => void;
   checkAuthState: () => Promise<void>;
+  handlegoogleSignin: (router: any) => Promise<void>;
 }
 
 export const useAuthStore = create(
@@ -92,35 +93,6 @@ export const useAuthStore = create(
           if (data) {
             router.push("/role");
           }
-
-          // if (userId) {
-          //   const { error: userError } = await supabase
-          //     .from("users")
-          //     .select("*")
-          //     .eq("id", userId)
-          //     .single();
-
-          //   if (userError) {
-          //     const { error: insertError } = await supabase
-          //       .from("users")
-          //       .insert({
-          //         id: userId,
-          //         name: data?.user?.user_metadata?.full_name,
-          //         email: data?.user?.email,
-          //         card_status: "false",
-          //       });
-
-          //     if (insertError) {
-          //       toast.error("Error saving user data. Please contact support!");
-          //       return;
-          //     }
-          //   }
-          //   toast.success("Sign-up successful!");
-
-          //   setTimeout(() => {
-          //     router.push("/auth/login");
-          //   }, 1000);
-          // }
         } catch (err) {
           console.error("Unexpected error during login:", err);
         } finally {
@@ -140,6 +112,32 @@ export const useAuthStore = create(
         } catch (err) {
           console.error("Error during sign-out:", err);
         }
+      },
+      handlegoogleSignin: async (router: any) => {
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: {
+            redirectTo: `http://localhost:3000/auth/callback`,
+          },
+        });
+
+        if (error) {
+          toast.error("Google login failed. Please try again.");
+          return;
+        }
+
+        // toast.success("Redirecting to Google login...");
+
+        // After Supabase redirects back to the API route, fetch the response
+        // const response = await fetch("/api/google-signin");
+        // const result = await response.json();
+
+        // if (response.ok) {
+        //   router.push(result.redirectUrl);
+        //   toast.success(result.message);
+        // } else {
+        //   toast.error(result.error);
+        // }
       },
       setIsAuth: (isAuth) => set({ isAuthenticated: isAuth }),
       setUserInfo: (userInfo) => set({ userInfo: userInfo }),

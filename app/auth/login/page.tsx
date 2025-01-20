@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginPage() {
-  const { signIn } = useAuthStore();
+  const { signIn, handlegoogleSignin } = useAuthStore();
   const router = useRouter();
   const form = useForm({
     mode: "uncontrolled",
@@ -86,7 +86,7 @@ export default function LoginPage() {
             </div>
             <div
               className="inline-flex cursor-pointer justify-center items-center gap-x-2 border border-gray-600 rounded-lg sm:py-3 py-2 text-base text-gray-100 font-medium bg-black hover:bg-black/80"
-              // onClick={handleGoogleSignIn}
+              onClick={() => handlegoogleSignin(router)}
             >
               <svg
                 width="25"

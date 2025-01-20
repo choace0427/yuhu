@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { IconMassage, IconUser } from "@tabler/icons-react";
 
 export default function UserRole() {
+  const { setUserInfo, setIsAuth } = useAuthStore();
   const [selectedRole, setSelectedRole] = useState("customer");
   const router = useRouter();
   const [userData, setUserData] = useState<any>();
@@ -20,8 +21,8 @@ export default function UserRole() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name: userData?.full_name,
-        email: userData?.email,
+        name: userData?.user_metadata?.full_name,
+        email: userData?.user_metadata?.email,
       }),
     });
 
@@ -30,30 +31,36 @@ export default function UserRole() {
       const { error: userError } = await supabase
         .from("customers_list")
         .select("*")
-        .eq("id", userData?.sub)
+        .eq("id", userData?.id)
         .single();
 
       if (userError) {
-        const { error: CustomerError } = await supabase
+        const { data: CustomerData, error: CustomerError } = await supabase
           .from("customers_list")
           .insert([
             {
-              id: userData?.sub,
-              email: userData?.email,
-              name: userData?.full_name,
+              id: userData?.id,
+              avatar_url: userData?.user_metadata?.avatar_url || "",
+              email: userData?.user_metadata?.email,
+              name: userData?.user_metadata?.full_nam,
               stripe_customer_id: data?.customer?.id,
             },
-          ]);
+          ])
+          .select();
 
         if (CustomerError) {
           toast.error("Error saving user data. Please contact support!");
           return;
         }
-
+        setUserInfo(CustomerData[0]);
         toast.success("Sign-up successful!");
-        setTimeout(() => {
-          router.push("/auth/login");
-        }, 1000);
+        if (userData?.app_metadata?.provider === "google") {
+          setIsAuth(true);
+          router.push("/customer");
+        } else
+          setTimeout(() => {
+            router.push("/auth/login");
+          }, 1000);
       }
     } else {
       console.error("Error creating customer:");
@@ -64,29 +71,36 @@ export default function UserRole() {
     const { error: userError } = await supabase
       .from("therapist_list")
       .select("*")
-      .eq("id", userData?.sub)
+      .eq("id", userData?.id)
       .single();
 
     if (userError) {
-      const { error: CustomerError } = await supabase
+      const { data: therapistData, error: CustomerError } = await supabase
         .from("therapist_list")
         .insert([
           {
-            id: userData?.sub,
-            email: userData?.email,
-            name: userData?.full_name,
+            id: userData?.id,
+            avatar_url: userData?.user_metadata?.avatar_url || "",
+            email: userData?.user_metadata?.email,
+            name: userData?.user_metadata?.full_name,
           },
-        ]);
+        ])
+        .select();
 
       if (CustomerError) {
         toast.error("Error saving user data. Please contact support!");
         return;
       }
 
+      setUserInfo(therapistData[0]);
       toast.success("Sign-up successful!");
-      setTimeout(() => {
-        router.push("/auth/login");
-      }, 1000);
+      if (userData?.app_metadata?.provider === "google") {
+        setIsAuth(true);
+        router.push("/therapist");
+      } else
+        setTimeout(() => {
+          router.push("/auth/login");
+        }, 1000);
     }
   };
 
@@ -100,7 +114,7 @@ export default function UserRole() {
       if (userError) {
         console.log(userError);
         return;
-      } else setUserData(user?.user_metadata);
+      } else setUserData(user);
     };
     handleGetUser();
   }, []);

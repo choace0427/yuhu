@@ -504,6 +504,8 @@ export default function TherapistDashboard() {
                   <Avatar
                     size={140}
                     src={avatarUrl || userInfo?.avatar_url}
+                    name={userInfo?.name || ""}
+                    color="initials"
                     alt="Profile Avatar"
                   />
                   <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
