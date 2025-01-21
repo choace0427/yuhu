@@ -115,7 +115,7 @@ const Header = () => {
           onClick={() => router.push("/")}
           variant=""
           className={`Poppins-font !font-semibold ${
-            pathname === "/home"
+            pathname === "/"
               ? "!text-[#46A7B0] border-b-2 border-[#46A7B0]"
               : colorScheme === "light"
               ? "!text-black"

@@ -738,7 +738,7 @@ const PaymentComponent = () => {
         throw new Error("Failed to update user card status.");
       }
       setUserInfo(userUpdateData[0]);
-      toast.success("Created your account successfully!");
+      toast.success("Created your payment account successfully!");
     } catch (error) {
       console.error("An unexpected error occurred.");
     } finally {
@@ -876,8 +876,15 @@ const ServicesComponent = ({
             {services.map((service: any, index: number) => {
               return (
                 <Card withBorder padding="md" key={index}>
-                  <Flex justify={"space-between"} align={"center"} mb="xs">
-                    <Text fw={500}>{service.category}</Text>
+                  <Flex
+                    justify={"space-between"}
+                    wrap={"nowrap"}
+                    align={"center"}
+                    mb="xs"
+                  >
+                    <Text fw={500} className="text-wrap" lineClamp={3}>
+                      {service.category}
+                    </Text>
                     <Menu
                       shadow="md"
                       width={150}

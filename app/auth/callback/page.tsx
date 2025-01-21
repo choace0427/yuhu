@@ -31,14 +31,14 @@ const Callback = () => {
       const { data: customerData, error: customerError } = await supabase
         .from("customers_list")
         .select("*")
-        .eq("id", data?.user?.id)
+        .eq("email", data?.user?.email)
         .single();
 
       if (customerError || !customerData) {
         const { data: therapistData, error: therapistError } = await supabase
           .from("therapist_list")
           .select("*")
-          .eq("id", data?.user?.id)
+          .eq("id", data?.user?.email)
           .single();
 
         if (therapistError || !therapistData) {

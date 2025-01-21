@@ -14,6 +14,8 @@ export default function UserRole() {
   const router = useRouter();
   const [userData, setUserData] = useState<any>();
 
+  console.log("------", userData);
+
   const handleCustomerCreateAccount = async () => {
     const response = await fetch("/api/create-customer", {
       method: "POST",
@@ -31,7 +33,7 @@ export default function UserRole() {
       const { error: userError } = await supabase
         .from("customers_list")
         .select("*")
-        .eq("id", userData?.id)
+        .eq("email", userData?.user_metadata?.email)
         .single();
 
       if (userError) {
@@ -42,7 +44,7 @@ export default function UserRole() {
               id: userData?.id,
               avatar_url: userData?.user_metadata?.avatar_url || "",
               email: userData?.user_metadata?.email,
-              name: userData?.user_metadata?.full_nam,
+              name: userData?.user_metadata?.full_name,
               stripe_customer_id: data?.customer?.id,
             },
           ])
@@ -71,7 +73,7 @@ export default function UserRole() {
     const { error: userError } = await supabase
       .from("therapist_list")
       .select("*")
-      .eq("id", userData?.id)
+      .eq("email", userData?.user_metadata?.email)
       .single();
 
     if (userError) {

@@ -355,7 +355,7 @@ export default function BookingPage(params: any) {
                             <Text fw={600}>
                               $
                               {userInfo?.hourly_rate *
-                                myselectedTimeRanges.length}
+                                myselectedTimeRanges.length || 0}
                               .00
                             </Text>
                           </Group>

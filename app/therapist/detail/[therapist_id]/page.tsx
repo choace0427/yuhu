@@ -203,11 +203,25 @@ export default function Home(params: any) {
                           </Text>
                         </Box>
                         <Text size="sm">{item?.service_description}</Text>
-                        <Group justify="space-between" align="center">
-                          <Text fw={700} size="xl">
+                        <Group
+                          justify="space-between"
+                          align="center"
+                          style={{ width: "100%" }}
+                        >
+                          <Text
+                            fw={700}
+                            size="xl"
+                            lineClamp={3}
+                            style={{
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                              maxWidth: "100%",
+                            }}
+                          >
                             ${userData?.hourly_rate || 0}/hour
                           </Text>
-                          <Button variant="light">Book Now</Button>
+                          {/* <Button variant="light">Book Now</Button> */}
                         </Group>
                       </Stack>
                     </Card>
