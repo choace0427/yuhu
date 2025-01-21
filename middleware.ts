@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
-import { toast } from "react-toastify";
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
@@ -26,13 +25,13 @@ export async function middleware(req: NextRequest) {
     req.nextUrl.pathname.startsWith(path)
   );
 
-  if (!session && isProtectedPath) {
-    console.log("Unauthenticated user, redirecting to /auth/login...");
-    const redirectUrl = req.nextUrl.clone();
-    redirectUrl.pathname = "/auth/login";
-    redirectUrl.searchParams.set("redirectedFrom", req.nextUrl.pathname);
-    return NextResponse.redirect(redirectUrl);
-  }
+  // if (!session && isProtectedPath) {
+  //   console.log("Unauthenticated user, redirecting to /auth/login...");
+  //   const redirectUrl = req.nextUrl.clone();
+  //   redirectUrl.pathname = "/auth/login";
+  //   redirectUrl.searchParams.set("redirectedFrom", req.nextUrl.pathname);
+  //   return NextResponse.redirect(redirectUrl);
+  // }
 
   return res;
 }
