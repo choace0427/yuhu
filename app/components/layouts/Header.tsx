@@ -51,19 +51,18 @@ const Header = () => {
     }
   };
 
-  const excludedPaths = [
-    "customer",
-    "home",
-    "service",
-    "auth",
-    "contactus",
-    "pricing",
-    "team",
-    "about",
-    "profile",
-  ];
+  // const excludedPaths = [
+  //   "home",
+  //   "service",
+  //   "auth",
+  //   "contactus",
+  //   "pricing",
+  //   "team",
+  //   "about",
+  //   "profile",
+  // ];
 
-  const isExcludedPath = excludedPaths.some((path) => pathname.includes(path));
+  // const isExcludedPath = excludedPaths.some((path) => pathname.includes(path));
   useEffect(() => {
     if (userInfo) {
       const notificationsRealtime = supabase
@@ -92,6 +91,13 @@ const Header = () => {
     //   }
     // }
   }, [userInfo]);
+
+  // useEffect(() => {
+  //   if (!isAuthenticated) {
+  //     toast.warn("Please login first");
+  //     router.replace("/auth/login");
+  //   }
+  // }, []);
 
   return (
     <div

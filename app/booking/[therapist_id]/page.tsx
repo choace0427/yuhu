@@ -9,6 +9,7 @@ import {
   Box,
   Button,
   Card,
+  Divider,
   Flex,
   Group,
   LoadingOverlay,
@@ -326,10 +327,10 @@ export default function BookingPage(params: any) {
                     <Elements stripe={stripePromise}>
                       <div className="border-t pt-4 mt-4">
                         <Stack gap="xs">
-                          <Group>
+                          {/* <Group>
                             <Text>Session Fee</Text>
                             <Text>${userInfo?.price / 100}.00</Text>
-                          </Group>
+                          </Group> */}
                           <Group>
                             <Text>Date</Text>
                             <Text>
@@ -350,7 +351,8 @@ export default function BookingPage(params: any) {
                                 : "-"}
                             </Box>
                           </Group>
-                          <Group className="border-t pt-4 mt-2">
+                          <Divider />
+                          {/* <Group className="border-t pt-4 mt-2">
                             <Text fw={600}>Total</Text>
                             <Text fw={600}>
                               $
@@ -358,7 +360,7 @@ export default function BookingPage(params: any) {
                                 myselectedTimeRanges.length || 0}
                               .00
                             </Text>
-                          </Group>
+                          </Group> */}
                         </Stack>
                       </div>
                       <Text size="sm" fw={500} mt={"sm"}>
@@ -565,7 +567,7 @@ const Paymentcomponent = ({
           // disabled={!}
           className="mt-4"
         >
-          Create Payment Method
+          Booking Now
         </Button>
       </div>
     </>
