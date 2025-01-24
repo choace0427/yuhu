@@ -63,7 +63,7 @@ export default function Home(params: any) {
             `
         )
         .eq("id", userId)
-        .eq("services.service_type.subcategory", serviceType)
+        // .eq("services.service_type.id", serviceType)
         .single();
 
       if (error) {
@@ -112,6 +112,7 @@ export default function Home(params: any) {
                 <Avatar
                   src={userData?.avatar_url || ""}
                   name={userData?.name}
+                  color="initials"
                   size={120}
                   radius="md"
                 />
@@ -202,7 +203,9 @@ export default function Home(params: any) {
                             {item?.service_type?.subcategory}
                           </Text>
                         </Box>
-                        <Text size="sm">{item?.service_description}</Text>
+                        <Text size="sm" lineClamp={4}>
+                          {item?.service_description}
+                        </Text>
                         <Group
                           justify="space-between"
                           align="center"

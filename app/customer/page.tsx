@@ -194,7 +194,7 @@ const ServiceCard = ({ service, handleBooking }: any) => {
         fullWidth
         mt="md"
         radius="md"
-        onClick={() => handleBooking(service?.subcategory)}
+        onClick={() => handleBooking(service?.id)}
       >
         Book Now
       </Button>

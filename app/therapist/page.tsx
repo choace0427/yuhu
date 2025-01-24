@@ -15,7 +15,6 @@ import {
   Group,
   ActionIcon,
   Stack,
-  NumberInput,
   Badge,
   Avatar,
   PasswordInput,
@@ -28,7 +27,6 @@ import { DatePicker, DatePickerInput, DateValue } from "@mantine/dates";
 import {
   IconPlus,
   IconDotsVertical,
-  IconCreditCard,
   IconCamera,
   IconEdit,
   IconTrash,
@@ -40,19 +38,9 @@ import dayjs from "dayjs";
 import { supabase } from "@/supabase";
 import { toast } from "react-toastify";
 import { useForm } from "@mantine/form";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
-import {
-  CardCvcElement,
-  CardElement,
-  CardExpiryElement,
-  CardNumberElement,
-  Elements,
-  useElements,
-  useStripe,
-} from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { type, userInfo } from "os";
 
 interface Service {
   category: string;
@@ -67,10 +55,6 @@ interface ServiceType {
 }
 
 export default function TherapistDashboard() {
-  const stripePromise = loadStripe(
-    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
-  );
-
   const { userInfo, setUserInfo } = useAuthStore();
   const [openedAddService, { open: openAddService, close: closeAddService }] =
     useDisclosure(false);
@@ -203,6 +187,7 @@ export default function TherapistDashboard() {
       toast.success("Successful to update profile");
     }
     setProfileLoading(false);
+    handlequery();
   };
 
   const getCategoryLabel = (categoryId: number) => {
@@ -400,6 +385,26 @@ export default function TherapistDashboard() {
     } catch (error) {
       toast.error("An error occurred while saving schedule.");
     }
+  };
+
+  const handlequery = async () => {
+    const { data: therapist_list, error } = await supabase.rpc(
+      "get_therapist",
+      {
+        input_therapist_id: userInfo?.id,
+      }
+    );
+
+    if (error) {
+      console.error("Error fetching chat members:", error);
+    }
+    await fetch(`${process.env.NEXT_PUBLIC_CHAT_API_URL}/api/train-therapist`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(therapist_list[0]),
+    });
   };
 
   useEffect(() => {

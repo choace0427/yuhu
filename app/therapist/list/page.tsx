@@ -27,51 +27,6 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const therapists = [
-  {
-    id: 1,
-    name: "Sarah Johnson",
-    rating: 5,
-    speciality: "Thai Massage",
-    hourlyRate: "80",
-    experience: "10+ years",
-    summary:
-      "Certified Thai massage therapist with expertise in traditional techniques and modern therapeutic approaches.",
-    location: "New York, NY",
-    availability: "Mon-Fri, 9AM-7PM",
-    avatar:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&auto=format&fit=crop&q=60",
-  },
-  {
-    id: 2,
-    name: "Michael Chen",
-    rating: 5,
-    speciality: "Thai Massage",
-    hourlyRate: "75",
-    experience: "10+ years",
-    summary:
-      "Specializing in therapeutic Thai massage with a focus on stress relief and muscle recovery.",
-    location: "Los Angeles, CA",
-    availability: "Mon-Sat, 8AM-8PM",
-    avatar:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop&q=60",
-  },
-  {
-    id: 3,
-    name: "Emma Davis",
-    rating: 5,
-    speciality: "Thai Massage",
-    hourlyRate: "85",
-    experience: "10+ years",
-    summary:
-      "Expert in traditional Thai massage techniques, combining ancient wisdom with modern wellness practices.",
-    location: "Chicago, IL",
-    availability: "Tue-Sun, 10AM-6PM",
-    avatar:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop&q=60",
-  },
-];
-
 export default function Home() {
   const router = useRouter();
 
@@ -111,7 +66,7 @@ export default function Home() {
                     )
                   `
           )
-          .eq("service_type.subcategory", serviceType);
+          .eq("service_type.id", serviceType);
 
         if (error) {
           throw error;
@@ -137,7 +92,8 @@ export default function Home() {
     <Container size="xl" py="xl">
       <Stack align="center" mb="xl" gap="md">
         <Title order={1} className="text-gray-900" ta="center">
-          Find Your Perfect Thai Massage Therapist
+          Find Your Perfect {services[0]?.service_type?.subcategory || ""}{" "}
+          Therapist
         </Title>
         <Text size="lg" c="dimmed" className="max-w-2xl text-center">
           Connect with certified Thai massage therapists who can help you
@@ -165,6 +121,7 @@ export default function Home() {
                       <Avatar
                         src={therapist?.therapist_list?.avatar_url}
                         name={therapist?.name}
+                        color="initials"
                         size="xl"
                         radius="md"
                         className="border-2 border-gray-100"
