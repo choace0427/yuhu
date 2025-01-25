@@ -154,6 +154,7 @@ export function ChatWidget() {
           right: "2rem",
           zIndex: 1000,
           //   backgroundColor: '#00afaf',
+          border: "1px solid #46A7B0",
         }}
       >
         <IconMessageChatbot size={24} color="#00afaf" />

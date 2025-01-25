@@ -36,7 +36,7 @@ export default function ExperienceRelaxionSection() {
 
   return (
     <motion.div
-      className="flex flex-col lg:gap-6 md:gap-4 gap-2 max-w-7xl items-center"
+      className="flex flex-col lg:gap-6 md:gap-4 gap-2 max-w-7xl items-center py-20"
       variants={containerVariants}
       initial="hidden"
       animate="visible"

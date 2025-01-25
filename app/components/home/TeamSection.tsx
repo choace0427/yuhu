@@ -71,7 +71,7 @@ export default function TeamSection() {
   };
 
   return (
-    <section className="flex w-full bg-[#f5f5f5] items-center justify-center lg:pt-10 md:pt-8 pt-6 lg:pb-10 md:pb-8 pb-6 px-4">
+    <section className="flex w-full bg-[#f5f5f5] items-center justify-center py-20 px-4">
       <motion.div
         variants={containerVariants}
         initial="hidden"

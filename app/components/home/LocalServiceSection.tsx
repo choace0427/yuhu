@@ -1,8 +1,22 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 
 export default function LocalServiceSection() {
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+  const scale = useTransform(
+    scrollYProgress,
+    [0, 0.2, 0.8, 1],
+    [0.8, 1, 1, 0.8]
+  );
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -63,7 +77,11 @@ export default function LocalServiceSection() {
   };
 
   return (
-    <div className="bg-[#46A7B0] py-14 w-full flex justify-center">
+    <motion.div
+      ref={sectionRef}
+      style={{ opacity, scale }}
+      className="bg-[#46A7B0] py-14 w-full flex justify-center"
+    >
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -157,6 +175,6 @@ export default function LocalServiceSection() {
           loop
         />
       </motion.div>
-    </div>
+    </motion.div>
   );
 }

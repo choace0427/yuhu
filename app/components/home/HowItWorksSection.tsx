@@ -4,10 +4,13 @@ import { useAuthStore } from "@/app/_store/authStore";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
-interface HowItWorksSectionProps {
-  isAuthenticated: boolean;
-}
+import {
+  Animator,
+  batch,
+  MoveIn,
+  ScrollContainer,
+  ScrollPage,
+} from "react-scroll-motion";
 
 export default function HowItWorksSection() {
   const { isAuthenticated } = useAuthStore();
@@ -48,110 +51,101 @@ export default function HowItWorksSection() {
     },
   };
 
-  const stepVariants = {
-    hidden: { opacity: 0, x: -30 },
-    visible: (custom: number) => ({
-      opacity: 1,
-      x: 0,
-      transition: {
-        delay: custom * 0.2,
-        duration: 0.5,
-        ease: "easeOut",
-      },
-    }),
-  };
-
   return (
-    <section className="flex w-full justify-center item-center lg:pt-10 md:pt-8 pt-6 lg:pb-10 md:pb-8 pb-6 px-4">
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        className="flex md:flex-row flex-col gap-4 justify-between w-full max-w-7xl items-center"
-      >
-        <motion.div
-          variants={imageVariants}
-          className="border rounded-2xl overflow-hidden"
-        >
-          <Image
-            className="blog-responsive"
-            id="blog-2"
-            src="/img/blog-2.png"
-            alt="dashboard"
-            width={556}
-            height={480}
-          />
-        </motion.div>
-        <motion.div
-          variants={containerVariants}
-          className="flex flex-col lg:gap-8 md:gap-6 gap-4 max-w-[650px] md:items-start items-center"
-        >
-          <motion.span
-            variants={itemVariants}
-            className="text-black lg:text-4xl md:text-3xl text-2xl font-bold Poppins-font"
-          >
-            How it works?
-          </motion.span>
+    <ScrollContainer className="w-full">
+      <ScrollPage>
+        <div className="flex justify-center items-center h-full w-full lg:pt-12 md:pt-10 pt-8 lg:pb-12 md:pb-10 pb-8">
           <motion.div
             variants={containerVariants}
-            className="flex flex-col gap-2"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            className="flex md:flex-row flex-col justify-between w-full gap-20 max-w-7xl items-center px-4"
           >
-            <motion.span
-              custom={0}
-              variants={stepVariants}
-              className="text-black md:text-base text-sm Poppins-font"
-            >
-              1. Choose your wellness service. Select from a variety of massage
-              and beauty treatments.
-            </motion.span>
-            <motion.span
-              custom={1}
-              variants={stepVariants}
-              className="text-black md:text-base text-sm Poppins-font"
-            >
-              2. Set your location and preferred time. Whether it&apos;s your
-              home, villa, or hotel.
-            </motion.span>
-            <motion.span
-              custom={2}
-              variants={stepVariants}
-              className="text-black md:text-base text-sm Poppins-font"
-            >
-              3. Book instantly-enjoy same-day availability or schedule in
-              advance.
-            </motion.span>
-            <motion.span
-              variants={itemVariants}
-              className="text-black md:text-base text-sm Poppins-font"
-            >
-              Yuhu Wellness and Massage makes it simple to access luxury
-              wellness services at affordable prices. Experience the convenience
-              of on-demand mobile wellness services, whether you are in Mallorca
-              Ibiza, or another Spanish city, our team is ready to deliver
-              relaxation and rejuvenation.
-            </motion.span>
+            <Animator animation={batch(MoveIn(-600, 0))}>
+              <motion.div
+                variants={imageVariants}
+                className="border rounded-2xl overflow-hidden"
+              >
+                <Image
+                  className="blog-responsive"
+                  id="blog-2"
+                  src="/img/blog-2.png"
+                  alt="dashboard"
+                  width={556}
+                  height={480}
+                />
+              </motion.div>
+            </Animator>
+            <Animator animation={batch(MoveIn(600, 0))}>
+              <motion.div
+                variants={containerVariants}
+                className="flex flex-col md:gap-4 gap-2 max-w-[600px] md:items-start items-center md:pb-0 pb-4"
+              >
+                <motion.span
+                  variants={itemVariants}
+                  className="text-black lg:text-3xl md:text-2xl text-xl font-bold Poppins-font md:text-start text-center"
+                >
+                  How it works?
+                </motion.span>
+                <motion.span
+                  variants={itemVariants}
+                  className="text-black Poppins-font text-base"
+                >
+                  1. Choose your wellness service. Select from a variety of
+                  massage and beauty treatments.
+                </motion.span>
+                <motion.span
+                  variants={itemVariants}
+                  className="text-black Poppins-font text-base"
+                >
+                  2. Set your location and preferred time. Whether it&apos;s
+                  your home, villa, or hotel.
+                </motion.span>
+                <motion.span
+                  variants={itemVariants}
+                  className="text-black Poppins-font text-base"
+                >
+                  3. Book instantly-enjoy same-day availability or schedule in
+                  advance.
+                </motion.span>
+                <motion.span
+                  variants={itemVariants}
+                  className="text-black Poppins-font text-base"
+                >
+                  Yuhu Wellness and Massage makes it simple to access luxury
+                  wellness services at affordable prices. Experience the
+                  convenience of on-demand mobile wellness services, whether you
+                  are in Mallorca Ibiza, or another Spanish city, our team is
+                  ready to deliver relaxation and rejuvenation.
+                </motion.span>
+                <motion.button
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="font-bold Poppins-font border-b-2 border-[#46A7B0] text-black"
+                  onClick={() => {
+                    if (isAuthenticated) {
+                      router.push("/customer");
+                    } else {
+                      router.push("/role");
+                    }
+                  }}
+                >
+                  <span className="text-[#46A7B0] md:text-lg sm:text-base">
+                    T
+                  </span>
+                  <span className="md:text-lg sm:text-base">ry</span>&nbsp;
+                  <span className="text-[#46A7B0] md:text-lg sm:text-base">
+                    N
+                  </span>
+                  <span className="md:text-lg sm:text-base">ow</span>
+                </motion.button>
+              </motion.div>
+            </Animator>
           </motion.div>
-          <motion.button
-            variants={itemVariants}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="font-bold Poppins-font border-b-2 border-[#46A7B0] text-black"
-            onClick={() => {
-              if (isAuthenticated) {
-                router.push("/customer");
-              } else {
-                router.push("/role");
-              }
-            }}
-          >
-            <span className="text-[#46A7B0] md:text-lg sm:text-base">T</span>
-            <span className="md:text-lg sm:text-base">ry</span>&nbsp;
-            <span className="text-[#46A7B0] md:text-lg sm:text-base">N</span>
-            <span className="md:text-lg sm:text-base">ow</span>
-          </motion.button>
-        </motion.div>
-      </motion.div>
-    </section>
+        </div>
+      </ScrollPage>
+    </ScrollContainer>
   );
 }
