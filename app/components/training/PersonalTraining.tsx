@@ -51,6 +51,7 @@ export default function PersonalTraining() {
         align="start"
         slidesToScroll={5}
         withControls={false}
+        dragFree
       >
         {personaltrainingcardData &&
           personaltrainingcardData.map((item, index) => (

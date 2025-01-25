@@ -19,12 +19,10 @@ import {
   IconLogout,
   IconMessageCircle,
   IconServicemark,
-  IconSettings,
   IconUser,
 } from "@tabler/icons-react";
 import ThemeSwitch from "../themeSwitch";
 import { useAuthStore } from "@/app/_store/authStore";
-import { toast } from "react-toastify";
 
 const Header = () => {
   const { colorScheme } = useMantineColorScheme();

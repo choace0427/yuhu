@@ -2,7 +2,7 @@ import { Image } from "@mantine/core";
 
 export default function TrainingCard({ src = "", title = "", body = "" }) {
   return (
-    <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 md:w-[240px] w-[190px] md:h-[450px] h-[300px] border lg:p-4 md:p-3 p-2 rounded-lg bg-[#D9D9D9]">
+    <div className="flex flex-col items-center justify-center lg:gap-4 md:gap-3 gap-2 md:w-[300px] w-[190px] md:h-[450px] h-[300px] border lg:p-4 md:p-3 p-2 rounded-lg bg-[#D9D9D9]">
       <Image
         className="massage-responsive w-[210px] h-[130px] rounded-xl bg-cover bg-center"
         id="training"

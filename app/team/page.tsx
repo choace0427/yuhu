@@ -1,32 +1,99 @@
-import { Image } from "@mantine/core";
-import TeamCard from "../components/team/TeamCard";
+"use client";
 
-export default function TeamPage() {
+import { Image } from "@mantine/core";
+import { motion } from "framer-motion";
+
+const TeamSection = () => {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.3,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut",
+      },
+    },
+  };
+
+  const imageVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.8,
+        ease: "easeOut",
+      },
+    },
+  };
+
+  const buttonVariants = {
+    initial: { scale: 1 },
+    hover: {
+      scale: 1.05,
+      transition: {
+        duration: 0.2,
+        ease: "easeInOut",
+      },
+    },
+  };
+
   return (
-    <div className="flex flex-col w-full items-center justify-center">
-      <div className="flex flex-col lg:gap-16 md:gap-12 sm:gap-8 gap-4 max-w-7xl w-full px-4">
-        <div className="w-full flex md:flex-row flex-col md:gap-0 gap-2 items-center justify-between lg:pt-10 md:pt-8 pt-6">
-          <div className="flex flex-col gap-4 max-w-[600px] md:items-start items-center">
-            <span className="lg:text-5xl md:text-4xl text-3xl text-[#46A7B0] Poppins-font font-semibold">
-              Meet the Team
-            </span>
-            <span className="lg:text-lg md:text-base text-sm text-black Poppins-font md:text-start text-center">
-              All of our professional massage therapists are fully licensed,
-              insured, and rigorously vetted through our industry-leading
-              security protocols. When you book a Yuhu Wellness service, be it a
-              relaxing massage, a sports massage, a personal training or our
-              beauty treatment sessions, you will receive a confirmation with
-              your therapist&apos;s full name, professional bio, and details
-              about their expertise, ensuring transparency and trust. We are
-              committed to providing the highest level of comfort and security.
-            </span>
-            <button className="font-bold Poppins-font border-b-2 border-[#46A7B0] text-black animate-pulse">
-              <span className="text-[#46A7B0] md:text-lg sm:text-base">B</span>
-              <span className="md:text-lg sm:text-base">OOK</span>&nbsp;
-              <span className="text-[#46A7B0] md:text-lg sm:text-base">T</span>
-              <span className="md:text-lg sm:text-base">ODAY</span>
-            </button>
-          </div>
+    <motion.div
+      className="flex flex-col lg:gap-16 md:gap-12 sm:gap-8 gap-4 max-w-7xl w-full px-4 mx-auto my-20"
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+    >
+      <div className="w-full flex md:flex-row flex-col md:gap-10 gap-2 items-center justify-between">
+        <motion.div
+          className="flex flex-col gap-4 max-w-[600px] md:items-start items-center"
+          variants={itemVariants}
+        >
+          <motion.span
+            className="lg:text-5xl md:text-4xl text-3xl text-[#46A7B0] Poppins-font font-semibold"
+            variants={itemVariants}
+          >
+            Meet the Team
+          </motion.span>
+          <motion.span
+            className="lg:text-lg md:text-base text-sm text-black Poppins-font md:text-start text-center"
+            variants={itemVariants}
+          >
+            All of our professional massage therapists are fully licensed,
+            insured, and rigorously vetted through our industry-leading security
+            protocols. When you book a Yuhu Wellness service, be it a relaxing
+            massage, a sports massage, a personal training or our beauty
+            treatment sessions, you will receive a confirmation with your
+            therapist&apos;s full name, professional bio, and details about
+            their expertise, ensuring transparency and trust. We are committed
+            to providing the highest level of comfort and security.
+          </motion.span>
+          <motion.button
+            className="font-bold Poppins-font border-b-2 border-[#46A7B0] text-black"
+            variants={buttonVariants}
+            whileHover="hover"
+            initial="initial"
+          >
+            <span className="text-[#46A7B0] md:text-lg sm:text-base">B</span>
+            <span className="md:text-lg sm:text-base">OOK</span>&nbsp;
+            <span className="text-[#46A7B0] md:text-lg sm:text-base">T</span>
+            <span className="md:text-lg sm:text-base">ODAY</span>
+          </motion.button>
+        </motion.div>
+        <motion.div variants={imageVariants}>
           <Image
             className="team-responsive"
             id="team"
@@ -35,53 +102,10 @@ export default function TeamPage() {
             width={550}
             height={460}
           />
-        </div>
-        <div className="flex flex-col lg:gap-8 md:gap-6 gap-4 items-center justify-center">
-          <div className="flex md:flex-row flex-col w-full md:justify-between justify-center items-center lg:px-10 md:px-8 sm:px-6 px-4 md:pb-20 pb-0 md:gap-0 gap-4">
-            <TeamCard />
-            <TeamCard />
-          </div>
-          <div className="flex md:flex-row flex-col w-full md:justify-between justify-center items-center lg:px-10 md:px-8 sm:px-6 px-4 md:pb-20 pb-0 md:gap-0 gap-4">
-            <TeamCard />
-            <TeamCard />
-          </div>
-          <div className="flex md:flex-row flex-col w-full md:justify-between justify-center items-center lg:px-10 md:px-8 sm:px-6 px-4 md:pb-20 pb-0 md:gap-0 gap-4">
-            <TeamCard />
-            <TeamCard />
-          </div>
-          <div className="flex md:flex-row flex-col w-full md:justify-between justify-center items-center lg:px-10 md:px-8 sm:px-6 px-4 md:pb-20 pb-0 md:gap-0 gap-4">
-            <TeamCard />
-            <TeamCard />
-          </div>
-          <div className="flex md:flex-row flex-col w-full md:justify-between justify-center items-center lg:px-10 md:px-8 sm:px-6 px-4 md:pb-20 pb-6 md:gap-0 gap-4">
-            <TeamCard />
-            <TeamCard />
-          </div>
-        </div>
+        </motion.div>
       </div>
-      <div className="w-full bg-[#D9D9D9] lg:py-10 md:py-8 py-6 flex items-center justify-center lg:mb-20 md:mb-16 mb-12">
-        <div className="flex flex-col lg:gap-8 md:gap-6 gap-4 max-w-7xl items-center">
-          <span className="lg:text-3xl md:text-2xl text-xl text-[#46A7B0] Poppins-font text-center">
-            Join Us on Our Journey
-          </span>
-          <span className="lg:text-lg md:text-base text-sm text-black Poppins-font text-center px-10">
-            Lorem ipsum dolor sit amet consectetur. Magna risus et in tempor
-            nulla condimentum in ac. Sapien nisl nisl ac lobortis mauris. Vitae
-            Lorem ipsum dolor sit amet consectetur. Magna risus et in tempor
-            nulla condimentum in ac. Sapien nisl nisl ac lobortis mauris. Vitae
-          </span>
-          {/* <button className="bg-[#46A7B0] md:text-base text-sm text-white Poppins-font p-2 w-24 rounded-md">
-              Join Now
-            </button> */}
-          <button className="w-24 font-bold Poppins-font border-b-2 border-[#46A7B0] text-black animate-pulse">
-            <span className="text-[#46A7B0] md:text-lg sm:text-base">J</span>
-            <span className="md:text-lg sm:text-base">oin</span>&nbsp;
-            <span className="text-[#46A7B0] md:text-lg sm:text-base">N</span>
-            <span className="md:text-lg sm:text-base">ow</span>
-          </button>
-        </div>
-      </div>
-      {/* <Footer /> */}
-    </div>
+    </motion.div>
   );
-}
+};
+
+export default TeamSection;

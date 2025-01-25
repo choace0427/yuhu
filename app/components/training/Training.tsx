@@ -33,12 +33,13 @@ export default function Training() {
       <Carousel
         withIndicators
         height={500}
-        slideSize="20%"
+        slideSize="25%"
         slideGap="md"
         loop
-        align="start"
+        align="center"
         slidesToScroll={5}
         withControls={false}
+        dragFree
       >
         {trainingcardData &&
           trainingcardData.map((item, index) => (

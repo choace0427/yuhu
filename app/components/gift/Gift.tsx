@@ -42,6 +42,7 @@ export default function Gift() {
         slideSize="20%"
         slideGap="md"
         loop
+        dragFree
         align="start"
         slidesToScroll={5}
         withControls={false}
