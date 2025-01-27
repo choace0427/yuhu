@@ -98,7 +98,7 @@ export default function NotifcationsPage() {
     }
   };
 
-  const handleDecline = async (booking_id: any) => {
+  const handleDecline = async (booking_id: any, customer_id: any) => {
     try {
       const { data, error } = await supabase
         .from("booking_list")
@@ -134,7 +134,8 @@ export default function NotifcationsPage() {
             .from("transaction_list")
             .insert({
               transaction_id: refund?.id,
-              customer_id: userInfo.id,
+              customer_id: customer_id,
+              therapist_id: userInfo?.id,
               status: "refunded",
               booking_id: booking_id,
             });
@@ -290,7 +291,9 @@ export default function NotifcationsPage() {
                           color="red"
                           size="lg"
                           aria-label="Decline"
-                          onClick={() => handleDecline(item?.booking_id)}
+                          onClick={() =>
+                            handleDecline(item?.booking_id, item?.customer_id)
+                          }
                         >
                           <IconX style={{ width: rem(20) }} />
                         </ActionIcon>
