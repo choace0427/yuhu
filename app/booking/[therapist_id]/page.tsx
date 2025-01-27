@@ -516,6 +516,7 @@ const Paymentcomponent = ({
             customer_id: userInfo.id,
             status: paymentIntent?.status,
             booking_id: bookingId,
+            therapist_id: therapistId,
           },
         ]);
 
