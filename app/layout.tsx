@@ -15,6 +15,7 @@ import "@mantine/carousel/styles.css";
 import "@mantine/dates/styles.css";
 import "@mantine/dropzone/styles.css";
 import { BlockedUserHandler } from "./components/BlockedUserHandler";
+import { Suspense } from "react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -45,7 +46,9 @@ export default function RootLayout({
       <body>
         <MantineProvider>
           <MainLayout>
-            <BlockedUserHandler />
+            <Suspense>
+              <BlockedUserHandler />
+            </Suspense>
             {children}
           </MainLayout>
         </MantineProvider>
