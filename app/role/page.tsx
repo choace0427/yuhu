@@ -3,18 +3,17 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { supabase } from "@/supabase";
 import { useAuthStore } from "../_store/authStore";
 import { toast } from "react-toastify";
 import { IconMassage, IconUser } from "@tabler/icons-react";
+import { createClient } from "../utils/supabase/client";
 
 export default function UserRole() {
+  const supabase = createClient();
   const { setUserInfo, setIsAuth } = useAuthStore();
   const [selectedRole, setSelectedRole] = useState("customer");
   const router = useRouter();
   const [userData, setUserData] = useState<any>();
-
-  console.log("------", userData);
 
   const handleCustomerCreateAccount = async () => {
     const response = await fetch("/api/create-customer", {

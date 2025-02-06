@@ -1,17 +1,16 @@
 "use client";
 
 import { useAuthStore } from "@/app/_store/authStore";
-import { supabase } from "@/supabase";
+import { createClient } from "@/app/utils/supabase/client";
 import {
   Avatar,
   Button,
   Flex,
-  Loader,
   Modal,
   Textarea,
   TextInput,
 } from "@mantine/core";
-import { DatePicker, DatePickerInput, DateValue } from "@mantine/dates";
+import { DatePickerInput } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
 import {
   IconCalendar,
@@ -27,6 +26,7 @@ import { toast } from "react-toastify";
 
 export default function TherapistGeneralProfile() {
   const { userInfo, setUserInfo } = useAuthStore();
+  const supabase = createClient();
 
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState<string>("");

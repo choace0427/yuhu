@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/supabase";
 import dayjs from "dayjs";
 import {
   IconBell,
@@ -25,9 +24,11 @@ import {
 } from "@mantine/core";
 import { useAuthStore } from "../_store/authStore";
 import { toast } from "react-toastify";
+import { createClient } from "../utils/supabase/client";
 
 export default function NotifcationsPage() {
   const { userInfo } = useAuthStore();
+  const supabase = createClient();
 
   const [notifications, setNotifications] = useState<any[]>([]);
   const [othersNotifications, setOthersNotifications] = useState<any[]>([]);

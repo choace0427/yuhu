@@ -188,27 +188,42 @@ export default function Home() {
                 </Text>
 
                 <Card.Section p="md" bg="gray.0">
-                  <Group grow>
-                    <Button
-                      variant="filled"
-                      color="blue"
+                  <Flex justify={"space-around"}>
+                    <button
+                      className="font-bold Poppins-font border-b-2 border-[#46A7B0] text-black animate-pulse w-fit"
                       onClick={() =>
                         router.push(`/booking/${therapist?.therapist_list?.id}`)
                       }
                     >
-                      Book Session
-                    </Button>
-                    <Button
-                      variant="light"
+                      <span className="text-[#46A7B0] md:text-xl sm:text-base">
+                        B
+                      </span>
+                      <span className="md:text-xl sm:text-base">ook</span>
+                      &nbsp;
+                      <span className="text-[#46A7B0] md:text-xl sm:text-base">
+                        S
+                      </span>
+                      <span className="md:text-xl sm:text-base">ession</span>
+                    </button>
+                    <button
+                      className="font-bold Poppins-font border-b-2 border-[#46A7B0] text-black animate-pulse"
                       onClick={() =>
                         router.push(
                           `/therapist/detail/${therapist?.therapist_list?.id}_${serviceType}`
                         )
                       }
                     >
-                      View Profile
-                    </Button>
-                  </Group>
+                      <span className="text-[#46A7B0] md:text-xl sm:text-base">
+                        V
+                      </span>
+                      <span className="md:text-xl sm:text-base">iew</span>
+                      &nbsp;
+                      <span className="text-[#46A7B0] md:text-xl sm:text-base">
+                        P
+                      </span>
+                      <span className="md:text-xl sm:text-base">rofile</span>
+                    </button>
+                  </Flex>
                 </Card.Section>
               </Card>
             ))}

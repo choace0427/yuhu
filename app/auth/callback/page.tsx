@@ -6,11 +6,13 @@ import { supabase } from "@/supabase";
 import { Loader } from "@mantine/core";
 import { toast } from "react-toastify";
 import { useAuthStore } from "@/app/_store/authStore";
+import { createClient } from "@/app/utils/supabase/client";
 
 const Callback = () => {
   const { setUserInfo, setIsAuth } = useAuthStore();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const supabase = createClient();
 
   useEffect(() => {
     handleCallback();

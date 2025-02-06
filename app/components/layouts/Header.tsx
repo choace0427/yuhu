@@ -126,7 +126,10 @@ const Header = () => {
               : "!text-white"
           }`}
         >
-          Home
+          <div className="Poppins-font font-bold">
+            <span className="text-lg text-[#46A7B0]">H</span>
+            <span className={`text-lg`}>ome</span>
+          </div>
         </Anchor>
         <Anchor
           underline={pathname === "/about" ? "always" : "hover"}
@@ -139,7 +142,10 @@ const Header = () => {
               : "!text-white"
           }`}
         >
-          About
+          <div className="Poppins-font font-bold">
+            <span className="text-lg text-[#46A7B0]">A</span>
+            <span className={`text-lg`}>bout</span>
+          </div>
         </Anchor>
         <Anchor
           underline={pathname === "/services" ? "always" : "hover"}
@@ -152,7 +158,13 @@ const Header = () => {
               : "!text-white"
           }`}
         >
-          Our services
+          <div className="Poppins-font font-bold">
+            <span className="text-lg text-[#46A7B0]">O</span>
+            <span className={`text-lg`}>ur</span>
+            &nbsp;
+            <span className="text-lg text-[#46A7B0]">S</span>
+            <span className={`text-lg`}>ervices</span>
+          </div>
         </Anchor>
         <Anchor
           underline={pathname === "/team" ? "always" : "hover"}
@@ -165,7 +177,10 @@ const Header = () => {
               : "!text-white"
           }`}
         >
-          Team
+          <div className="Poppins-font font-bold">
+            <span className="text-lg text-[#46A7B0]">T</span>
+            <span className={`text-lg`}>eam</span>
+          </div>
         </Anchor>
         <Anchor
           onClick={() => router.push("/pricing")}
@@ -178,7 +193,10 @@ const Header = () => {
               : "!text-white"
           }`}
         >
-          Pricing
+          <div className="Poppins-font font-bold">
+            <span className="text-lg text-[#46A7B0]">P</span>
+            <span className={`text-lg`}>ricing</span>
+          </div>
         </Anchor>
         <Anchor
           onClick={() => router.push("/contactus")}
@@ -191,7 +209,13 @@ const Header = () => {
               : "!text-white"
           }`}
         >
-          Contact us
+          <div className="Poppins-font font-bold">
+            <span className="text-lg text-[#46A7B0]">C</span>
+            <span className={`text-lg`}>ontact</span>
+            &nbsp;
+            <span className="text-lg text-[#46A7B0]">U</span>
+            <span className={`text-lg`}>s</span>
+          </div>
         </Anchor>
       </Group>
       {!isAuthenticated ? (

@@ -1,6 +1,5 @@
 "use client";
 
-import { supabase } from "@/supabase";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../_store/authStore";
@@ -10,19 +9,15 @@ import {
   Card,
   Flex,
   ScrollArea,
-  Menu,
   Skeleton,
   Text,
   TextInput,
-  LoadingOverlay,
   Textarea,
   Loader,
 } from "@mantine/core";
 import { IconSend, IconX } from "@tabler/icons-react";
-import { IconNotification } from "@tabler/icons-react";
-import { IconUser } from "@tabler/icons-react";
-import { IconDotsVertical } from "@tabler/icons-react";
 import { IconSearch } from "@tabler/icons-react";
+import { createClient } from "../utils/supabase/client";
 
 export default function ChatPage() {
   const { userInfo } = useAuthStore();
@@ -30,6 +25,7 @@ export default function ChatPage() {
   const [chatMembers, setChatMembers] = useState([]);
 
   const [chatMembersLoading, setChatMembersLoading] = useState(false);
+  const supabase = createClient();
 
   const selectChatUser = async (
     sender_id: any,

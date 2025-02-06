@@ -35,12 +35,10 @@ import {
 import { useAuthStore } from "../_store/authStore";
 import { useDisclosure } from "@mantine/hooks";
 import dayjs from "dayjs";
-import { supabase } from "@/supabase";
 import { toast } from "react-toastify";
 import { useForm } from "@mantine/form";
 import { useRouter, useSearchParams } from "next/navigation";
-
-import { loadStripe } from "@stripe/stripe-js";
+import { createClient } from "../utils/supabase/client";
 
 interface Service {
   category: string;
@@ -55,6 +53,7 @@ interface ServiceType {
 }
 
 export default function TherapistDashboard() {
+  const supabase = createClient();
   const { userInfo, setUserInfo } = useAuthStore();
   const [openedAddService, { open: openAddService, close: closeAddService }] =
     useDisclosure(false);
@@ -77,8 +76,6 @@ export default function TherapistDashboard() {
   const [phone, setPhone] = useState("");
   const [location, setLocation] = useState("");
   const [summary, setSummary] = useState("");
-
-  const [selected, setSelected] = useState<Service[]>([]);
 
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(false);
@@ -627,6 +624,7 @@ export default function TherapistDashboard() {
 }
 
 const ChangePasswordComponent = () => {
+  const supabase = createClient();
   const passwordform = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -697,6 +695,7 @@ const ChangePasswordComponent = () => {
 };
 
 const PaymentComponent = () => {
+  const supabase = createClient();
   const { userInfo, setUserInfo } = useAuthStore();
   const searchParams = useSearchParams();
   const router = useRouter();

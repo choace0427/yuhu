@@ -134,10 +134,21 @@ export default function Home(params: any) {
                 {userData?.summary || "Unknown"}
               </Text>
 
-              <Group mt="xl">
-                <Button onClick={() => handleConfirmBooking()}>
-                  Book Appointment
-                </Button>
+              <Group mt="xl" ps={"start"}>
+                <button
+                  className="font-bold Poppins-font border-b-2 border-[#46A7B0] text-black animate-pulse w-fit"
+                  onClick={() => handleConfirmBooking()}
+                >
+                  <span className="text-[#46A7B0] md:text-xl sm:text-base">
+                    B
+                  </span>
+                  <span className="md:text-xl sm:text-base">ook</span>
+                  &nbsp;
+                  <span className="text-[#46A7B0] md:text-xl sm:text-base">
+                    N
+                  </span>
+                  <span className="md:text-xl sm:text-base">ow</span>
+                </button>
               </Group>
             </Grid.Col>
 

@@ -14,13 +14,14 @@ import {
 import { IconUser, IconLock, IconCamera } from "@tabler/icons-react";
 import { useAuthStore } from "../_store/authStore";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/supabase";
 import { toast } from "react-toastify";
 import { useForm } from "@mantine/form";
 import dayjs from "dayjs";
 import { DatePickerInput } from "@mantine/dates";
+import { createClient } from "../utils/supabase/client";
 
 export default function ProfileSettings() {
+  const supabase = createClient();
   const [activeTab, setActiveTab] = useState<string | null>("general");
 
   const { userInfo, setUserInfo } = useAuthStore();
@@ -143,6 +144,7 @@ export default function ProfileSettings() {
 
 const GeneralProfile = () => {
   const { userInfo, setUserInfo } = useAuthStore();
+  const supabase = createClient();
 
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
@@ -216,6 +218,7 @@ const GeneralProfile = () => {
 };
 
 const ChangePasswordComponent = () => {
+  const supabase = createClient();
   const passwordform = useForm({
     mode: "uncontrolled",
     initialValues: {

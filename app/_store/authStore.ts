@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { createClient } from "../utils/supabase/client";
 
 interface AuthState {
   session: any | null;
@@ -26,6 +27,7 @@ export const useAuthStore = create(
       isAuthenticated: false,
       userInfo: null,
       signIn: async (email: string, password: string, router: any) => {
+        const supabase = createClient();
         try {
           const { data, error } = await supabase.auth.signInWithPassword({
             email,
@@ -76,6 +78,7 @@ export const useAuthStore = create(
         }
       },
       signUp: async (name, email, password, router) => {
+        const supabase = createClient();
         try {
           const { data, error } = await supabase.auth.signUp({
             email,
@@ -100,6 +103,7 @@ export const useAuthStore = create(
         }
       },
       signOut: async (router) => {
+        const supabase = createClient();
         try {
           localStorage.removeItem("userInfo");
           set({ userInfo: null, isAuthenticated: false });
@@ -108,12 +112,13 @@ export const useAuthStore = create(
             isAuthenticated: false,
             userInfo: null,
           });
-          router.push("/");
+          router.push("/auth/login");
         } catch (err) {
           console.error("Error during sign-out:", err);
         }
       },
       handlegoogleSignin: async (router: any) => {
+        const supabase = createClient();
         const { error } = await supabase.auth.signInWithOAuth({
           provider: "google",
           options: {
@@ -142,6 +147,7 @@ export const useAuthStore = create(
       setIsAuth: (isAuth) => set({ isAuthenticated: isAuth }),
       setUserInfo: (userInfo) => set({ userInfo: userInfo }),
       checkAuthState: async () => {
+        const supabase = createClient();
         const { data } = await supabase.auth.getSession();
 
         if (data?.session) {

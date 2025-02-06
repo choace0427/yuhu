@@ -14,6 +14,7 @@ import "@mantine/core/styles.css";
 import "@mantine/carousel/styles.css";
 import "@mantine/dates/styles.css";
 import "@mantine/dropzone/styles.css";
+import { BlockedUserHandler } from "./components/BlockedUserHandler";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -43,7 +44,10 @@ export default function RootLayout({
       </head>
       <body>
         <MantineProvider>
-          <MainLayout>{children}</MainLayout>
+          <MainLayout>
+            <BlockedUserHandler />
+            {children}
+          </MainLayout>
         </MantineProvider>
         <ToastContainer
           position="top-right"

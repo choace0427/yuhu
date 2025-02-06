@@ -5,7 +5,6 @@ import {
   Card,
   Container,
   Image,
-  Loader,
   SimpleGrid,
   Skeleton,
   Stack,
@@ -14,20 +13,30 @@ import {
   Title,
 } from "@mantine/core";
 import { useAuthStore } from "../_store/authStore";
-import Service from "../components/service/Service";
 import { useRouter } from "next/navigation";
 import { IconMassage, IconSparkles, IconYoga } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { supabase } from "@/supabase";
+import { createClient } from "../utils/supabase/client";
 
 export default function CustomerPage() {
+  const supabase = createClient();
   const { userInfo } = useAuthStore();
   const router = useRouter();
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [category, setCategory] = useState<any[]>([]);
 
   const handleBooking = (service: string) => {
     router.push(`/therapist/list?service=${service}`);
+  };
+
+  const handlefetchCategory = async () => {
+    const { data, error } = await supabase.from("service_category").select();
+    if (error) {
+      console.log("error", error);
+      return;
+    }
+    setCategory(data);
   };
 
   const handlefetchServices = async () => {
@@ -43,6 +52,7 @@ export default function CustomerPage() {
 
   useEffect(() => {
     handlefetchServices();
+    handlefetchCategory();
   }, []);
 
   return (
@@ -88,17 +98,19 @@ export default function CustomerPage() {
 
       {/* Services Sections */}
       <Container size="lg" py="xl">
-        <Tabs defaultValue="massage">
+        <Tabs defaultValue={"1"} color="#46A7B0">
           <Tabs.List grow mb="xl">
-            <Tabs.Tab value="massage" leftSection={<IconMassage size={16} />}>
-              Massage Therapy
-            </Tabs.Tab>
-            <Tabs.Tab value="training" leftSection={<IconYoga size={16} />}>
-              Personal Training
-            </Tabs.Tab>
-            <Tabs.Tab value="beauty" leftSection={<IconSparkles size={16} />}>
-              Beauty Treatments
-            </Tabs.Tab>
+            {category?.map((category, index) => {
+              return (
+                <Tabs.Tab
+                  value={String(category.id)}
+                  key={index}
+                  // leftSection={<IconMassage size={16} />}
+                >
+                  {category?.category}
+                </Tabs.Tab>
+              );
+            })}
           </Tabs.List>
 
           {loading ? (
@@ -111,56 +123,26 @@ export default function CustomerPage() {
             </SimpleGrid>
           ) : (
             <>
-              <Tabs.Panel value="massage">
-                <Title order={2} ta="center" mb="xl">
-                  Massage Services
-                </Title>
-                <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
-                  {services
-                    ?.filter((item) => item.category_id === 1)
-                    .map((service) => (
-                      <ServiceCard
-                        key={service.name}
-                        service={service}
-                        handleBooking={handleBooking}
-                      />
-                    ))}
-                </SimpleGrid>
-              </Tabs.Panel>
-
-              <Tabs.Panel value="training">
-                <Title order={2} ta="center" mb="xl">
-                  Training Programs
-                </Title>
-                <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
-                  {services
-                    ?.filter((item) => item.category_id === 2)
-                    .map((service) => (
-                      <ServiceCard
-                        key={service.name}
-                        service={service}
-                        handleBooking={handleBooking}
-                      />
-                    ))}
-                </SimpleGrid>
-              </Tabs.Panel>
-
-              <Tabs.Panel value="beauty">
-                <Title order={2} ta="center" mb="xl">
-                  Beauty Services
-                </Title>
-                <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
-                  {services
-                    ?.filter((item) => item.category_id === 3)
-                    .map((service) => (
-                      <ServiceCard
-                        key={service.name}
-                        service={service}
-                        handleBooking={handleBooking}
-                      />
-                    ))}
-                </SimpleGrid>
-              </Tabs.Panel>
+              {category?.map((category, index) => {
+                return (
+                  <Tabs.Panel value={String(category?.id)} key={index}>
+                    <Title order={2} ta="center" mb="xl">
+                      {category?.category}
+                    </Title>
+                    <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
+                      {services
+                        ?.filter((item) => item.category_id === category?.id)
+                        .map((service) => (
+                          <ServiceCard
+                            key={service.name}
+                            service={service}
+                            handleBooking={handleBooking}
+                          />
+                        ))}
+                    </SimpleGrid>
+                  </Tabs.Panel>
+                );
+              })}
             </>
           )}
         </Tabs>
@@ -187,17 +169,16 @@ const ServiceCard = ({ service, handleBooking }: any) => {
       <Text size="sm" c="dimmed" mb="md">
         {service?.service_content}
       </Text>
-
-      <Button
-        variant="light"
-        color="blue"
-        fullWidth
-        mt="md"
-        radius="md"
+      <button
+        className="font-bold Poppins-font border-b-2 border-[#46A7B0] text-black animate-pulse w-fit mx-auto"
         onClick={() => handleBooking(service?.id)}
       >
-        Book Now
-      </Button>
+        <span className="text-[#46A7B0] md:text-xl sm:text-base">B</span>
+        <span className="md:text-xl sm:text-base">ook</span>
+        &nbsp;
+        <span className="text-[#46A7B0] md:text-xl sm:text-base">N</span>
+        <span className="md:text-xl sm:text-base">ow</span>
+      </button>
     </Card>
   );
 };

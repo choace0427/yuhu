@@ -2,6 +2,7 @@
 
 import { useAuthStore } from "@/app/_store/authStore";
 import ReviewPage from "@/app/components/review/ReviewLeft";
+import { createClient } from "@/app/utils/supabase/client";
 import { supabase } from "@/supabase";
 import {
   Card,
@@ -204,6 +205,7 @@ export default function BookingList() {
     };
   }, [userInfo?.id]);
 
+  const supabase = createClient();
   const [selectedBook, setSelectedBook] = useState<any>({});
   const [submitted, setSubmitted] = useState(false);
 

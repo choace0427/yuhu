@@ -52,7 +52,7 @@ export default function LoginPage() {
                 Already have an account?{" "}
                 <span
                   className="text-[#46A7B0] hover:cursor-pointer"
-                  onClick={() => router.push("/auth/login")}
+                  onClick={() => router.push("/login")}
                 >
                   Login
                 </span>

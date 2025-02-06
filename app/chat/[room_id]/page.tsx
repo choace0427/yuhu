@@ -1,6 +1,5 @@
 "use client";
 
-import { supabase } from "@/supabase";
 import { useState, useEffect, useRef } from "react";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
@@ -38,6 +37,7 @@ import {
 } from "@tabler/icons-react";
 import { toast } from "react-toastify";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
+import { createClient } from "@/app/utils/supabase/client";
 
 type User = {
   id: string;
@@ -50,6 +50,7 @@ type Therapist = {
 };
 
 export default function ChatPage(params: any) {
+  const supabase = createClient();
   const { userInfo } = useAuthStore();
   const router = useRouter();
 
@@ -477,6 +478,7 @@ const TherapistList = ({
   );
 };
 const ChatSection = ({ room_id, currentUser }: any) => {
+  const supabase = createClient();
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
