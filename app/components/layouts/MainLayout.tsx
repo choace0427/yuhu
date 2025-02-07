@@ -5,6 +5,7 @@ import Footer from "./Footer";
 import Header from "./Header";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuthStore } from "@/app/_store/authStore";
 
 export default function MainLayout({
   children,
@@ -12,11 +13,15 @@ export default function MainLayout({
   children: React.ReactNode;
 }>) {
   const pathname = usePathname();
+  const { userInfo } = useAuthStore();
+
+  console.log("-0-", userInfo);
 
   return (
     <div className="min-h-screen">
       <Header />
-      <ChatWidget />
+      {userInfo?.role === "customer" && <ChatWidget />}
+
       <AnimatePresence mode="wait">
         <motion.div
           initial={{ opacity: 0 }}

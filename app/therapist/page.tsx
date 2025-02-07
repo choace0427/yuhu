@@ -22,6 +22,7 @@ import {
   Menu,
   Loader,
   Modal,
+  FileInput,
 } from "@mantine/core";
 import { DatePicker, DatePickerInput, DateValue } from "@mantine/dates";
 import {
@@ -31,6 +32,8 @@ import {
   IconEdit,
   IconTrash,
   IconCircleCheck,
+  IconUpload,
+  IconFile,
 } from "@tabler/icons-react";
 import { useAuthStore } from "../_store/authStore";
 import { useDisclosure } from "@mantine/hooks";
@@ -39,6 +42,7 @@ import { toast } from "react-toastify";
 import { useForm } from "@mantine/form";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "../utils/supabase/client";
+import { ResumeManagement } from "../components/resume-management";
 
 interface Service {
   category: string;
@@ -490,7 +494,6 @@ export default function TherapistDashboard() {
           </Stack>
         </Group>
       </Paper>
-
       <Grid gutter="xl">
         <Grid.Col span={{ base: 12, md: 8 }}>
           <Paper shadow="sm" radius="md" p="xl" mb="xl" withBorder>
@@ -581,6 +584,9 @@ export default function TherapistDashboard() {
         </Grid.Col>
 
         <Grid.Col span={{ base: 12, md: 4 }}>
+          <Paper shadow="sm" radius="md" p="xl" mb="xl" withBorder>
+            <ResumeManagement />
+          </Paper>
           <Paper shadow="sm" radius="md" p="xl" mb="xl" withBorder>
             <DatePicker
               //   value={selectedDate}
