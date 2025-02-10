@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Group,
   Text,
@@ -22,6 +22,8 @@ import {
   IconPdf,
 } from "@tabler/icons-react";
 import { createClient } from "../utils/supabase/client";
+import { PDFDocumentProxy, PDFPageProxy, RenderTask } from "pdfjs-dist";
+import { toast } from "react-toastify";
 
 interface ResumeFile {
   name: string;
@@ -35,13 +37,7 @@ export function ResumeManagement() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
-
-  const [numPages, setNumPages] = useState<number>();
-  const [pageNumber, setPageNumber] = useState<number>(1);
-
-  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }): void => {
-    setNumPages(numPages);
-  };
+  const [viewModalOpen, setViewModalOpen] = useState(false);
 
   useEffect(() => {
     fetchExistingResume();
@@ -75,11 +71,7 @@ export function ResumeManagement() {
         });
       }
     } catch (error) {
-      //   notifications.show({
-      //     title: "Error",
-      //     message: "Failed to fetch existing resume",
-      //     color: "red",
-      //   })
+      toast.error("Failed to fetch existing resume");
     } finally {
       setLoading(false);
     }
@@ -148,25 +140,95 @@ export function ResumeManagement() {
       }
 
       await fetchExistingResume();
-
-      //   notifications.show({
-      //     title: "Success",
-      //     message: existingResume ? "Resume updated successfully" : "Resume uploaded successfully",
-      //     color: "green",
-      //   })
+      toast.success(
+        existingResume
+          ? "Resume updated successfully"
+          : "Resume uploaded successfully"
+      );
 
       setUpdateModalOpen(false);
     } catch (error) {
       console.error("Error:", error);
-      //   notifications.show({
-      //     title: "Error",
-      //     message: "Failed to upload resume and save information",
-      //     color: "red",
-      //   })
+      toast.error("Failed to upload resume and save information");
     } finally {
       setUploading(false);
     }
   };
+
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const renderTaskRef = useRef<RenderTask | null>(null);
+
+  useEffect(() => {
+    if (existingResume?.url) {
+      let isCancelled = false;
+
+      (async function () {
+        const pdfJS = await import("pdfjs-dist");
+
+        // pdfJS.GlobalWorkerOptions.workerSrc =
+        //   window.location.origin + "/public/pdf.worker.min.mjs";
+        pdfJS.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+
+        const pdf: PDFDocumentProxy = await pdfJS.getDocument(
+          existingResume.url
+        ).promise;
+
+        const page: PDFPageProxy = await pdf.getPage(1);
+        const viewport = page.getViewport({ scale: 1.5 });
+
+        const canvas = canvasRef.current;
+        if (!canvas) {
+          console.error("Canvas element not found");
+          return;
+        }
+
+        const canvasContext = canvas.getContext("2d");
+        if (!canvasContext) {
+          console.error("Could not get 2D context");
+          return;
+        }
+
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        if (renderTaskRef.current) {
+          await renderTaskRef.current.promise;
+        }
+
+        const renderContext = {
+          canvasContext,
+          viewport,
+        };
+
+        const renderTask = page.render(renderContext);
+        renderTaskRef.current = renderTask;
+
+        try {
+          await renderTask.promise;
+        } catch (error) {
+          if (
+            error instanceof Error &&
+            error.name === "RenderingCancelledException"
+          ) {
+            console.log("Rendering cancelled.");
+          } else {
+            console.error("Render error:", error);
+          }
+        }
+
+        if (!isCancelled) {
+          console.log("Rendering completed");
+        }
+      })();
+
+      return () => {
+        isCancelled = true;
+        if (renderTaskRef.current) {
+          renderTaskRef.current.cancel();
+        }
+      };
+    }
+  }, [existingResume, viewModalOpen]);
 
   if (loading) {
     return (
@@ -182,7 +244,6 @@ export function ResumeManagement() {
       <Text size="lg" fw={500}>
         Resume Management
       </Text>
-
       {existingResume ? (
         <Stack gap="sm">
           <Group ps="apart">
@@ -200,10 +261,11 @@ export function ResumeManagement() {
             <Button
               leftSection={<IconDownload size={14} />}
               variant="light"
-              component="a"
-              href={existingResume.url}
-              target="_blank"
+              // component="a"
+              // href={existingResume.url}
+              // target="_blank"
               color="blue"
+              onClick={() => setViewModalOpen(true)}
             >
               View Resume
             </Button>
@@ -297,6 +359,15 @@ export function ResumeManagement() {
             </Stack>
           </Group>
         </Dropzone>
+      </Modal>
+
+      <Modal
+        opened={viewModalOpen}
+        onClose={() => setViewModalOpen(false)}
+        title="View Resume"
+        size="lg"
+      >
+        <canvas ref={canvasRef} style={{ height: "100vh", width: "100%" }} />
       </Modal>
     </Stack>
   );

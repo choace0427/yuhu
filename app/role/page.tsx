@@ -84,6 +84,7 @@ export default function UserRole() {
             avatar_url: userData?.user_metadata?.avatar_url || "",
             email: userData?.user_metadata?.email,
             name: userData?.user_metadata?.full_name,
+            step: "general",
           },
         ])
         .select();
@@ -97,7 +98,7 @@ export default function UserRole() {
       toast.success("Sign-up successful!");
       if (userData?.app_metadata?.provider === "google") {
         setIsAuth(true);
-        router.push("/therapist");
+        router.push("/therapist/signup/general");
       } else
         setTimeout(() => {
           router.push("/auth/login");

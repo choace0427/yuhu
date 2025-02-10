@@ -15,8 +15,6 @@ export default function MainLayout({
   const pathname = usePathname();
   const { userInfo } = useAuthStore();
 
-  console.log("-0-", userInfo);
-
   return (
     <div className="min-h-screen">
       <Header />

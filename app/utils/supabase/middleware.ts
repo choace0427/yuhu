@@ -55,34 +55,39 @@ export async function updateSession(request: NextRequest) {
     }
 
     if (therapist) {
-      if (therapist.status === "pending" && request.nextUrl.pathname !== "/") {
-        const redirectUrl = new URL("/", request.url);
-        redirectUrl.searchParams.set("pending", "true");
-        const response = NextResponse.redirect(redirectUrl);
-        response.cookies.set({
-          name: "user_pending",
-          value: "true",
-          maxAge: 10,
-          // httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "strict",
-        });
-        return response;
-        // return NextResponse.redirect(new URL("/", request.url));
-      }
-      if (therapist.status === "block") {
-        const redirectUrl = new URL("/auth/login", request.url);
-        redirectUrl.searchParams.set("blocked", "true");
-        const response = NextResponse.redirect(redirectUrl);
-        response.cookies.set({
-          name: "user_blocked",
-          value: "true",
-          maxAge: 10,
-          // httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "strict",
-        });
-        return response;
+      if (therapist.step === "completed") {
+        if (
+          therapist.status === "pending" &&
+          request.nextUrl.pathname !== "/"
+        ) {
+          const redirectUrl = new URL("/therapist", request.url);
+          redirectUrl.searchParams.set("pending", "true");
+          const response = NextResponse.redirect(redirectUrl);
+          response.cookies.set({
+            name: "user_pending",
+            value: "true",
+            maxAge: 10,
+            // httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+          });
+          return response;
+          // return NextResponse.redirect(new URL("/", request.url));
+        }
+        if (therapist.status === "block") {
+          const redirectUrl = new URL("/auth/login", request.url);
+          redirectUrl.searchParams.set("blocked", "true");
+          const response = NextResponse.redirect(redirectUrl);
+          response.cookies.set({
+            name: "user_blocked",
+            value: "true",
+            maxAge: 10,
+            // httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+          });
+          return response;
+        }
       }
     } else {
       // Check customer status

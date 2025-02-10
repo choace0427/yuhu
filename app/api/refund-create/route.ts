@@ -20,8 +20,6 @@ export async function POST(req: NextRequest) {
       payment_intent: paymentIntent,
     });
 
-    console.log("---------", refund);
-
     return NextResponse.json({ refund }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json(

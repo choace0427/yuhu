@@ -64,8 +64,24 @@ export const useAuthStore = create(
               return;
             }
 
-            set({ userInfo: therapistData, isAuthenticated: true });
-            router.push("/therapist");
+            if (therapistData.step === "general") {
+              set({ userInfo: therapistData, isAuthenticated: true });
+              router.push("/therapist/signup/general");
+            }
+
+            if (therapistData.step === "services") {
+              set({ userInfo: therapistData, isAuthenticated: true });
+              router.push("/therapist/signup/services");
+            }
+
+            if (therapistData.step === "payment") {
+              set({ userInfo: therapistData, isAuthenticated: true });
+              router.push("/therapist/signup/payment");
+            }
+            if (therapistData.step === "completed") {
+              set({ userInfo: therapistData, isAuthenticated: true });
+              router.push("/therapist");
+            }
           } else {
             set({ userInfo: customerData, isAuthenticated: true });
             router.push("/customer");

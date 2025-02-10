@@ -1051,3 +1051,13 @@ const ServicesComponent = ({
     </Paper>
   );
 };
+
+// import ProfileSetup from "../components/therapist/ProfileSetup";
+// import Dashboard from "../components/therapist/Dashboard";
+
+// export default function Page() {
+//   // In a real application, you would check if the user has completed the profile setup
+//   const isProfileComplete = true;
+
+//   return isProfileComplete ? <Dashboard /> : <ProfileSetup />;
+// }
