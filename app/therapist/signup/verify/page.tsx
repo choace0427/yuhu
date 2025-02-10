@@ -37,30 +37,16 @@ import { useAuthStore } from "@/app/_store/authStore";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-interface ImageManagerProps {
-  recordId: string;
-  onImagesChange?: (urls: string[]) => void;
-}
-
-interface ImageFile {
-  url: string;
-  path: string;
-  name: string;
-}
-
-export default function ImageManager({
-  recordId,
-  onImagesChange,
-}: ImageManagerProps) {
+export default function ImageManager() {
   const supabase = createClient();
   const { userInfo } = useAuthStore();
   const router = useRouter();
 
-  const [images, setImages] = useState<ImageFile[]>([]);
+  const [images, setImages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
-  const [previewImage, setPreviewImage] = useState<ImageFile | null>(null);
-  const [editingImage, setEditingImage] = useState<ImageFile | null>(null);
+  const [previewImage, setPreviewImage] = useState<any | null>(null);
+  const [editingImage, setEditingImage] = useState<any | null>(null);
   const [showDropzone, setShowDropzone] = useState(false);
   const [editDropzoneKey, setEditDropzoneKey] = useState(0);
   const [newImageName, setNewImageName] = useState("");
@@ -78,7 +64,7 @@ export default function ImageManager({
 
       if (error) throw error;
 
-      const imageFiles: ImageFile[] = await Promise.all(
+      const imageFiles: any[] = await Promise.all(
         data.map(async (file) => {
           const {
             data: { publicUrl },
@@ -95,9 +81,6 @@ export default function ImageManager({
       );
 
       setImages(imageFiles);
-      if (onImagesChange) {
-        onImagesChange(imageFiles.map((img) => img.url));
-      }
     } catch (error) {
       console.error("Error fetching images:", error);
     } finally {
@@ -138,7 +121,7 @@ export default function ImageManager({
     }
   };
 
-  const handleRemove = async (image: ImageFile) => {
+  const handleRemove = async (image: any) => {
     try {
       const { error } = await supabase.storage
         .from("document")
@@ -147,11 +130,6 @@ export default function ImageManager({
       if (error) throw error;
 
       setImages(images.filter((img) => img.path !== image.path));
-      if (onImagesChange) {
-        onImagesChange(
-          images.filter((img) => img.path !== image.path).map((img) => img.url)
-        );
-      }
     } catch (error) {
       console.error("Error removing image:", error);
     }
