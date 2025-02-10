@@ -78,6 +78,11 @@ export const useAuthStore = create(
               set({ userInfo: therapistData, isAuthenticated: true });
               router.push("/therapist/signup/payment");
             }
+            if (therapistData.step === "verify") {
+              set({ userInfo: therapistData, isAuthenticated: true });
+              router.push("/therapist/signup/verify");
+            }
+
             if (therapistData.step === "completed") {
               set({ userInfo: therapistData, isAuthenticated: true });
               router.push("/therapist");

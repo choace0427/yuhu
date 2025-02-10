@@ -113,7 +113,7 @@ export default function GeneralProfileSignUp() {
     const { data, error } = await supabase
       .from("therapist_list")
       .update({
-        name: name,
+        name: name || userInfo?.name,
         hourly_rate: hourlyRate || userInfo?.hourly_rate,
         phone: phone || userInfo?.phone,
         location: location || userInfo?.location,

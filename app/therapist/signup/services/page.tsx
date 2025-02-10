@@ -385,11 +385,11 @@ export default function ServicesComponent() {
     setSubmitLoading(true);
     const { error } = await supabase
       .from("therapist_list")
-      .update({ step: "payment" })
+      .update({ step: "verify" })
       .eq("id", userInfo?.id);
     if (error) throw error;
     await handlequery();
-    router.push("/therapist/signup/payment");
+    router.push("/therapist/signup/verify");
     setSubmitLoading(false);
   };
 

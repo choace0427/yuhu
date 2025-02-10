@@ -43,6 +43,8 @@ import { useForm } from "@mantine/form";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "../utils/supabase/client";
 import { ResumeManagement } from "../components/resume-management";
+import TherapistScheduleComponent from "../components/therapist/ScheduleComponent";
+import DocumentComponent from "../components/therapist/DocumentComponent";
 
 interface Service {
   category: string;
@@ -175,7 +177,7 @@ export default function TherapistDashboard() {
         phone: phone || userInfo?.phone,
         location: location || userInfo?.location,
         summary: summary || userInfo?.summary,
-        birthday: dayjs(value).format("YYYY-MM-DD") || "",
+        birthday: value || userInfo?.birthday,
       })
       .eq("id", userInfo?.id)
       .select();
@@ -355,39 +357,6 @@ export default function TherapistDashboard() {
     }
   };
 
-  const handleDateSelect = (date: any) => {
-    setValue(date);
-    setSelectedDate(date);
-    // onDateOpen();
-  };
-
-  const handleSaveSchedule = async () => {
-    if (!selectedDate || !userInfo || !availability) return;
-
-    try {
-      if (availability === "available") {
-        const { error } = await supabase.from("service_available_time").insert([
-          {
-            available_time: selectedDate.toString(),
-            user_id: userInfo.id,
-            name: userInfo.name,
-            email: userInfo.email,
-            created_at: new Date(),
-          },
-        ]);
-        if (error) {
-          toast.error("Failed to save schedule.");
-          return;
-        }
-        toast.success("Schedule saved successfully.");
-      }
-      //   onDateOpenChange();
-      setAvailability("");
-    } catch (error) {
-      toast.error("An error occurred while saving schedule.");
-    }
-  };
-
   const handlequery = async () => {
     const { data: therapist_list, error } = await supabase.rpc(
       "get_therapist",
@@ -469,31 +438,7 @@ export default function TherapistDashboard() {
 
   return (
     <Container size="xl" py="xl">
-      <Paper
-        radius="md"
-        p="xl"
-        mb="xl"
-        bg="var(--mantine-color-teal-6)"
-        c="white"
-      >
-        <Group align="flex-start">
-          <Stack gap="xs">
-            <Title order={1}>Welcome, Test_therapist</Title>
-            <Text size="lg">
-              Manage your schedule and services all in one place
-            </Text>
-            <Button
-              variant="white"
-              color="teal"
-              size="md"
-              mt="md"
-              style={{ width: "fit-content" }}
-            >
-              View Schedule
-            </Button>
-          </Stack>
-        </Group>
-      </Paper>
+      <TherapistScheduleComponent />
       <Grid gutter="xl">
         <Grid.Col span={{ base: 12, md: 8 }}>
           <Paper shadow="sm" radius="md" p="xl" mb="xl" withBorder>
@@ -555,7 +500,11 @@ export default function TherapistDashboard() {
               <DatePickerInput
                 label="Birthday"
                 placeholder="Pick date"
-                value={value}
+                // value={value}
+                valueFormat="YYYY-MM-DD"
+                defaultValue={
+                  userInfo?.birthday ? new Date(userInfo.birthday) : null
+                }
                 onChange={setValue}
               />
               <Textarea
@@ -581,13 +530,16 @@ export default function TherapistDashboard() {
           <Suspense>
             <PaymentComponent />
           </Suspense>
+          <Paper shadow="sm" radius="md" mt="xl" withBorder>
+            <DocumentComponent />
+          </Paper>
         </Grid.Col>
 
         <Grid.Col span={{ base: 12, md: 4 }}>
           <Paper shadow="sm" radius="md" p="xl" mb="xl" withBorder>
             <ResumeManagement />
           </Paper>
-          <Paper shadow="sm" radius="md" p="xl" mb="xl" withBorder>
+          {/* <Paper shadow="sm" radius="md" p="xl" mb="xl" withBorder>
             <DatePicker
               //   value={selectedDate}
               //   onChange={setSelectedDate}
@@ -602,7 +554,7 @@ export default function TherapistDashboard() {
                 },
               }}
             />
-          </Paper>
+          </Paper> */}
 
           <ServicesComponent
             loading={loading}
@@ -701,117 +653,7 @@ const ChangePasswordComponent = () => {
 };
 
 const PaymentComponent = () => {
-  const supabase = createClient();
-  const { userInfo, setUserInfo } = useAuthStore();
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-
-  const handleInsertCard = async () => {
-    try {
-      setLoading(true);
-
-      const { data: selectCardData, error: selectCardError } = await supabase
-        .from("credit_card")
-        .select()
-        .eq("account_id", searchParams.get("account_id"))
-        .eq("user_id", userInfo?.id);
-
-      if (selectCardError) {
-        console.error(selectCardError);
-        throw new Error("Failed to fetch existing card data.");
-      }
-
-      if (selectCardData.length > 0) {
-        toast.warn("You created account already!");
-        return;
-      }
-
-      const { error: insertCardError } = await supabase
-        .from("credit_card")
-        .insert({
-          account_id: searchParams.get("account_id"),
-          user_id: userInfo?.id,
-        });
-
-      if (insertCardError) {
-        console.error(insertCardError);
-        throw new Error("Failed to insert new card.");
-      }
-      const { data: userUpdateData, error: userUpdateError } = await supabase
-        .from("therapist_list")
-        .update({ card_status: "true" })
-        .eq("id", userInfo?.id)
-        .select();
-      if (userUpdateError) {
-        console.error(userUpdateError);
-        throw new Error("Failed to update user card status.");
-      }
-      setUserInfo(userUpdateData[0]);
-      toast.success("Created your payment account successfully!");
-    } catch (error) {
-      console.error("An unexpected error occurred.");
-    } finally {
-      setLoading(false);
-      router.push("/therapist");
-    }
-  };
-
-  const createStripeAccount = async () => {
-    try {
-      const response = await fetch("/api/create-express-account", {
-        method: "POST",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to create Stripe account");
-      }
-
-      const data = await response.json();
-      if (data) {
-        try {
-          const response = await fetch("/api/create-account-link", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              connectedAccountId: data.account.id,
-            }),
-          });
-
-          if (!response.ok) {
-            throw new Error("Failed to create account link");
-          }
-
-          const accountLinkResponse = await response.json();
-          console.log("Account link created:", accountLinkResponse.accountLink);
-          toast.success("You create stripe account link successfully.");
-          toast.success("Please complete your account now");
-
-          setTimeout(() => {
-            window.location.href = accountLinkResponse.accountLink?.url;
-          }, 1000);
-        } catch (error) {
-          console.error("Error creating account link:", error);
-          toast.error("An error occurred while creating the account link.");
-        }
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      toast.error("An error occurred while creating the account.");
-    }
-  };
-
-  useEffect(() => {
-    if (
-      userInfo?.card_status === "false" &&
-      userInfo?.id &&
-      searchParams.get("account_id")
-    ) {
-      handleInsertCard();
-    }
-  }, [userInfo]);
+  const { userInfo } = useAuthStore();
 
   return (
     <Paper shadow="sm" radius="md" p="xl" withBorder>
@@ -829,16 +671,6 @@ const PaymentComponent = () => {
           </Text>
         )}
       </Flex>
-      {userInfo?.card_status === "false" && (
-        <Button
-          color="green"
-          variant="light"
-          loading={loading}
-          onClick={() => createStripeAccount()}
-        >
-          Create Stripe Account
-        </Button>
-      )}
     </Paper>
   );
 };
@@ -863,7 +695,7 @@ const ServicesComponent = ({
   openAddService,
 }: any) => {
   return (
-    <Paper shadow="sm" radius="md" p="xl">
+    <Paper shadow="sm" radius="md" p="xl" withBorder>
       <Flex justify={"space-between"} mb="lg">
         <Title order={3}>My Services</Title>
         <Button
@@ -1051,13 +883,3 @@ const ServicesComponent = ({
     </Paper>
   );
 };
-
-// import ProfileSetup from "../components/therapist/ProfileSetup";
-// import Dashboard from "../components/therapist/Dashboard";
-
-// export default function Page() {
-//   // In a real application, you would check if the user has completed the profile setup
-//   const isProfileComplete = true;
-
-//   return isProfileComplete ? <Dashboard /> : <ProfileSetup />;
-// }
