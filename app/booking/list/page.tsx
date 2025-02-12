@@ -253,13 +253,13 @@ export default function BookingList() {
       body: JSON.stringify({
         amount:
           selectedBook?.therapist_list?.hourly_rate *
-          selectedBook?.b_date?.range?.length,
+          selectedBook?.b_date?.range?.length *
+          0.85,
         currency: "eur",
         destination: CardData[0]?.account_id,
       }),
     });
     const { transfer } = await response.json();
-
     if (transfer) {
       const { error: insertTransactionError } = await supabase
         .from("transaction_list")
@@ -269,6 +269,7 @@ export default function BookingList() {
             customer_id: userInfo.id,
             status: "transfered",
             booking_id: selectedBook?.booking_id,
+            therapist_id: selectedBook?.therapist_id,
           },
         ]);
 
