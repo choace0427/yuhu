@@ -31,6 +31,7 @@ import {
   IconPhoto,
   IconX,
   IconCheck,
+  IconArrowLeft,
 } from "@tabler/icons-react";
 import { createClient } from "@/app/utils/supabase/client";
 import { useAuthStore } from "@/app/_store/authStore";
@@ -182,7 +183,9 @@ export default function ImageManager() {
 
   return (
     <Container size={"lg"} p={"lg"}>
-      <Title order={4}>ID, Insurance and Diplomas</Title>
+      <Title order={4} mt={"lg"}>
+        ID, Insurance and Diplomas
+      </Title>
       <Stack gap="md" mt={"sm"}>
         <Transition
           mounted
@@ -317,10 +320,27 @@ export default function ImageManager() {
           )}
         </Grid>
 
-        <Flex justify={"end"} mt={"lg"}>
+        <Flex justify={"end"} mt={"lg"} gap={"lg"}>
+          <Button
+            onClick={() => router.push("/therapist/signup/services")}
+            leftSection={<IconArrowLeft size={"1rem"} />}
+            variant="outline"
+            color="blue"
+          >
+            Update Services
+          </Button>
           <Button
             color="#46A7B0"
-            onClick={() => handleSubmitDocumentsImages()}
+            onClick={() => {
+              if (images.length > 0) {
+                handleSubmitDocumentsImages();
+              } else {
+                toast.warn(
+                  "Please upload ID, Insurance and Diplomas Images to veriy"
+                );
+                return;
+              }
+            }}
             loading={submitLoading}
           >
             Submit Documents

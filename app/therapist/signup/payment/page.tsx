@@ -159,28 +159,33 @@ function PaymentSignUpComponent() {
 
   const handleSubmit = async (values: { iban: string; swift: string }) => {
     setLoading(true);
-    try {
-      const { error } = await supabase.from("bank_list").insert({
-        user_id: userInfo?.id,
-        iban_number: values.iban,
-        swift_number: values.swift,
-      });
+    if (userInfo?.card_status) {
+      try {
+        const { error } = await supabase.from("bank_list").insert({
+          user_id: userInfo?.id,
+          iban_number: values.iban,
+          swift_number: values.swift,
+        });
 
-      if (error) throw error;
-      const { error: updateError } = await supabase
-        .from("therapist_list")
-        .update({ step: "completed" })
-        .eq("id", userInfo?.id);
-      if (updateError) throw updateError;
+        if (error) throw error;
+        const { error: updateError } = await supabase
+          .from("therapist_list")
+          .update({ step: "completed" })
+          .eq("id", userInfo?.id);
+        if (updateError) throw updateError;
 
-      toast.success("Bank details saved successfully");
-      router.push("/therapist");
+        toast.success("Bank details saved successfully");
+        router.push("/therapist");
 
-      form.reset();
-    } catch (error) {
-      toast.error("Failed to save bank details");
-    } finally {
-      setLoading(false);
+        form.reset();
+      } catch (error) {
+        toast.error("Failed to save bank details");
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      toast.warn("Please create Stripe Account first");
+      return;
     }
   };
 
@@ -268,7 +273,7 @@ function PaymentSignUpComponent() {
                   color="#46A7B0"
                   ps={"end"}
                 >
-                  Submit Bank Details
+                  Submit Payment Details
                 </Button>
               </Flex>
             </form>

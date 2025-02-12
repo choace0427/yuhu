@@ -401,15 +401,23 @@ export default function BookingList() {
                 You have{" "}
                 {
                   bookingList.filter(
-                    (item: any) => item.booking_status === "cancelled"
+                    (item: any) => item.booking_status !== "cancelled"
                   ).length
                 }{" "}
-                cancelled massage sessions
+                cancelled massage sessions{" "}
+                {
+                  bookingList.filter(
+                    (item: any) => item.booking_status !== "completed"
+                  ).length
+                }{" "}
+                completed massage sessions
               </Text>
               <Text size="48px" fw={700} className="text-teal-500">
                 {
                   bookingList.filter(
-                    (item: any) => item.booking_status === "cancelled"
+                    (item: any) =>
+                      item.booking_status !== "cancelled" ||
+                      item.booking_status !== "completed"
                   ).length
                 }
               </Text>
@@ -430,10 +438,19 @@ export default function BookingList() {
         </Paper>
       ) : bookingList &&
         bookingList?.length > 0 &&
-        bookingList.filter((item: any) => item.booking_status === type).length >
-          0 ? (
+        bookingList.filter((item: any) =>
+          type === "cancelled"
+            ? item.booking_status === type ||
+              item?.booking_status === "completed"
+            : item.booking_status === type
+        ).length > 0 ? (
         bookingList
-          .filter((item: any) => item.booking_status === type)
+          .filter((item: any) =>
+            type === "cancelled"
+              ? item.booking_status === type ||
+                item?.booking_status === "completed"
+              : item.booking_status === type
+          )
           .map((item, index) => {
             return (
               <Paper
@@ -494,6 +511,11 @@ export default function BookingList() {
                     <p className="font-semibold text-red-400">
                       Booking Cancelled
                     </p>
+                  )}
+                  {item?.booking_status === "completed" && (
+                    <Badge color="green" variant="light" size="lg">
+                      Paid
+                    </Badge>
                   )}
                   {item?.booking_status === "upcoming" ? (
                     <Button

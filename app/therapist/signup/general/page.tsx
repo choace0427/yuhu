@@ -13,6 +13,7 @@ import {
   Flex,
   Group,
   Loader,
+  LoadingOverlay,
   Modal,
   NumberInput,
   Paper,
@@ -177,6 +178,12 @@ export default function GeneralProfileSignUp() {
 
       setResumeUrl(publicUrl);
 
+      setExistingResume({
+        name: fileName,
+        url: publicUrl,
+        updatedAt: new Date().toISOString(),
+      });
+
       setUpdateModalOpen(false);
     } catch (error) {
       console.error("Error:", error);
@@ -194,6 +201,7 @@ export default function GeneralProfileSignUp() {
       let isCancelled = false;
 
       (async function () {
+        setLoading(true);
         const pdfJS = await import("pdfjs-dist");
 
         pdfJS.GlobalWorkerOptions.workerSrc =
@@ -249,8 +257,8 @@ export default function GeneralProfileSignUp() {
         if (!isCancelled) {
           console.log("Rendering completed");
         }
+        setLoading(false);
       })();
-
       return () => {
         isCancelled = true;
         if (renderTaskRef.current) {
@@ -352,7 +360,7 @@ export default function GeneralProfileSignUp() {
           <Text size="lg" fw={500}>
             Only CV
           </Text>
-          {userInfo?.resume_url ? (
+          {userInfo?.resume_url || existingResume?.url ? (
             <Stack gap="sm">
               <Group ps="apart">
                 <Group>
@@ -475,10 +483,13 @@ export default function GeneralProfileSignUp() {
             title="View Resume"
             size="lg"
           >
-            <canvas
-              ref={canvasRef}
-              style={{ height: "100vh", width: "100%" }}
-            />
+            <div className="relative">
+              {loading && <LoadingOverlay />}
+              <canvas
+                ref={canvasRef}
+                style={{ height: "100vh", width: "100%" }}
+              />
+            </div>
           </Modal>
         </Stack>
         <Button
@@ -486,7 +497,14 @@ export default function GeneralProfileSignUp() {
           color="teal"
           mt="md"
           loading={profileLoading}
-          onClick={() => handleProfileUpdate()}
+          onClick={() => {
+            if (userInfo?.resume_url || existingResume?.url)
+              handleProfileUpdate();
+            else {
+              toast.warn("Please submit your CV");
+              return;
+            }
+          }}
         >
           Submit Information
         </Button>

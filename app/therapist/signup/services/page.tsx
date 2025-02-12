@@ -389,6 +389,7 @@ export default function ServicesComponent() {
       .eq("id", userInfo?.id);
     if (error) throw error;
     await handlequery();
+    toast.success("Services added successfully!");
     router.push("/therapist/signup/verify");
     setSubmitLoading(false);
   };
@@ -567,7 +568,13 @@ export default function ServicesComponent() {
             Update Information
           </Button>
           <Button
-            onClick={() => handleSubmitServices()}
+            onClick={() => {
+              if (filteredServices.length > 0) handleSubmitServices();
+              else {
+                toast.warn("Please select at least 1 service");
+                return;
+              }
+            }}
             color="#46A7B0"
             loading={submitLoading}
           >
