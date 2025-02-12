@@ -19,24 +19,13 @@ import {
   Button,
   Container,
   Avatar,
-  Box,
-  Drawer,
   Modal,
   Textarea,
   Rating,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { useStripe } from "@stripe/react-stripe-js";
-import {
-  IconMessage,
-  IconCalendar,
-  IconMoneybag,
-  IconTarget,
-  IconUser,
-  IconX,
-  IconPaywall,
-} from "@tabler/icons-react";
+import { IconMessage, IconMoneybag } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -462,6 +451,7 @@ export default function BookingList() {
                         src={item?.therapist_list?.avatar_url}
                         name={item?.therapist_list?.name}
                         size={"lg"}
+                        color="initials"
                       />
                       <Stack gap={4}>
                         <Text size="md" fw={500}>

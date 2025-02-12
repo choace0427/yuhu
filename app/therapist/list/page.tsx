@@ -8,7 +8,6 @@ import {
   Card,
   Badge,
   Group,
-  Button,
   SimpleGrid,
   Avatar,
   Stack,
@@ -56,14 +55,7 @@ export default function Home() {
                     service_type!inner (
                       subcategory
                     ),
-                    therapist_list (
-                      id,
-                      hourly_rate,
-                      phone,
-                      location,
-                      summary,
-                      avatar_url
-                    )
+                    therapist_list (*)
                   `
           )
           .eq("service_type.id", serviceType);
@@ -120,7 +112,7 @@ export default function Home() {
                     <Group>
                       <Avatar
                         src={therapist?.therapist_list?.avatar_url}
-                        name={therapist?.name}
+                        name={therapist?.therapist_list?.name}
                         color="initials"
                         size="xl"
                         radius="md"
@@ -128,7 +120,7 @@ export default function Home() {
                       />
                       <div>
                         <Text fw={600} size="lg" className="text-gray-900">
-                          {therapist?.name || "(Unknown)"}
+                          {therapist?.therapist_list?.name || "(Unknown)"}
                         </Text>
                         <Group gap={4} mb={4}>
                           {Array.from({ length: therapist.rating }).map(

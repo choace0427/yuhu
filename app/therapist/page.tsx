@@ -22,7 +22,6 @@ import {
   Menu,
   Loader,
   Modal,
-  FileInput,
 } from "@mantine/core";
 import { DatePicker, DatePickerInput, DateValue } from "@mantine/dates";
 import {
@@ -32,19 +31,18 @@ import {
   IconEdit,
   IconTrash,
   IconCircleCheck,
-  IconUpload,
-  IconFile,
 } from "@tabler/icons-react";
 import { useAuthStore } from "../_store/authStore";
 import { useDisclosure } from "@mantine/hooks";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
 import { useForm } from "@mantine/form";
-import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "../utils/supabase/client";
 import { ResumeManagement } from "../components/resume-management";
 import TherapistScheduleComponent from "../components/therapist/ScheduleComponent";
 import DocumentComponent from "../components/therapist/DocumentComponent";
+import CustomerBooking from "./availability";
+import TherapistAvailability from "./TherapistAvailability";
 
 interface Service {
   category: string;
@@ -93,10 +91,8 @@ export default function TherapistDashboard() {
     index: number;
     service: Service;
   } | null>(null);
-  const [selectedDate, setSelectedDate] = useState<DateValue | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [subCategories, setSubCategories] = useState<ServiceType[]>([]);
-  const [availability, setAvailability] = useState<string>("");
 
   //for Avatar Upload to supabase
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -533,6 +529,7 @@ export default function TherapistDashboard() {
           <Paper shadow="sm" radius="md" mt="xl" withBorder>
             <DocumentComponent />
           </Paper>
+          {/* <CustomerBooking /> */}
         </Grid.Col>
 
         <Grid.Col span={{ base: 12, md: 4 }}>

@@ -350,7 +350,7 @@ export default function GeneralProfileSignUp() {
         </Stack>
         <Stack gap="md" mt={"md"}>
           <Text size="lg" fw={500}>
-            Resume Management
+            Only CV
           </Text>
           {userInfo?.resume_url ? (
             <Stack gap="sm">

@@ -167,6 +167,18 @@ export default function DocumentComponent() {
     }
   };
 
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const handleSubmitDocumentsImages = async () => {
+    setSubmitLoading(true);
+    const { data, error } = await supabase
+      .from("therapist_list")
+      .update({ documents: images.map((item) => item.url), step: "payment" })
+      .eq("id", userInfo?.id);
+    if (error) throw error;
+    toast.success("Uploaded documents successfully");
+    setSubmitLoading(false);
+  };
+
   return (
     <Container size={"lg"} p={"lg"}>
       <Title order={4}>ID, Insurance and Diplomas</Title>
@@ -303,6 +315,16 @@ export default function DocumentComponent() {
             ))
           )}
         </Grid>
+
+        <Flex justify={"end"} mt={"lg"}>
+          <Button
+            color="#46A7B0"
+            onClick={() => handleSubmitDocumentsImages()}
+            loading={submitLoading}
+          >
+            Submit Documents
+          </Button>
+        </Flex>
 
         <Modal
           opened={!!previewImage}

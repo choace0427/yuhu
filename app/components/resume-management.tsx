@@ -24,6 +24,7 @@ import {
 import { createClient } from "../utils/supabase/client";
 import { PDFDocumentProxy, PDFPageProxy, RenderTask } from "pdfjs-dist";
 import { toast } from "react-toastify";
+import { useAuthStore } from "../_store/authStore";
 
 interface ResumeFile {
   name: string;
@@ -33,6 +34,7 @@ interface ResumeFile {
 
 export function ResumeManagement() {
   const supabase = createClient();
+  const { userInfo } = useAuthStore();
   const [existingResume, setExistingResume] = useState<ResumeFile | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -40,19 +42,14 @@ export function ResumeManagement() {
   const [viewModalOpen, setViewModalOpen] = useState(false);
 
   useEffect(() => {
-    fetchExistingResume();
-  }, []);
+    if (userInfo?.id) fetchExistingResume();
+  }, [userInfo?.id]);
 
   const fetchExistingResume = async () => {
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) throw new Error("No user found");
-
       const { data, error } = await supabase.storage
         .from("resume")
-        .list(`${user.id}/`);
+        .list(`${userInfo?.id}/`);
 
       if (error) throw error;
 
@@ -62,7 +59,9 @@ export function ResumeManagement() {
           data: { publicUrl },
         } = supabase.storage
           .from("resume")
-          .getPublicUrl(`${user.id}/${mostRecent.name}`);
+          .getPublicUrl(`${userInfo?.id}/${mostRecent.name}`);
+
+        console.log("----------", publicUrl);
 
         setExistingResume({
           name: mostRecent.name,
@@ -242,7 +241,7 @@ export function ResumeManagement() {
   return (
     <Stack gap="md">
       <Text size="lg" fw={500}>
-        Resume Management
+        Only CV
       </Text>
       {existingResume ? (
         <Stack gap="sm">

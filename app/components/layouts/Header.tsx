@@ -21,7 +21,6 @@ import {
   IconServicemark,
   IconUser,
 } from "@tabler/icons-react";
-import ThemeSwitch from "../themeSwitch";
 import { useAuthStore } from "@/app/_store/authStore";
 
 const Header = () => {
@@ -49,18 +48,6 @@ const Header = () => {
     }
   };
 
-  // const excludedPaths = [
-  //   "home",
-  //   "service",
-  //   "auth",
-  //   "contactus",
-  //   "pricing",
-  //   "team",
-  //   "about",
-  //   "profile",
-  // ];
-
-  // const isExcludedPath = excludedPaths.some((path) => pathname.includes(path));
   useEffect(() => {
     if (userInfo) {
       const notificationsRealtime = supabase
@@ -80,22 +67,7 @@ const Header = () => {
         notificationsRealtime.unsubscribe();
       };
     }
-    // else {
-    //   if (!isExcludedPath) {
-    //     setTimeout(() => {
-    //       router.push("/auth/login");
-    //     }, 500);
-    //     toast.warn("Authentication required. Please log in to continue.");
-    //   }
-    // }
   }, [userInfo]);
-
-  // useEffect(() => {
-  //   if (!isAuthenticated) {
-  //     toast.warn("Please login first");
-  //     router.replace("/auth/login");
-  //   }
-  // }, []);
 
   return (
     <div
@@ -235,7 +207,6 @@ const Header = () => {
         </Group>
       ) : (
         <Group>
-          <ThemeSwitch />
           <Menu shadow="md" width={200} position="bottom-end">
             <Menu.Target>
               <Indicator
@@ -274,7 +245,7 @@ const Header = () => {
 
               <Menu.Item
                 leftSection={<IconMessageCircle size={14} />}
-                onClick={() => router.push("/chat/'")}
+                onClick={() => router.push("/chat")}
               >
                 Message
               </Menu.Item>
