@@ -30,17 +30,7 @@ export default function MainLayout({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="min-h-[calc(100vh - 80px)]">
-            {pathname.includes("chat") ? (
-              <Flex>
-                <MembersSidebar />
-                {children}
-              </Flex>
-            ) : (
-              children
-            )}
-            {/* {children} */}
-          </div>
+          {children}
         </motion.div>
       </AnimatePresence>
 

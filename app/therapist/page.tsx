@@ -43,6 +43,7 @@ import TherapistScheduleComponent from "../components/therapist/ScheduleComponen
 import DocumentComponent from "../components/therapist/DocumentComponent";
 import CustomerBooking from "./availability";
 import TherapistAvailability from "./TherapistAvailability";
+import TherapistReview from "./reviews/TherapistReview";
 
 interface Service {
   category: string;
@@ -572,6 +573,8 @@ export default function TherapistDashboard() {
             handleCreateService={handleCreateService}
             openAddService={openAddService}
           />
+
+          <TherapistReview />
         </Grid.Col>
       </Grid>
     </Container>

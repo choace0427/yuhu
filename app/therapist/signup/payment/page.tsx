@@ -174,6 +174,16 @@ function PaymentSignUpComponent() {
           .eq("id", userInfo?.id);
         if (updateError) throw updateError;
 
+        const { error: notificationError } = await supabase
+          .from("notifications")
+          .insert({
+            notification_type: 5,
+            content: `${userInfo?.name} therapist registered.`,
+            read_status: false,
+          });
+
+        if (notificationError) throw notificationError;
+
         toast.success("Bank details saved successfully");
         router.push("/therapist");
 
