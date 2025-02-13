@@ -515,7 +515,7 @@ export default function TherapistDashboard() {
             </Stack>
             <Button
               fullWidth
-              color="teal"
+              color="#46A7B0"
               mt="md"
               loading={profileLoading}
               onClick={() => handleProfileUpdate()}
@@ -643,7 +643,7 @@ const ChangePasswordComponent = () => {
             key={passwordform.key("confirmPassword")}
             {...passwordform.getInputProps("confirmPassword")}
           />
-          <Button color="teal" mt="md" loading={loading} type="submit">
+          <Button color="#46A7B0" mt="md" loading={loading} type="submit">
             Update Password
           </Button>
         </Stack>
@@ -665,9 +665,9 @@ const PaymentComponent = () => {
       >
         <Title order={3}>Payment</Title>
         {userInfo?.card_status === "true" && (
-          <Text color="green" className="flex gap-2" fw={600}>
+          <Text color="#46A7B0" className="flex gap-2" fw={600}>
             Verified
-            <IconCircleCheck size={"1.2rem"} color="green" />
+            <IconCircleCheck size={"1.2rem"} color="#46A7B0" />
           </Text>
         )}
       </Flex>
@@ -701,7 +701,7 @@ const ServicesComponent = ({
         <Button
           leftSection={<IconPlus size={16} />}
           variant="light"
-          color="green"
+          color="#46A7B0"
           onClick={openAddService}
         >
           Add Service
@@ -735,7 +735,7 @@ const ServicesComponent = ({
                       withArrow
                     >
                       <Menu.Target>
-                        <ActionIcon variant="transparent" color="green">
+                        <ActionIcon variant="transparent" color="#46A7B0">
                           <IconDotsVertical size={16} />
                         </ActionIcon>
                       </Menu.Target>
@@ -761,7 +761,7 @@ const ServicesComponent = ({
                     {service.description}
                   </Text>
 
-                  <Badge color="green" variant="light">
+                  <Badge color="#46A7B0" variant="light">
                     {service.subcategory}
                   </Badge>
                 </Card>

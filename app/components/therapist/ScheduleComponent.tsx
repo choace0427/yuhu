@@ -26,7 +26,7 @@ import TherapistAvailability from "@/app/therapist/TherapistAvailability";
 type BookingStatus = "confirmed" | "cancelled" | "upcoming";
 
 const statusColors: Record<BookingStatus, string> = {
-  confirmed: "green",
+  confirmed: "#46A7B0",
   cancelled: "red",
   upcoming: "yellow",
 };
@@ -43,7 +43,7 @@ export default function TherapistScheduleComponent() {
 
   const renderScheduleItem = (schedule: any) => (
     <Paper key={schedule.id} p="md" withBorder mb="sm" radius="md">
-      <Group ps="apart" wrap="nowrap">
+      <Group ps="apart" wrap="nowrap" bg={"#46A7B0"}>
         <Stack gap="xs" style={{ flex: 1 }}>
           <Group ps="apart" wrap="nowrap">
             <Text size="sm" fw={500}>
@@ -102,13 +102,7 @@ export default function TherapistScheduleComponent() {
 
   return (
     <>
-      <Paper
-        radius="md"
-        p="xl"
-        mb="xl"
-        bg="var(--mantine-color-teal-6)"
-        c="white"
-      >
+      <Paper radius="md" p="xl" mb="xl" bg={"#46A7B0"} c="white">
         <Group align="flex-start">
           <Stack gap="xs">
             <Title order={1}>Welcome, {userInfo?.name || ""}</Title>
@@ -117,7 +111,7 @@ export default function TherapistScheduleComponent() {
             </Text>
             <Button
               variant="white"
-              color="teal"
+              color="#46A7B0"
               size="md"
               mt="md"
               style={{ width: "fit-content" }}
