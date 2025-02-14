@@ -26,22 +26,34 @@ export default function ResetPassword() {
 
   const handleSubmit = async (values: typeof form.values) => {
     console.log("=========eventValue", eventValue);
-    if (eventValue === "PASSWORD_RECOVERY") {
-      setLoading(true);
-      const { data, error } = await supabase.auth.updateUser({
-        password: values.newPassword,
-      });
-      console.log("--------data", data);
-      console.log("--------error", error);
-      if (data?.user) {
-        toast.success("Password updated successfully!");
-        router.push("/auth/login");
-      }
-      if (error) toast.error(`${error?.message}`);
-      setLoading(false);
-    } else {
-      toast.success("Failed to reset password!");
+    setLoading(true);
+    const { data, error } = await supabase.auth.updateUser({
+      password: values.newPassword,
+    });
+    console.log("--------data", data);
+    console.log("--------error", error);
+    if (data?.user) {
+      toast.success("Password updated successfully!");
+      router.push("/auth/login");
     }
+    if (error) toast.error(`${error?.message}`);
+    setLoading(false);
+    // if (eventValue === "PASSWORD_RECOVERY") {
+    //   setLoading(true);
+    //   const { data, error } = await supabase.auth.updateUser({
+    //     password: values.newPassword,
+    //   });
+    //   console.log("--------data", data);
+    //   console.log("--------error", error);
+    //   if (data?.user) {
+    //     toast.success("Password updated successfully!");
+    //     router.push("/auth/login");
+    //   }
+    //   if (error) toast.error(`${error?.message}`);
+    //   setLoading(false);
+    // } else {
+    //   toast.error("Failed to reset password!");
+    // }
   };
 
   const [eventValue, setEventValue] = useState<any>();
