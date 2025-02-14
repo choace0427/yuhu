@@ -35,9 +35,9 @@ export default function ResetPassword() {
       console.log("--------error", error);
       if (data?.user) {
         toast.success("Password updated successfully!");
-        // router.push("/auth/login");
+        router.push("/auth/login");
       }
-      if (error) toast.error(`${error}`);
+      if (error) toast.error(`${error?.message}`);
       setLoading(false);
     } else {
       toast.success("Failed to reset password!");
