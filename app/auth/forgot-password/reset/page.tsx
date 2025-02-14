@@ -25,14 +25,17 @@ export default function ResetPassword() {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (values: typeof form.values) => {
+    console.log("=========eventValue", eventValue);
     if (eventValue === "PASSWORD_RECOVERY") {
       setLoading(true);
       const { data, error } = await supabase.auth.updateUser({
         password: values.newPassword,
       });
+      console.log("--------data", data);
+      console.log("--------error", error);
       if (data) {
         toast.success("Password updated successfully!");
-        router.push("/auth/login");
+        // router.push("/auth/login");
       }
       if (error) toast.error("There was an error updating your password.");
       setLoading(false);
