@@ -39,6 +39,8 @@ export default function ResetPassword() {
       }
       if (error) toast.error(`${error}`);
       setLoading(false);
+    } else {
+      toast.success("Failed to reset password!");
     }
   };
 
@@ -46,6 +48,7 @@ export default function ResetPassword() {
 
   useEffect(() => {
     supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("event=======", event);
       if (event == "PASSWORD_RECOVERY") {
         setEventValue(event);
       }
