@@ -2,12 +2,13 @@
 
 import { useForm } from "@mantine/form";
 import { PasswordInput, Button, Image } from "@mantine/core";
-import { createClient } from "@/app/utils/supabase/client";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
+import { supabase } from "@/supabase";
+import { useRouter } from "next/navigation";
 
 export default function ResetPassword() {
-  const supabase = createClient();
+  const router = useRouter();
   const form = useForm({
     initialValues: {
       newPassword: "",
@@ -21,13 +22,20 @@ export default function ResetPassword() {
     },
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleSubmit = async (values: typeof form.values) => {
     if (eventValue === "PASSWORD_RECOVERY") {
+      setLoading(true);
       const { data, error } = await supabase.auth.updateUser({
-        password: form.values.newPassword,
+        password: values.newPassword,
       });
-      if (data) toast.success("Password updated successfully!");
+      if (data) {
+        toast.success("Password updated successfully!");
+        router.push("/auth/login");
+      }
       if (error) toast.error("There was an error updating your password.");
+      setLoading(false);
     }
   };
 
@@ -35,7 +43,6 @@ export default function ResetPassword() {
 
   useEffect(() => {
     supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("============", event);
       if (event == "PASSWORD_RECOVERY") {
         setEventValue(event);
       }
@@ -78,7 +85,7 @@ export default function ResetPassword() {
                 size="lg"
                 fullWidth
                 className="!bg-[#46A7B0]"
-                // loading={loading}
+                loading={loading}
               >
                 Reset Password
               </Button>

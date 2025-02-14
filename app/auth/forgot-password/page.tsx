@@ -1,22 +1,13 @@
 "use client";
 
 import { useForm } from "@mantine/form";
-import {
-  TextInput,
-  PasswordInput,
-  Button,
-  Title,
-  Text,
-  Container,
-  Stack,
-  Image,
-} from "@mantine/core";
-import { createClient } from "@/app/utils/supabase/client";
-import { useEffect } from "react";
+import { TextInput, Button, Image } from "@mantine/core";
 import { toast } from "react-toastify";
+import { supabase } from "@/supabase";
+import { useState } from "react";
 
 export default function ForgotPassword() {
-  const supabase = createClient();
+  const [loading, setLoading] = useState(false);
   const form = useForm({
     initialValues: {
       email: "",
@@ -28,24 +19,25 @@ export default function ForgotPassword() {
 
   const handleSubmit = async (values: typeof form.values) => {
     try {
-      const response = await fetch("/api/reset-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: values.email,
-        }),
-      });
-      if (!response.ok) {
-        toast.error("Something went wrong. Please try again.");
-      } else {
-        toast.success("Please check your email to reset password");
+      console.log("Form values:", values);
+      setLoading(true);
+      const { data, error } = await supabase.auth.resetPasswordForEmail(
+        values.email,
+        {
+          redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/forgot-password/reset`,
+        }
+      );
+
+      if (error) {
+        toast.error(`${error?.message}`);
+        return;
       }
+
+      toast.success("Please check your email to reset password");
     } catch (error) {
-      console.error("Reset password error:", error);
-      toast.error("Something went wrong. Please try again.");
+      toast.error("Failed to reset password. Please try again.");
     }
+    setLoading(false);
   };
 
   return (
@@ -75,7 +67,7 @@ export default function ForgotPassword() {
                 size="lg"
                 fullWidth
                 className="!bg-[#46A7B0]"
-                // loading={loading}
+                loading={loading}
               >
                 Login
               </Button>
