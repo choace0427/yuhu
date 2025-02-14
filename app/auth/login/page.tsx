@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "@mantine/form";
-import { Button, Image, PasswordInput, TextInput } from "@mantine/core";
+import { Button, Image, PasswordInput, Text, TextInput } from "@mantine/core";
 import { useAuthStore } from "@/app/_store/authStore";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -66,9 +66,19 @@ export default function LoginPage() {
                 key={form.key("password")}
                 {...form.getInputProps("password")}
               />
+              <Text
+                td="underline"
+                fw={500}
+                mt={"sm"}
+                ta={"end"}
+                onClick={() => router.push("/auth/forgot-password")}
+                className="hover:cursor-pointer"
+              >
+                Forgot Password
+              </Text>
               <Button
                 type="submit"
-                mt={60}
+                mt={40}
                 size="lg"
                 fullWidth
                 className="!bg-[#46A7B0]"
