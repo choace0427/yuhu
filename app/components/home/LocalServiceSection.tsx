@@ -406,7 +406,7 @@ export default function HomePage() {
     });
 
   return (
-    <Box>
+    <Box w={"100%"}>
       {/* Hero Section */}
       <div className="w-full h-screen relative overflow-hidden flex items-center">
         {/* Video Element */}
