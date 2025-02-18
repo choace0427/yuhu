@@ -408,37 +408,22 @@ export default function HomePage() {
   return (
     <Box>
       {/* Hero Section */}
-      <div
-        style={{
-          position: "relative",
-          height: "100vh",
-          overflow: "hidden",
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
+      <div className="w-full h-screen relative overflow-hidden flex items-center">
         {/* Video Element */}
         <video
-          autoPlay // Automatically plays the video when the page loads
-          loop // Ensures the video plays in an infinite loop
-          muted // Mutes the video so it won't disrupt the user
-          playsInline // Ensures the video plays inline on mobile devices
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute top-[50%] left-[50%] w-full h-full object-cover z-[-1]"
           style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
             transform: "translate(-50%, -50%)",
-            zIndex: -1, // Ensures the video is behind the content
           }}
         >
           <source
             src="https://myyuhuawsbucket.s3.us-east-2.amazonaws.com/intro-yuhu.mov"
             type="video/mp4"
           />
-          Your browser does not support the video tag.
         </video>
 
         {/* Content rendered on top of the video */}
