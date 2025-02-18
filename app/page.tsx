@@ -15,6 +15,15 @@ import WhyChooseSection from "./components/home/WhyChooseSection";
 import HowItWorksSection from "./components/home/HowItWorksSection";
 import TeamSection from "./components/home/TeamSection";
 import EventsSection from "./components/events/Event";
+import {
+  Box,
+  Button,
+  Container,
+  Group,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 
 export default function Home() {
   const { isAuthenticated } = useAuthStore();
