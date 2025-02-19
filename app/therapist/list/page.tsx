@@ -261,7 +261,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import {
   Container,
   Group,
@@ -733,15 +733,17 @@ const TherapistList = () => {
 
         <Grid gutter="50">
           <Grid.Col span={{ base: 12, md: 3 }}>
-            <FilterSection
-              setTherapistData={setTherapistData}
-              therapistData={therapistData}
-              currentPage={currentPage}
-              setCurrentPage={setCurrentPage}
-              totalTherapists={totalTherapists}
-              setTotalTherapists={setTotalTherapists}
-              setTotalPages={setTotalPages}
-            />
+            <Suspense>
+              <FilterSection
+                setTherapistData={setTherapistData}
+                therapistData={therapistData}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                totalTherapists={totalTherapists}
+                setTotalTherapists={setTotalTherapists}
+                setTotalPages={setTotalPages}
+              />
+            </Suspense>
           </Grid.Col>
 
           <Grid.Col span={{ base: 12, md: 9 }}>
