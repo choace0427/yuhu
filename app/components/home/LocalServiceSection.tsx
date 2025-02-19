@@ -181,6 +181,7 @@
 
 "use client";
 
+import { supabase } from "@/supabase";
 import { Carousel } from "@mantine/carousel";
 import {
   Container,
@@ -214,7 +215,8 @@ import {
   IconChevronLeft,
   IconChevronRight,
 } from "@tabler/icons-react";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface CityStats {
   id: number;
@@ -385,7 +387,9 @@ const cityStats: CityStats[] = [
 ];
 
 export default function HomePage() {
-  const [activeCountry, setActiveCountry] = useState("italy");
+  const router = useRouter();
+
+  const [activeCountry, setActiveCountry] = useState("Italy");
   const [sortBy, setSortBy] = useState<"rating" | "therapists" | "experience">(
     "rating"
   );
@@ -404,6 +408,23 @@ export default function HomePage() {
           return 0;
       }
     });
+
+  const [cities, setCities] = useState<any[]>([]);
+
+  const handleCities = async (country: string) => {
+    const { data, error } = await supabase
+      .from("location_city")
+      .select("*, therapist_list (*), location_country!inner (*))")
+      .eq("location_country.country", country);
+
+    if (error) throw error;
+
+    setCities(data);
+  };
+
+  useEffect(() => {
+    handleCities(activeCountry);
+  }, [activeCountry]);
 
   return (
     <Box w={"100%"}>
@@ -468,16 +489,18 @@ export default function HomePage() {
               >
                 <Tabs.List>
                   <Tabs.Tab
-                    value="italy"
+                    value="Italy"
                     leftSection={<IconBuildingSkyscraper size={20} />}
                     style={{ color: "white", fontSize: rem(24) }}
+                    color="#46A7B0"
                   >
                     Italy
                   </Tabs.Tab>
                   <Tabs.Tab
-                    value="spain"
+                    value="Spain"
                     leftSection={<IconBuildingSkyscraper size={20} />}
                     style={{ color: "white", fontSize: rem(24) }}
+                    color="#46A7B0"
                   >
                     Spain
                   </Tabs.Tab>
@@ -488,7 +511,7 @@ export default function HomePage() {
                 <Tooltip label="Sort by Rating">
                   <ActionIcon
                     variant={sortBy === "rating" ? "filled" : "light"}
-                    color="blue"
+                    color="#46A7B0"
                     size="lg"
                     onClick={() => setSortBy("rating")}
                   >
@@ -498,7 +521,7 @@ export default function HomePage() {
                 <Tooltip label="Sort by Therapist Count">
                   <ActionIcon
                     variant={sortBy === "therapists" ? "filled" : "light"}
-                    color="blue"
+                    color="#46A7B0"
                     size="lg"
                     onClick={() => setSortBy("therapists")}
                   >
@@ -508,7 +531,7 @@ export default function HomePage() {
                 <Tooltip label="Sort by Experience">
                   <ActionIcon
                     variant={sortBy === "experience" ? "filled" : "light"}
-                    color="blue"
+                    color="#46A7B0"
                     size="lg"
                     onClick={() => setSortBy("experience")}
                   >
@@ -549,13 +572,13 @@ export default function HomePage() {
             },
           }}
         >
-          {filteredCities.map((city) => (
+          {cities.map((city) => (
             <Carousel.Slide key={city.id}>
               <Card shadow="sm" padding="lg" radius="md" withBorder>
                 <Card.Section>
                   <Box style={{ position: "relative" }}>
                     <Image
-                      src={city.image}
+                      src={city.image || ""}
                       alt={city.name}
                       className="h-[200px]"
                     />
@@ -573,19 +596,19 @@ export default function HomePage() {
                       <Group justify="space-between" align="center">
                         <Box>
                           <Text size="xl" fw={700} c="white">
-                            {city.name}
+                            {city.city}
                           </Text>
                           <Group gap={4}>
                             <IconMapPin size={14} color="white" />
                             <Text size="sm" c="white">
-                              {city.country}
+                              {city.location_country?.country}
                             </Text>
                           </Group>
                         </Box>
                         <Badge
                           size="lg"
                           variant="filled"
-                          color="blue"
+                          color="#46A7B0"
                           leftSection={<IconStar size={12} />}
                         >
                           {city.averageRating}
@@ -597,56 +620,29 @@ export default function HomePage() {
 
                 <Group mt="md" mb="xs" justify="space-between">
                   <Group gap="xs">
-                    <ThemeIcon color="blue" variant="light" size="md">
+                    <ThemeIcon color="#46A7B0" variant="light" size="md">
                       <IconUsers size={16} />
                     </ThemeIcon>
-                    <Text fw={500}>{city.therapistCount} Therapists</Text>
+                    <Text fw={500}>
+                      {city.therapist_list?.length || 0} Therapists
+                    </Text>
                     <Badge color="teal" variant="light" size="sm">
                       +{city.growth}%
                     </Badge>
                   </Group>
-                  <Badge variant="light" color="blue">
-                    {city.specialties} Specialties
-                  </Badge>
-                </Group>
-
-                <Text size="sm" c="dimmed" mb="md" lineClamp={2}>
-                  {city.description}
-                </Text>
-
-                <Divider my="xs" />
-
-                <Box mb="md">
-                  <Group justify="space-between" mb={4}>
-                    <Text size="sm" fw={500}>
-                      Experience Level
-                    </Text>
-                    <Text size="sm" c="dimmed">
-                      {city.averageExperience} years avg
-                    </Text>
-                  </Group>
-                  <Progress
-                    value={city.averageExperience * 10}
-                    color="blue"
-                    size="sm"
-                    radius="xl"
-                  />
-                </Box>
-
-                <Group gap={8} mb="md">
-                  {city.topSpecialties.map((specialty, index) => (
-                    <Badge key={index} variant="dot" color="blue" size="sm">
-                      {specialty}
-                    </Badge>
-                  ))}
                 </Group>
 
                 <Button
                   variant="light"
-                  color="blue"
+                  color="#46A7B0"
                   fullWidth
                   mt="auto"
                   leftSection={<IconHeartHandshake size={16} />}
+                  onClick={() =>
+                    router.push(
+                      `/therapist/list?country=${city.location_country?.country}&cities=${city?.city}`
+                    )
+                  }
                 >
                   Find Therapists
                 </Button>
