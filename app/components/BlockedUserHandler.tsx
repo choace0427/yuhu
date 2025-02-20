@@ -63,7 +63,7 @@ export function BlockedUserHandler() {
         newUrl.searchParams.delete("pending");
         window.history.replaceState({}, "", newUrl.toString());
 
-        router.push("/");
+        router.push("/home");
       }
     };
 

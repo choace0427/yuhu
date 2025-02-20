@@ -265,7 +265,7 @@ export default function HomePage() {
         </video>
 
         {/* Content rendered on top of the video */}
-        <Container size="xl">
+        <Container size="xl" mt={-80}>
           <Box style={{ maxWidth: rem(1200) }}>
             <Title
               order={1}

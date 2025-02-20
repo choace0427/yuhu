@@ -30,6 +30,17 @@ export async function updateSession(request: NextRequest) {
   );
 
   try {
+    if (
+      !request.nextUrl.pathname.startsWith("/") ||
+      !request.nextUrl.pathname.startsWith("/contactus") ||
+      !request.nextUrl.pathname.startsWith("/team") ||
+      !request.nextUrl.pathname.startsWith("/pricing") ||
+      !request.nextUrl.pathname.startsWith("/services") ||
+      !request.nextUrl.pathname.startsWith("/about")
+    ) {
+      return NextResponse.next();
+    }
+
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -58,7 +69,7 @@ export async function updateSession(request: NextRequest) {
       if (therapist.step === "completed") {
         if (
           therapist.status === "pending" &&
-          request.nextUrl.pathname !== "/"
+          request.nextUrl.pathname !== "/home"
         ) {
           const redirectUrl = new URL("/therapist", request.url);
           redirectUrl.searchParams.set("pending", "true");
@@ -102,8 +113,11 @@ export async function updateSession(request: NextRequest) {
       }
 
       if (customer) {
-        if (customer.status === "pending" && request.nextUrl.pathname !== "/") {
-          const redirectUrl = new URL("/", request.url);
+        if (
+          customer.status === "pending" &&
+          request.nextUrl.pathname !== "/home"
+        ) {
+          const redirectUrl = new URL("/home", request.url);
           redirectUrl.searchParams.set("pending", "true");
           const response = NextResponse.redirect(redirectUrl);
           response.cookies.set({

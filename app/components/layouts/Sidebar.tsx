@@ -122,8 +122,6 @@ export function MembersSidebar() {
     }
   }, [userInfo, router]);
 
-  console.log("=======", chatMembers);
-
   return (
     <div className="w-[440px] border-r bg-white">
       {/* <div className="p-4 border-b">
