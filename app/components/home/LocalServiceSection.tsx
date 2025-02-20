@@ -269,7 +269,7 @@ export default function HomePage() {
           <Box style={{ maxWidth: rem(1200) }}>
             <Title
               order={1}
-              size={rem(60)}
+              size={rem(48)}
               style={{
                 color: "white",
                 marginBottom: rem(24),
@@ -281,7 +281,7 @@ export default function HomePage() {
             </Title>
             <Title
               order={1}
-              size={rem(60)}
+              size={rem(48)}
               style={{
                 color: "white",
                 marginBottom: rem(24),
@@ -297,7 +297,7 @@ export default function HomePage() {
                 color: "white",
                 marginBottom: rem(48),
                 opacity: 0.9,
-                fontSize: rem(24),
+                fontSize: rem(18),
                 // maxWidth: rem(600),
               }}
             >
