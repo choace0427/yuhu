@@ -45,31 +45,26 @@ export default function ExperienceRelaxionSection() {
         className="font-bold lg:text-3xl md:text-2xl text-xl text-black Poppins-font text-center"
         variants={itemVariants}
       >
-        Mobile Massage Mallorca - experience relaxation
+        Mobile Massage in Spain & Italy – Luxury Wellness, Anytime, Anywhere
       </motion.span>
 
       <motion.span
         className="font-semibold lg:text-2xl md:text-xl text-lg text-center text-black Poppins-font"
         variants={itemVariants}
       >
-        Relaxation, beauty treatments and wellness near you, delivered to your
-        doorstep or workplace in Mallorca, Ibiza and across Spain
+        Expert Massage & Beauty Treatments Delivered to Your Doorstep
       </motion.span>
 
       <motion.span
         className="text-base text-black Poppins-font text-center"
         variants={itemVariants}
       >
-        Looking for the perfect way to unwind in the beautiful surroundings? Our
-        expert mobile massage services in Mallorca, Ibiza and Spain bring
-        relaxation to you-whether you&apos;re at home, a hotel, or a private
-        villa. From deep tissue to soothing relaxation massages, we ensure a
-        tailored experience to meet your needs. Yuhu Wellness brings
-        professional massage therapists to your villa, home, hotel, yacht, or
-        workplace anywhere in Mallorca, Ibiza & Spain, offering the ultimate
-        convenience and luxury for your wellbeing. Whether you are on holidays
-        or a resident, with Yuhu Wellness, you can enjoy expert massage and
-        beauty treatments in the comfort of your own space and on your schedule.
+        Looking for the ultimate relaxation experience in Spain and Italy? Yuhu
+        Wellness provides premium mobile massage services, bringing professional
+        therapists directly to your home, hotel, yacht, or workplace. Whether
+        you need a spot massage, relaxing massage , pedicure ,manicure or a
+        facial treatment our expert team ensures a personalized wellness
+        experience wherever you are.
       </motion.span>
 
       <motion.div

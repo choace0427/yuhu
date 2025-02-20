@@ -218,174 +218,6 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-interface CityStats {
-  id: number;
-  name: string;
-  country: string;
-  image: string;
-  therapistCount: number;
-  averageRating: number;
-  specialties: number;
-  averageExperience: number;
-  topSpecialties: string[];
-  description: string;
-  growth: number;
-}
-
-const cityStats: CityStats[] = [
-  // Italy
-  {
-    id: 1,
-    name: "Rome",
-    country: "Italy",
-    image:
-      "https://images.unsplash.com/photo-1552832230-c0197dd311b5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80",
-    therapistCount: 156,
-    averageRating: 4.8,
-    specialties: 12,
-    averageExperience: 8.5,
-    topSpecialties: ["Deep Tissue", "Sports Therapy", "Rehabilitation"],
-    description:
-      "The eternal city offers a perfect blend of traditional and modern wellness practices.",
-    growth: 25,
-  },
-  {
-    id: 2,
-    name: "Milan",
-    country: "Italy",
-    image:
-      "https://images.unsplash.com/photo-1574401347928-9a8e4dae16e5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80",
-    therapistCount: 134,
-    averageRating: 4.7,
-    specialties: 10,
-    averageExperience: 7.8,
-    topSpecialties: ["Swedish Massage", "Aromatherapy", "Hot Stone"],
-    description:
-      "Fashion capital with a growing wellness community focused on innovative therapies.",
-    growth: 32,
-  },
-  {
-    id: 3,
-    name: "Florence",
-    country: "Italy",
-    image:
-      "https://images.unsplash.com/photo-1543429257-3eb0b65d9c58?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80",
-    therapistCount: 98,
-    averageRating: 4.9,
-    specialties: 8,
-    averageExperience: 9.1,
-    topSpecialties: ["Therapeutic", "Reflexology", "Shiatsu"],
-    description:
-      "Renaissance city with a rich tradition of healing and wellness practices.",
-    growth: 28,
-  },
-  {
-    id: 4,
-    name: "Venice",
-    country: "Italy",
-    image:
-      "https://images.unsplash.com/photo-1514890547357-a9ee288728e0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80",
-    therapistCount: 87,
-    averageRating: 4.6,
-    specialties: 9,
-    averageExperience: 7.5,
-    topSpecialties: ["Lymphatic Drainage", "Facial", "Aromatherapy"],
-    description: "Unique floating city offering serene wellness experiences.",
-    growth: 22,
-  },
-  {
-    id: 5,
-    name: "Naples",
-    country: "Italy",
-    image:
-      "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80",
-    therapistCount: 112,
-    averageRating: 4.7,
-    specialties: 11,
-    averageExperience: 8.2,
-    topSpecialties: ["Sports Therapy", "Deep Tissue", "Myofascial"],
-    description:
-      "Vibrant southern Italian city with diverse therapeutic offerings.",
-    growth: 30,
-  },
-  // Spain
-  {
-    id: 6,
-    name: "Barcelona",
-    country: "Spain",
-    image:
-      "https://images.unsplash.com/photo-1523531294919-4bcd7c65e216?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80",
-    therapistCount: 189,
-    averageRating: 4.9,
-    specialties: 15,
-    averageExperience: 9.2,
-    topSpecialties: ["Sports Therapy", "Therapeutic Massage", "Rehabilitation"],
-    description:
-      "Mediterranean wellness hub combining traditional and modern healing practices.",
-    growth: 40,
-  },
-  {
-    id: 7,
-    name: "Madrid",
-    country: "Spain",
-    image:
-      "https://images.unsplash.com/photo-1543785734-4b6e564642f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80",
-    therapistCount: 167,
-    averageRating: 4.8,
-    specialties: 13,
-    averageExperience: 8.7,
-    topSpecialties: ["Deep Tissue", "Prenatal", "Myofascial Release"],
-    description:
-      "Vibrant capital city with a diverse range of wellness specialists.",
-    growth: 35,
-  },
-  {
-    id: 8,
-    name: "Valencia",
-    country: "Spain",
-    image:
-      "https://images.unsplash.com/photo-1599991271439-d663e2ec95a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80",
-    therapistCount: 145,
-    averageRating: 4.7,
-    specialties: 12,
-    averageExperience: 8.4,
-    topSpecialties: ["Sports Recovery", "Hot Stone", "Swedish"],
-    description:
-      "Coastal city offering modern wellness with Mediterranean influence.",
-    growth: 33,
-  },
-  {
-    id: 9,
-    name: "Seville",
-    country: "Spain",
-    image:
-      "https://images.unsplash.com/photo-1559682468-a6a29e7d9517?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80",
-    therapistCount: 123,
-    averageRating: 4.8,
-    specialties: 10,
-    averageExperience: 7.9,
-    topSpecialties: ["Therapeutic", "Aromatherapy", "Deep Tissue"],
-    description:
-      "Andalusian gem with a perfect blend of traditional and modern therapies.",
-    growth: 28,
-  },
-  {
-    id: 10,
-    name: "Malaga",
-    country: "Spain",
-    image:
-      "https://images.unsplash.com/photo-1562677292-00d628e0b2bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80",
-    therapistCount: 134,
-    averageRating: 4.6,
-    specialties: 11,
-    averageExperience: 8.1,
-    topSpecialties: ["Beach Therapy", "Sports Recovery", "Relaxation"],
-    description:
-      "Coastal paradise offering unique wellness experiences by the Mediterranean.",
-    growth: 31,
-  },
-];
-
 export default function HomePage() {
   const router = useRouter();
 
@@ -393,21 +225,6 @@ export default function HomePage() {
   const [sortBy, setSortBy] = useState<"rating" | "therapists" | "experience">(
     "rating"
   );
-
-  const filteredCities = cityStats
-    .filter((city) => city.country.toLowerCase() === activeCountry)
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "rating":
-          return b.averageRating - a.averageRating;
-        case "therapists":
-          return b.therapistCount - a.therapistCount;
-        case "experience":
-          return b.averageExperience - a.averageExperience;
-        default:
-          return 0;
-      }
-    });
 
   const [cities, setCities] = useState<any[]>([]);
 
@@ -449,10 +266,10 @@ export default function HomePage() {
 
         {/* Content rendered on top of the video */}
         <Container size="xl">
-          <Box style={{ maxWidth: rem(900) }}>
+          <Box style={{ maxWidth: rem(1200) }}>
             <Title
               order={1}
-              size={rem(72)}
+              size={rem(60)}
               style={{
                 color: "white",
                 marginBottom: rem(24),
@@ -460,11 +277,19 @@ export default function HomePage() {
                 lineHeight: 1.1,
               }}
             >
-              Discover Wellness
-              <Text span c="blue.4">
-                {" "}
-                Across Europe
-              </Text>
+              Premium Massage & Wellness Services –
+            </Title>
+            <Title
+              order={1}
+              size={rem(60)}
+              style={{
+                color: "white",
+                marginBottom: rem(24),
+                fontWeight: 800,
+                lineHeight: 1.1,
+              }}
+            >
+              Anytime, Anywhere in Italy & Spain
             </Title>
             <Text
               size="xl"
@@ -473,11 +298,15 @@ export default function HomePage() {
                 marginBottom: rem(48),
                 opacity: 0.9,
                 fontSize: rem(24),
-                maxWidth: rem(600),
+                // maxWidth: rem(600),
               }}
             >
-              Connect with expert therapists in Italy and Spain's most vibrant
-              cities
+              Rejuvenate your mind and body with expert massage therapy and
+              wellness experiences tailored to your needs. Whether you're
+              seeking deep relaxation massage, post-workout recovery massage, or
+              a sports recovery treatment, our top massage therapists in Spain
+              and Italy bring wellness directly to you—on your schedule,
+              wherever you are.
             </Text>
 
             <Group gap="md" mb="xl">
