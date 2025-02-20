@@ -277,7 +277,7 @@ export default function HomePage() {
                 lineHeight: 1.1,
               }}
             >
-              Premium Massage & Wellness Services –
+              Premium Massage & Wellness Services
             </Title>
             <Title
               order={1}
