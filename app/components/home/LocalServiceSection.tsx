@@ -630,13 +630,14 @@ export default function HomePage() {
                       +{city.growth}%
                     </Badge>
                   </Group>
+                  <Text lineClamp={4}>{city?.description}</Text>
                 </Group>
 
                 <Button
                   variant="light"
                   color="#46A7B0"
                   fullWidth
-                  mt="auto"
+                  mt="md"
                   leftSection={<IconHeartHandshake size={16} />}
                   onClick={() =>
                     router.push(
