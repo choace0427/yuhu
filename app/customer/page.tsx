@@ -14,13 +14,11 @@ import {
 } from "@mantine/core";
 import { useAuthStore } from "../_store/authStore";
 import { useRouter } from "next/navigation";
-import { IconMassage, IconSparkles, IconYoga } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { createClient } from "../utils/supabase/client";
 
 export default function CustomerPage() {
   const supabase = createClient();
-  const { userInfo } = useAuthStore();
   const router = useRouter();
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -156,7 +154,7 @@ const ServiceCard = ({ service, handleBooking }: any) => {
     <Card shadow="sm" padding="lg" radius="md" withBorder>
       <Card.Section>
         <Image
-          src={`/img/${service?.image_url}`}
+          src={`${service?.image_url}`}
           height={200}
           alt={service?.subcategory}
         />
