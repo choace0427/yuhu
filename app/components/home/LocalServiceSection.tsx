@@ -276,6 +276,7 @@ export default function HomePage() {
                 fontWeight: 800,
                 lineHeight: 1.1,
               }}
+              className="Poppins-font"
             >
               Premium Massage & Wellness Services
             </Title>
@@ -288,6 +289,7 @@ export default function HomePage() {
                 fontWeight: 800,
                 lineHeight: 1.1,
               }}
+              className="Poppins-font"
             >
               Anytime, Anywhere in Italy & Spain
             </Title>
@@ -300,13 +302,13 @@ export default function HomePage() {
                 fontSize: rem(18),
                 // maxWidth: rem(600),
               }}
+              className="Poppins-font"
             >
               Rejuvenate your mind and body with expert massage therapy and
               wellness experiences tailored to your needs. Whether you're
-              seeking deep relaxation massage, post-workout recovery massage, or
-              a sports recovery treatment, our top massage therapists in Spain
-              and Italy bring wellness directly to you—on your schedule,
-              wherever you are.
+              seeking a relaxing massage, sports massage massage, or a spa day
+              at home ,our top massage therapists in Spain and Italy bring
+              wellness directly to you—on your schedule, wherever you are.
             </Text>
 
             <Group gap="md" mb="xl">

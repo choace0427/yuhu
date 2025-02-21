@@ -76,13 +76,13 @@ const Header = () => {
       }`}
     >
       <div className="flex flex-row gap-1 items-center">
-        <Image src="/img/logo.png" alt="logo" width={30} height={30} />
+        <Image src="/img/logo.png" alt="logo" width={40} height={40} />
         <div className="Poppins-font font-bold">
-          <span className="text-lg text-[#46A7B0]">Y</span>
-          <span className={`text-lg`}>uhu</span>
+          <span className="text-3xl text-[#46A7B0]">Y</span>
+          <span className={`text-2xl`}>uhu</span>
           &nbsp;
-          <span className="text-lg text-[#46A7B0]">W</span>
-          <span className={`text-lg `}>ellness</span>
+          <span className="text-3xl text-[#46A7B0]">W</span>
+          <span className={`text-2xl `}>ellness</span>
         </div>
       </div>
       <Group justify="center" gap={"xl"}>
