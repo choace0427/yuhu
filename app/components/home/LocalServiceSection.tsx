@@ -387,15 +387,15 @@ export default function HomePage() {
           slidesToScroll={3}
           controlsOffset="xl"
           controlSize={44}
-          withControls={false}
           loop
           dragFree
           nextControlIcon={<IconChevronRight size={24} />}
           previousControlIcon={<IconChevronLeft size={24} />}
           styles={{
             control: {
-              backgroundColor: "white",
-              border: "1px solid #e9ecef",
+              backgroundColor: "#46A7B0",
+              border: "1px solid #46A7B0",
+              color: "white",
               boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
               "&:hover": {
                 backgroundColor: "#f8f9fa",
