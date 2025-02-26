@@ -237,7 +237,7 @@ const Header = () => {
               ) : (
                 <Menu.Item
                   leftSection={<IconServicemark size={14} />}
-                  onClick={() => router.push("/customer")}
+                  onClick={() => router.push("/services")}
                 >
                   Services
                 </Menu.Item>
