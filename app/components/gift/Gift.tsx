@@ -4,32 +4,22 @@ import GiftCard from "./GiftCard";
 export default function Gift() {
   const giftcardData = [
     {
-      src: "/img/gitcard1.png",
+      src: "/img/gift_1.jpg",
       title: "90% Caseback",
       content: "On 50+ Gift Cards",
     },
     {
-      src: "/img/gitcard2.png",
+      src: "/img/gift_2.jpg",
       title: "90% Caseback",
       content: "On 50+ Gift Cards",
     },
     {
-      src: "/img/gitcard1.png",
+      src: "/img/gift_3.jpg",
       title: "90% Caseback",
       content: "On 50+ Gift Cards",
     },
     {
-      src: "/img/gitcard2.png",
-      title: "90% Caseback",
-      content: "On 50+ Gift Cards",
-    },
-    {
-      src: "/img/gitcard1.png",
-      title: "90% Caseback",
-      content: "On 50+ Gift Cards",
-    },
-    {
-      src: "/img/gitcard2.png",
+      src: "/img/gift_4.jpg",
       title: "90% Caseback",
       content: "On 50+ Gift Cards",
     },
