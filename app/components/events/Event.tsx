@@ -150,7 +150,7 @@ export default function EventSection() {
             </Animator>
 
             <Animator
-              animation={batch(MoveOut(0, 100))}
+              animation={batch(MoveOut(0, 200))}
               className="h-fit my-auto"
             >
               <motion.div

@@ -103,12 +103,12 @@ export default function Footer() {
               AI Health Advisor
             </span>
             <Image
-              className="ai-logo-responsive"
+              className="ai-logo-responsive w-20 h-60"
               id="ai-logo"
               src={"/img/ai-logo.png"}
               alt="ai-logo"
-              width={68}
-              height={68}
+              // width={32}
+              // height={32}
             />
           </div>
         </div>

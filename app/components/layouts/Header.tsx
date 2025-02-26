@@ -166,8 +166,8 @@ const Header = () => {
           }`}
         >
           <div className="Poppins-font font-bold">
-            <span className="text-lg text-[#46A7B0]">P</span>
-            <span className={`text-lg`}>ricing</span>
+            <span className="text-lg text-[#46A7B0]">E</span>
+            <span className={`text-lg`}>vent</span>
           </div>
         </Anchor>
         <Anchor
