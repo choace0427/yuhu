@@ -81,17 +81,30 @@ const TeamSection = () => {
             their expertise, ensuring transparency and trust. We are committed
             to providing the highest level of comfort and security.
           </motion.span>
-          <motion.button
-            className="font-bold Poppins-font border-b-2 border-[#46A7B0] text-black"
-            variants={buttonVariants}
-            whileHover="hover"
-            initial="initial"
-          >
-            <span className="text-[#46A7B0] md:text-lg sm:text-base">B</span>
-            <span className="md:text-lg sm:text-base">OOK</span>&nbsp;
-            <span className="text-[#46A7B0] md:text-lg sm:text-base">T</span>
-            <span className="md:text-lg sm:text-base">ODAY</span>
-          </motion.button>
+          <div className="flex gap-10 items-center mt-10">
+            <motion.button
+              className="font-bold Poppins-font border-b-2 border-[#46A7B0] text-black"
+              variants={buttonVariants}
+              whileHover="hover"
+              initial="initial"
+            >
+              <span className="text-[#46A7B0] md:text-lg sm:text-base">B</span>
+              <span className="md:text-lg sm:text-base">ook</span>&nbsp;
+              <span className="text-[#46A7B0] md:text-lg sm:text-base">T</span>
+              <span className="md:text-lg sm:text-base">oday</span>
+            </motion.button>
+            <motion.button
+              className="font-bold Poppins-font border-b-2 border-[#46A7B0] text-black"
+              variants={buttonVariants}
+              whileHover="hover"
+              initial="initial"
+            >
+              <span className="text-[#46A7B0] md:text-lg sm:text-base">A</span>
+              <span className="md:text-lg sm:text-base">pply</span>&nbsp;
+              <span className="text-[#46A7B0] md:text-lg sm:text-base">N</span>
+              <span className="md:text-lg sm:text-base">ow</span>
+            </motion.button>
+          </div>
         </motion.div>
         <motion.div variants={imageVariants}>
           <Image

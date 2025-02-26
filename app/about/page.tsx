@@ -262,7 +262,7 @@ export default function AboutPage() {
           </motion.div>
 
           <motion.div
-            className="flex flex-col lg:gap-4 md:gap-3 gap-2 items-center justify-start p-6 rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow"
+            className="flex flex-col mb-10 lg:gap-4 md:gap-3 gap-2 items-center justify-start p-6 rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow"
             variants={cardVariants}
             whileHover="hover"
           >
@@ -293,26 +293,6 @@ export default function AboutPage() {
             </div>
           </motion.div>
         </motion.div>
-      </motion.div>
-
-      <motion.div
-        className="flex flex-col lg:gap-8 md:gap-6 gap-4 items-center lg:pb-24 md:pb-20 sm:pb-16 pb-12"
-        variants={sectionVariants}
-      >
-        <motion.span
-          className="lg:text-5xl md:text-4xl text-3xl text-[#46A7B0] font-bold Poppins-font"
-          variants={textVariants}
-        >
-          Meet our team
-        </motion.span>
-        <motion.span
-          className="md:text-base text-sm text-black text-center Poppins-font max-w-2xl"
-          variants={textVariants}
-        >
-          Lorem ipsum dolor sit amet consectetur. Magna risus et in tempor nulla
-          condimentum in ac. Sapien nisl nisl ac lobortis mauris. Vitae
-        </motion.span>
-        <TeamSection />
       </motion.div>
     </motion.div>
   );

@@ -252,22 +252,17 @@ export default function Contacts() {
             <span className="text-[#46A7B0] md:text-lg sm:text-base">S</span>
             <span className="md:text-lg sm:text-base">ubmit</span>
           </motion.button>
-          <div className="flex flex-row w-full justify-between items-center">
+          <div className="flex flex-row w-full gap-10 items-center">
             {[
               {
                 icon: <IconPhoneCall className="w-6 h-6 text-[#46A7B0]" />,
                 label: "Phone",
-                value: "35353536565",
-              },
-              {
-                icon: <IconFlagX className="w-6 h-6 text-[#46A7B0]" />,
-                label: "FAX",
-                value: "67567755756",
+                value: "+34624388967",
               },
               {
                 icon: <IconMail className="w-6 h-6 text-[#46A7B0]" />,
                 label: "EMAIL",
-                value: "financial@gmail.com",
+                value: "info@yuhuapp.com",
               },
             ].map((contact, index) => (
               <motion.div

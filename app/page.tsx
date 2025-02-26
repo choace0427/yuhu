@@ -44,12 +44,12 @@ export default function Home() {
       />
       <main className="flex h-full w-full flex-col items-center justify-between">
         <LocalServiceSection />
-        <ExperienceRelaxionSection />
+        {/* <ExperienceRelaxionSection /> */}
         <WhyChooseSection />
         <HowItWorksSection />
-        <TeamSection />
-        <EventsSection />
-        <Contacts />
+        {/* <TeamSection /> */}
+        {/* <EventsSection /> */}
+        {/* <Contacts /> */}
       </main>
     </>
   );

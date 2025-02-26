@@ -62,7 +62,7 @@ export default function EventSection() {
           className="text-black lg:text-4xl md:text-3xl text-2xl font-bold Poppins-font"
           variants={headerVariants}
         >
-          Mobile Wellness Events
+          Events
         </motion.h2>
         <motion.p
           className="text-black md:text-lg text-base Poppins-font"
