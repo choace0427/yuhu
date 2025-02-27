@@ -252,7 +252,16 @@ export default function CustomerPage() {
 
       {/* Services Sections */}
       <Container size="lg" py="xl">
-        <Tabs defaultValue={"1"} color="#46A7B0">
+        <Tabs
+          defaultValue={"1"}
+          color="#46A7B0"
+          styles={{
+            tabLabel: {
+              fontSize: "1.05rem",
+              fontWeight: 600,
+            },
+          }}
+        >
           <Tabs.List grow mb="xl">
             {category?.map((category, index) => {
               return (
