@@ -1,184 +1,3 @@
-// "use client";
-
-// import { motion, useScroll, useTransform } from "framer-motion";
-// import { useRef } from "react";
-
-// export default function LocalServiceSection() {
-//   const sectionRef = useRef(null);
-//   const { scrollYProgress } = useScroll({
-//     target: sectionRef,
-//     offset: ["start end", "end start"],
-//   });
-
-//   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
-//   const scale = useTransform(
-//     scrollYProgress,
-//     [0, 0.2, 0.8, 1],
-//     [0.8, 1, 1, 0.8]
-//   );
-
-//   const containerVariants = {
-//     hidden: { opacity: 0 },
-//     visible: {
-//       opacity: 1,
-//       transition: {
-//         staggerChildren: 0.2,
-//         delayChildren: 0.3,
-//       },
-//     },
-//   };
-
-//   const titleVariants = {
-//     hidden: { opacity: 0, y: -20 },
-//     visible: {
-//       opacity: 1,
-//       y: 0,
-//       transition: {
-//         duration: 0.6,
-//         ease: "easeOut",
-//       },
-//     },
-//   };
-
-//   const countryVariants = {
-//     hidden: { opacity: 0, y: 30 },
-//     visible: {
-//       opacity: 1,
-//       y: 0,
-//       transition: {
-//         duration: 0.5,
-//         ease: "easeOut",
-//       },
-//     },
-//   };
-
-//   const cityVariants = {
-//     hidden: { opacity: 0, x: -20 },
-//     visible: {
-//       opacity: 1,
-//       x: 0,
-//       transition: {
-//         duration: 0.4,
-//         ease: "easeOut",
-//       },
-//     },
-//   };
-
-//   const videoVariants = {
-//     hidden: { opacity: 0, scale: 0.95 },
-//     visible: {
-//       opacity: 1,
-//       scale: 1,
-//       transition: {
-//         duration: 0.8,
-//         ease: "easeOut",
-//       },
-//     },
-//   };
-
-//   return (
-//     <motion.div
-//       ref={sectionRef}
-//       style={{ opacity, scale }}
-//       className="bg-[#46A7B0] py-14 w-full flex justify-center"
-//     >
-//       <motion.div
-//         variants={containerVariants}
-//         initial="hidden"
-//         whileInView="visible"
-//         viewport={{ once: true, amount: 0.3 }}
-//         className="flex flex-row w-full justify-between max-w-7xl"
-//       >
-//         <motion.div
-//           variants={containerVariants}
-//           className="flex flex-col gap-4 items-center w-[500px]"
-//         >
-//           <motion.span
-//             variants={titleVariants}
-//             className="Poppins-font text-white text-3xl font-bold"
-//           >
-//             Find your local massage service:
-//           </motion.span>
-//           <div className="flex flex-row justify-between w-full px-20">
-//             <motion.div
-//               variants={containerVariants}
-//               className="flex flex-col gap-1 items-center"
-//             >
-//               <motion.span
-//                 variants={countryVariants}
-//                 className="text-2xl text-gray-200 Poppins-font"
-//               >
-//                 Italy
-//               </motion.span>
-//               <motion.span
-//                 variants={cityVariants}
-//                 className="text-base text-white Poppins-font"
-//               >
-//                 Roma
-//               </motion.span>
-//               <motion.span
-//                 variants={cityVariants}
-//                 className="text-base text-white Poppins-font"
-//               >
-//                 Milano
-//               </motion.span>
-//             </motion.div>
-//             <motion.div
-//               variants={containerVariants}
-//               className="flex flex-col gap-1 items-center"
-//             >
-//               <motion.span
-//                 variants={countryVariants}
-//                 className="text-2xl text-gray-200 Poppins-font"
-//               >
-//                 Spain
-//               </motion.span>
-//               <motion.span
-//                 variants={cityVariants}
-//                 className="text-base text-white Poppins-font"
-//               >
-//                 Mallorca
-//               </motion.span>
-//               <motion.span
-//                 variants={cityVariants}
-//                 className="text-base text-white Poppins-font"
-//               >
-//                 Ibiza
-//               </motion.span>
-//               <motion.span
-//                 variants={cityVariants}
-//                 className="text-base text-white Poppins-font"
-//               >
-//                 Madrid
-//               </motion.span>
-//               <motion.span
-//                 variants={cityVariants}
-//                 className="text-base text-white Poppins-font"
-//               >
-//                 Malaga
-//               </motion.span>
-//               <motion.span
-//                 variants={cityVariants}
-//                 className="text-base text-white Poppins-font"
-//               >
-//                 Barcelona
-//               </motion.span>
-//             </motion.div>
-//           </div>
-//         </motion.div>
-//         <motion.video
-//           variants={videoVariants}
-//           className="w-[500px] rounded-3xl"
-//           src="https://myyuhubucket.s3.us-east-2.amazonaws.com/video-output-A46683D6-84E3-4524-8FB5-E6C7BF446550.mov"
-//           controls
-//           autoPlay
-//           loop
-//         />
-//       </motion.div>
-//     </motion.div>
-//   );
-// }
-
 "use client";
 
 import { supabase } from "@/supabase";
@@ -193,22 +12,16 @@ import {
   Button,
   Box,
   rem,
-  Paper,
   ThemeIcon,
-  SimpleGrid,
-  Progress,
   Tabs,
   ActionIcon,
   Tooltip,
   Card,
-  Divider,
 } from "@mantine/core";
 import {
   IconMapPin,
   IconUsers,
-  IconStethoscope,
   IconStar,
-  IconCertificate,
   IconBuildingSkyscraper,
   IconChartBar,
   IconHeartHandshake,
@@ -218,8 +31,16 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { useParams } from "next/navigation";
+import translations from "@/app/utils/language";
+type TranslationKeys = keyof typeof translations;
+
 export default function HomePage() {
+  const params = useParams();
   const router = useRouter();
+
+  const languageId = params.language_id as TranslationKeys;
+  const currentLanguage = translations[languageId] || translations.en;
 
   const [activeCountry, setActiveCountry] = useState("Italy");
   const [sortBy, setSortBy] = useState<"rating" | "therapists" | "experience">(
@@ -278,7 +99,7 @@ export default function HomePage() {
               }}
               className="Poppins-font"
             >
-              Premium Massage & Wellness Services
+              {currentLanguage?.home_hero_title_1}
             </Title>
             <Title
               order={1}
@@ -291,7 +112,7 @@ export default function HomePage() {
               }}
               className="Poppins-font"
             >
-              Anytime, Anywhere in Italy & Spain
+              {currentLanguage?.home_hero_title_2}
             </Title>
             <Text
               size="xl"
@@ -304,11 +125,7 @@ export default function HomePage() {
               }}
               className="Poppins-font"
             >
-              Rejuvenate your mind and body with expert massage therapy and
-              wellness experiences tailored to your needs. Whether you're
-              seeking a relaxing massage, sports massage massage, or a spa day
-              at home ,our top massage therapists in Spain and Italy bring
-              wellness directly to you—on your schedule, wherever you are.
+              {currentLanguage?.home_hero_title_content}
             </Text>
 
             <Group gap="md" mb="xl">

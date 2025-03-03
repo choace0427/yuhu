@@ -72,6 +72,55 @@ const translations = {
     meet_team: "Meet the Team",
     meet_team_content:
       "All of our professional massage therapists are fully licensed, insured, and rigorously vetted through our industry-leading security protocols. When you book a Yuhu Wellness service, be it a relaxing massage, a sports massage, a personal training or our beauty treatment sessions, you will receive a confirmation with your therapist's full name, professional bio, and details about their expertise, ensuring transparency and trust. We are committed to providing the highest level of comfort and security.",
+    home_choose_wellness: "Why Choose Yuhu Wellness?",
+    home_choose_wellness_content_1:
+      "Why Choose Us? With our on-demand, mobile massage services in Mallorca, Ibiza and Spain, you save time and enjoy a premium spa experience in the comfort of your chosen location. Whether you're relaxing after a long day exploring Mallorca or celebrating a special event, we're here to ensure your complete relaxation.",
+    home_choose_wellness_content_2:
+      "Convenient & Time-saving: book our mobile massage or beauty treatment at a time that suits you. No need to worry about driving, parking, or babysitters-stay in the comfort of your space.",
+    home_choose_wellness_content_3:
+      "Tailored Services: Our skilled professionals offer personalized treatments across Mallorca, including sports recovery, pain relief, and relaxation massages.",
+    home_choose_wellness_content_4:
+      "Spa Quality at Home: Enjoy premium wellness services without the hassle of traveling to a spa.",
+    home_how_works: "How it works?",
+    home_how_works_content_1:
+      "Choose your wellness service. Select from a variety of massage and beauty treatments.",
+    home_how_works_content_2:
+      "Set your location and preferred time. Whether it's your home, villa, or hotel.",
+    home_how_works_content_3:
+      "Book instantly-enjoy same-day availability or schedule in advance.",
+    home_how_works_content_4:
+      "Yuhu Wellness and Massage makes it simple to access luxury wellness services at affordable prices. Experience the convenience of on-demand mobile wellness services, whether you are in Mallorca Ibiza, or another Spanish city, our team is ready to deliver relaxation and rejuvenation.",
+    home_hero_title_1: "Premium Massage & Wellness Services",
+    home_hero_title_2: "Anytime, Anywhere in Italy & Spain",
+    home_hero_title_content:
+      "Rejuvenate your mind and body with expert massage therapy and wellness experiences tailored to your needs. Whether you're seeking a relaxing massage, sports massage massage, or a spa day at home ,our top massage therapists in Spain and Italy bring wellness directly to you—on your schedule, wherever you are.",
+    about_us: "About Us",
+    about_us_content:
+      "At Yuhu Wellness, we believe in bringing wellness and fitness directly to you. As a leading provider of mobile massage and personal training services, we deliver tailored experiences across Mallorca, Ibiza, the Balearic Islands, Rome, Milan, and Italy. With a team of certified professionals, we ensure personalized care in the comfort of your home, office, or event.",
+    our_mission: "Our Mission",
+    our_mission_content:
+      "Our mission is to make wellness accessible, convenient, and personalized. By combining expert care, flexibility, and on-demand services, we empower individuals to prioritize their health and well-being. Whether you seek relaxation, recovery, or fitness improvement, Yuhu Wellness is here to help.",
+    our_vision: "Our Vision",
+    our_vision_content:
+      "We envision a world where wellness is a lifestyle, not a luxury. At Yuhu Wellness, we strive to revolutionize the way people approach self-care by creating seamless, accessible, and stress-free experiences across Spain and Italy.",
+    what_we_do: "What We Do?",
+    we_offer: "We offer",
+    we_offer_content_1: "Massages: therapeutic, relaxing, and sports.",
+    we_offer_content_2: "Beauty treatments (Facials, Manicure, pedicure, etc)",
+    we_offer_content_3: "Personal training programs customized to your goals.",
+    about_how_it_works: "How It Works",
+    about_how_it_works_content_1:
+      "Simply select what you need, your favorite therapist (upon availability) along with the time and place.",
+    about_how_it_works_content_2:
+      "Make your payment and We will deliver the service directly to you.",
+    about_who_where_servce: "Who and Where We Serve",
+    about_who_where_servce_content_1: "We cater to:",
+    about_who_where_servce_content_2:
+      "Private clients, Corporate events, Retreats and more.",
+    about_who_where_servce_content_3:
+      "Locations include: Mallorca, Ibiza, Spain Rome, Milan, and across Italy",
+    about_who_where_servce_content_4:
+      "Wherever you are, we bring wellness to you.",
   },
   es: {
     contactUs: "CONTÁCTANOS",
@@ -137,6 +186,57 @@ const translations = {
     meet_team: "Conozca al equipo",
     meet_team_content:
       "Todos nuestros masajistas profesionales cuentan con licencia completa, están asegurados y han sido rigurosamente examinados a través de nuestros protocolos de seguridad líderes en la industria. Cuando reservas un servicio de Yuhu Wellness, ya sea un masaje relajante, un masaje deportivo, un entrenamiento personal o nuestras sesiones de tratamiento de belleza, recibirás una confirmación con el nombre completo de tu masajista, una biografía profesional y detalles sobre su experiencia, lo que garantiza transparencia y confianza. Nos comprometemos a brindar el más alto nivel de comodidad y seguridad.",
+    home_choose_wellness: "¿Por qué elegir Yuhu Wellness?",
+    home_choose_wellness_content_1:
+      "¿Por qué elegirnos? Con nuestros servicios de masajes móviles bajo demanda en Mallorca, Ibiza y España, ahorras tiempo y disfrutas de una experiencia spa premium en la comodidad de tu ubicación elegida. Ya sea que te estés relajando después de un largo día explorando Mallorca o celebrando un evento especial, estamos aquí para garantizar tu completa relajación.",
+    home_choose_wellness_content_2:
+      "Conveniente y Ahorra Tiempo: reserva nuestro masaje móvil o tratamiento de belleza en el momento que mejor te convenga. No hay necesidad de preocuparse por conducir, estacionar o niñeras - quédate en la comodidad de tu espacio.",
+    home_choose_wellness_content_3:
+      "Servicios Personalizados: Nuestros profesionales capacitados ofrecen tratamientos personalizados en toda Mallorca, incluyendo recuperación deportiva, alivio del dolor y masajes de relajación.",
+    home_choose_wellness_content_4:
+      "Calidad de Spa en Casa: Disfruta de servicios de bienestar premium sin la molestia de viajar a un spa.",
+    home_how_works: "¿Cómo funciona?",
+    home_how_works_content_1:
+      "Elige tu servicio de bienestar. Selecciona entre una variedad de masajes y tratamientos de belleza.",
+    home_how_works_content_2:
+      "Configura tu ubicación y el horario preferido. Ya sea en tu casa, villa u hotel.",
+    home_how_works_content_3:
+      "Reserva al instante: disfruta de disponibilidad el mismo día o programa con anticipación.",
+    home_how_works_content_4:
+      "Yuhu Wellness and Massage hace que sea fácil acceder a servicios de bienestar de lujo a precios accesibles. Experimenta la comodidad de los servicios móviles de bienestar bajo demanda, ya sea que estés en Mallorca, Ibiza u otra ciudad española, nuestro equipo está listo para brindarte relajación y rejuvenecimiento.",
+    home_hero_title_1: "Servicios Premium de Masajes y Bienestar",
+    home_hero_title_2: "En cualquier momento y lugar en Italia y España",
+    home_hero_title_content:
+      "Rejuvenece tu mente y cuerpo con terapias de masajes y experiencias de bienestar adaptadas a tus necesidades. Ya sea que busques un masaje relajante, un masaje deportivo o un día de spa en casa, nuestros mejores masajistas en España e Italia llevan el bienestar directamente a ti, en tu horario, dondequiera que estés.",
+    about_us: "Sobre Nosotros",
+    about_us_content:
+      "En Yuhu Wellness, creemos en llevar el bienestar y la salud directamente a ti. Como líder en servicios de masajes móviles y entrenamiento personal, ofrecemos experiencias personalizadas en Mallorca, Ibiza, las Islas Baleares, Roma, Milán y toda Italia. Con un equipo de profesionales certificados, garantizamos atención personalizada en la comodidad de tu hogar, oficina o evento.",
+    our_mission: "Nuestra Misión",
+    our_mission_content:
+      "Nuestra misión es hacer que el bienestar sea accesible, conveniente y personalizado. Combinando atención experta, flexibilidad y servicios bajo demanda, ayudamos a las personas a priorizar su salud y bienestar. Ya sea que busques relajación, recuperación o mejora física, Yuhu Wellness está aquí para ayudarte.",
+    our_vision: "Nuestra Visión",
+    our_vision_content:
+      "Imaginamos un mundo donde el bienestar sea un estilo de vida, no un lujo. En Yuhu Wellness, nos esforzamos por revolucionar la forma en que las personas abordan el autocuidado creando experiencias fluidas, accesibles y sin estrés en toda España e Italia.",
+    what_we_do: "¿Qué Hacemos?",
+    we_offer: "Lo que Ofrecemos",
+    we_offer_content_1: "Masajes: terapéuticos, relajantes y deportivos.",
+    we_offer_content_2:
+      "Tratamientos de belleza (faciales, manicura, pedicura, etc.)",
+    we_offer_content_3:
+      "y programas de entrenamiento personal adaptados a tus objetivos.",
+    about_how_it_works: "Cómo Funciona",
+    about_how_it_works_content_1:
+      "Simplemente selecciona lo que necesitas, tu terapeuta favorito (según disponibilidad) junto con la hora y el lugar.",
+    about_how_it_works_content_2:
+      "Realiza tu pago y nosotros llevaremos el servicio directamente a ti.",
+    about_who_where_servce: "A Quién y Dónde Servimos",
+    about_who_where_servce_content_1: "Atendemos a:",
+    about_who_where_servce_content_2:
+      "Clientes privados, eventos corporativos, retiros y más.",
+    about_who_where_servce_content_3:
+      "Ubicaciones incluyen: Mallorca, Ibiza, España, Roma, Milán y toda Italia.",
+    about_who_where_servce_content_4:
+      "Dondequiera que estés, llevamos el bienestar a ti.",
   },
   it: {
     contactUs: "CONTATTACI",
@@ -202,6 +302,57 @@ const translations = {
     meet_team: "Incontra il team",
     meet_team_content:
       "Tutti i nostri massaggiatori professionisti sono completamente autorizzati, assicurati e rigorosamente controllati tramite i nostri protocolli di sicurezza leader del settore. Quando prenoti un servizio Yuhu Wellness, che si tratti di un massaggio rilassante, sportivo, di un personal training o delle nostre sessioni di trattamento di bellezza, riceverai una conferma con il nome completo del tuo terapista, la biografia professionale e i dettagli sulla sua competenza, garantendo trasparenza e fiducia. Ci impegniamo a fornire il massimo livello di comfort e sicurezza.",
+    home_choose_wellness: "Perché scegliere Yuhu Wellness?",
+    home_choose_wellness_content_1:
+      "Perché scegliere noi? Con i nostri servizi di massaggi mobili su richiesta a Maiorca, Ibiza e in Spagna, risparmi tempo e godi di un'esperienza spa premium nel comfort della tua posizione scelta. Che tu stia rilassandoti dopo una lunga giornata esplorando Maiorca o celebrando un evento speciale, siamo qui per garantire il tuo totale relax.",
+    home_choose_wellness_content_2:
+      "Comodo e Salva-tempo: prenota il nostro massaggio mobile o trattamento di bellezza in un momento che ti è comodo. Non c'è bisogno di preoccuparsi di guidare, parcheggiare o trovare una babysitter - rimani nel comfort del tuo spazio.",
+    home_choose_wellness_content_3:
+      "Servizi Personalizzati: I nostri professionisti qualificati offrono trattamenti personalizzati in tutta Maiorca, tra cui recupero sportivo, sollievo dal dolore e massaggi rilassanti.",
+    home_choose_wellness_content_4:
+      "Qualità Spa a Casa: Goditi servizi di benessere premium senza il fastidio di dover andare in una spa.",
+    home_how_works: "Come funziona?",
+    home_how_works_content_1:
+      "Scegli il tuo servizio di benessere. Seleziona tra una varietà di massaggi e trattamenti di bellezza.",
+    home_how_works_content_2:
+      "Imposta la tua posizione e il tuo orario preferito. Che sia a casa tua, in villa o in hotel.",
+    home_how_works_content_3:
+      "Prenota istantaneamente - goditi la disponibilità per lo stesso giorno o programma in anticipo.",
+    home_how_works_content_4:
+      "Yuhu Wellness e Massage rende semplice accedere a servizi di benessere di lusso a prezzi accessibili. Sperimenta la comodità dei servizi di benessere mobili su richiesta, che tu sia a Maiorca, Ibiza o in un'altra città spagnola, il nostro team è pronto a offrirti relax e ringiovanimento.",
+    home_hero_title_1: "Servizi Premium di Massaggi e Benessere",
+    home_hero_title_2: "Sempre e Ovunque in Italia e Spagna",
+    home_hero_title_content:
+      "Ringiovanisci la tua mente e il tuo corpo con esperienze di massoterapia e benessere esperte, su misura per le tue esigenze. Che tu stia cercando un massaggio rilassante, un massaggio sportivo o una giornata spa a casa, i nostri migliori massaggiatori in Spagna e Italia portano il benessere direttamente da te, nel momento che preferisci, ovunque tu sia.",
+    about_us: "Chi Siamo",
+    about_us_content:
+      "In Yuhu Wellness, crediamo nel portare il benessere e il fitness direttamente a te. Come leader nei servizi di massaggi mobili e personal training, offriamo esperienze su misura a Maiorca, Ibiza, le Isole Baleari, Roma, Milano e in tutta Italia. Con un team di professionisti certificati, garantiamo cure personalizzate nel comfort della tua casa, ufficio o evento.",
+    our_mission: "La Nostra Missione",
+    our_mission_content:
+      "La nostra missione è rendere il benessere accessibile, conveniente e personalizzato. Combinando cure esperte, flessibilità e servizi su richiesta, aiutiamo le persone a dare priorità alla loro salute e al loro benessere. Che tu cerchi relax, recupero o miglioramento fisico, Yuhu Wellness è qui per aiutarti.",
+    our_vision: "La Nostra Visione",
+    our_vision_content:
+      "Immaginiamo un mondo in cui il benessere è uno stile di vita, non un lusso. In Yuhu Wellness, ci impegniamo a rivoluzionare il modo in cui le persone affrontano la cura di sé creando esperienze fluide, accessibili e prive di stress in tutta la Spagna e l'Italia.",
+    what_we_do: "Cosa Facciamo?",
+    we_offer: "Cosa Offriamo",
+    we_offer_content_1: "Massaggi: terapeutici, rilassanti e sportivi.",
+    we_offer_content_2:
+      "Trattamenti di bellezza (trattamenti viso, manicure, pedicure, ecc.)",
+    we_offer_content_3:
+      "e programmi di personal training personalizzati ai tuoi obiettivi.",
+    about_how_it_works: "Come Funziona",
+    about_how_it_works_content_1:
+      "Basta selezionare ciò di cui hai bisogno, il tuo terapeuta preferito (se disponibile) insieme al momento e al luogo.",
+    about_how_it_works_content_2:
+      "Effettua il pagamento e noi ti consegneremo il servizio direttamente.",
+    about_who_where_servce: "Chi e Dove Serviamo",
+    about_who_where_servce_content_1: "Ci rivolgiamo a:",
+    about_who_where_servce_content_2:
+      "Clienti privati, eventi aziendali, ritiri e altro.",
+    about_who_where_servce_content_3:
+      "Le località includono: Maiorca, Ibiza, Spagna, Roma, Milano e tutta l'Italia.",
+    about_who_where_servce_content_4:
+      "Ovunque tu sia, portiamo il benessere da te.",
   },
 };
 

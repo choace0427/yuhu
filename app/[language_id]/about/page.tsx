@@ -4,7 +4,16 @@ import { motion } from "framer-motion";
 import { Image } from "@mantine/core";
 import TeamSection from "../components/home/TeamSection";
 
+import { useParams } from "next/navigation";
+import translations from "@/app/utils/language";
+type TranslationKeys = keyof typeof translations;
+
 export default function AboutPage() {
+  const params = useParams();
+  const languageId = params.language_id as TranslationKeys;
+
+  const currentLanguage = translations[languageId] || translations.en;
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -89,18 +98,13 @@ export default function AboutPage() {
             className="lg:text-5xl md:text-4xl text-3xl text-[#46A7B0] Poppins-font font-semibold"
             variants={textVariants}
           >
-            About Us
+            {currentLanguage?.about_us}
           </motion.span>
           <motion.span
             className="lg:text-xl md:text-lg sm:text-base text-sm text-black Poppins-font md:text-start text-center"
             variants={textVariants}
           >
-            At Yuhu Wellness, we believe in bringing wellness and fitness
-            directly to you. As a leading provider of mobile massage and
-            personal training services, we deliver tailored experiences across
-            Mallorca, Ibiza, the Balearic Islands, Rome, Milan, and Italy. With
-            a team of certified professionals, we ensure personalized care in
-            the comfort of your home, office, or event.
+            {currentLanguage?.about_us_content}
           </motion.span>
         </motion.div>
         <motion.div variants={imageVariants}>
@@ -138,17 +142,13 @@ export default function AboutPage() {
             className="lg:text-3xl md:text-2xl text-xl text-[#46A7B0] Poppins-font font-semibold"
             variants={textVariants}
           >
-            Our Mission
+            {currentLanguage?.our_mission}
           </motion.span>
           <motion.span
             className="lg:text-xl md:text-lg sm:text-base text-sm text-black Poppins-font md:text-start text-center"
             variants={textVariants}
           >
-            Our mission is to make wellness accessible, convenient, and
-            personalized. By combining expert care, flexibility, and on-demand
-            services, we empower individuals to prioritize their health and
-            well-being. Whether you seek relaxation, recovery, or fitness
-            improvement, Yuhu Wellness is here to help.
+            {currentLanguage?.our_mission_content}
           </motion.span>
         </motion.div>
       </motion.div>
@@ -166,16 +166,13 @@ export default function AboutPage() {
             className="lg:text-3xl md:text-2xl text-xl text-[#46A7B0] Poppins-font font-semibold"
             variants={textVariants}
           >
-            Our Vision
+            {currentLanguage?.our_vision}
           </motion.span>
           <motion.span
             className="lg:text-xl md:text-lg sm:text-base text-sm text-black Poppins-font md:text-start text-center"
             variants={textVariants}
           >
-            We envision a world where wellness is a lifestyle, not a luxury. At
-            Yuhu Wellness, we strive to revolutionize the way people approach
-            self-care by creating seamless, accessible, and stress-free
-            experiences across Spain and Italy.
+            {currentLanguage?.our_vision_content}
           </motion.span>
         </motion.div>
         <motion.div variants={imageVariants}>
@@ -199,7 +196,7 @@ export default function AboutPage() {
           className="text-[#46A7B0] lg:text-5xl md:text-4xl text-3xl font-bold Poppins-font"
           variants={textVariants}
         >
-          What We Do?
+          {currentLanguage?.what_we_do}
         </motion.span>
         <motion.div
           className="grid md:grid-cols-3 grid-cols-1 gap-8 w-full"
@@ -219,17 +216,17 @@ export default function AboutPage() {
               h={30}
             />
             <span className="md:text-base text-sm font-bold text-black Poppins-font">
-              We offer
+              {currentLanguage?.we_offer}
             </span>
             <div className="flex flex-col gap-2">
               <span className="text-black md:text-sm text-xs Poppins-font text-center">
-                Massages: therapeutic, relaxing, and sports.
+                {currentLanguage?.we_offer_content_1}
               </span>
               <span className="text-black md:text-sm text-xs Poppins-font text-center">
-                Beauty treatments (Facials, Manicure, pedicure, etc)
+                {currentLanguage?.we_offer_content_2}
               </span>
               <span className="text-black md:text-sm text-xs Poppins-font text-center">
-                Personal training programs customized to your goals.
+                {currentLanguage?.we_offer_content_3}
               </span>
             </div>
           </motion.div>
@@ -247,16 +244,14 @@ export default function AboutPage() {
               h={30}
             />
             <span className="md:text-base text-sm font-bold text-black Poppins-font">
-              How It Works
+              {currentLanguage?.about_how_it_works}
             </span>
             <div className="flex flex-col gap-2">
               <span className="text-black md:text-sm text-xs Poppins-font text-center">
-                Simply select what you need, your favorite therapist (upon
-                availability) along with the time and place.
+                {currentLanguage?.about_how_it_works_content_1}
               </span>
               <span className="text-black md:text-sm text-xs Poppins-font text-center">
-                Make your payment and We will deliver the service directly to
-                you.
+                {currentLanguage?.about_how_it_works_content_2}
               </span>
             </div>
           </motion.div>
@@ -274,21 +269,20 @@ export default function AboutPage() {
               h={30}
             />
             <span className="md:text-base text-sm font-bold text-black Poppins-font">
-              Who and Where We Serve
+              {currentLanguage?.about_who_where_servce}
             </span>
             <div className="flex flex-col gap-2">
               <span className="text-black md:text-sm text-xs Poppins-font text-center">
-                We cater to:
+                {currentLanguage?.about_who_where_servce_content_1}
               </span>
               <span className="text-black md:text-sm text-xs Poppins-font text-center">
-                Private clients, Corporate events, Retreats and more.
+                {currentLanguage?.about_who_where_servce_content_2}
               </span>
               <span className="text-black md:text-sm text-xs Poppins-font text-center">
-                Locations include: Mallorca, Ibiza, Spain Rome, Milan, and
-                across Italy
+                {currentLanguage?.about_who_where_servce_content_3}
               </span>
               <span className="text-black md:text-sm text-xs Poppins-font text-center">
-                Wherever you are, we bring wellness to you.
+                {currentLanguage?.about_who_where_servce_content_4}
               </span>
             </div>
           </motion.div>

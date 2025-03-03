@@ -12,9 +12,17 @@ import {
 } from "react-scroll-motion";
 import { useAuthStore } from "../../_store/authStore";
 
+import { useParams } from "next/navigation";
+import translations from "@/app/utils/language";
+type TranslationKeys = keyof typeof translations;
+
 export default function HowItWorksSection() {
   const { isAuthenticated } = useAuthStore();
+  const params = useParams();
   const router = useRouter();
+
+  const languageId = params.language_id as TranslationKeys;
+  const currentLanguage = translations[languageId] || translations.en;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -86,38 +94,31 @@ export default function HowItWorksSection() {
                   variants={itemVariants}
                   className="text-black lg:text-3xl md:text-2xl text-xl font-bold Poppins-font md:text-start text-center"
                 >
-                  How it works?
+                  {currentLanguage?.home_how_works}
                 </motion.span>
                 <motion.span
                   variants={itemVariants}
                   className="text-black Poppins-font text-base"
                 >
-                  1. Choose your wellness service. Select from a variety of
-                  massage and beauty treatments.
+                  1. {currentLanguage?.home_how_works_content_1}
                 </motion.span>
                 <motion.span
                   variants={itemVariants}
                   className="text-black Poppins-font text-base"
                 >
-                  2. Set your location and preferred time. Whether it&apos;s
-                  your home, villa, or hotel.
+                  2. {currentLanguage?.home_how_works_content_2}
                 </motion.span>
                 <motion.span
                   variants={itemVariants}
                   className="text-black Poppins-font text-base"
                 >
-                  3. Book instantly-enjoy same-day availability or schedule in
-                  advance.
+                  3. {currentLanguage?.home_how_works_content_3}
                 </motion.span>
                 <motion.span
                   variants={itemVariants}
                   className="text-black Poppins-font text-base"
                 >
-                  Yuhu Wellness and Massage makes it simple to access luxury
-                  wellness services at affordable prices. Experience the
-                  convenience of on-demand mobile wellness services, whether you
-                  are in Mallorca Ibiza, or another Spanish city, our team is
-                  ready to deliver relaxation and rejuvenation.
+                  {currentLanguage?.home_how_works_content_4}
                 </motion.span>
                 <motion.button
                   variants={itemVariants}

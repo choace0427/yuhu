@@ -12,9 +12,17 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../../_store/authStore";
 
+import { useParams } from "next/navigation";
+import translations from "@/app/utils/language";
+type TranslationKeys = keyof typeof translations;
+
 export default function WhyChooseSection() {
-  const router = useRouter();
   const { isAuthenticated } = useAuthStore();
+  const params = useParams();
+  const router = useRouter();
+
+  const languageId = params.language_id as TranslationKeys;
+  const currentLanguage = translations[languageId] || translations.en;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -71,17 +79,13 @@ export default function WhyChooseSection() {
                   className="text-black lg:text-3xl md:text-2xl text-xl font-bold Poppins-font md:text-start text-center"
                 >
                   Why Choose Yuhu Wellness?
+                  {currentLanguage?.home_choose_wellness}
                 </motion.span>
                 <motion.span
                   variants={itemVariants}
                   className="text-black Poppins-font text-base"
                 >
-                  Why Choose Us? With our on-demand, mobile massage services in
-                  Mallorca, Ibiza and Spain, you save time and enjoy a premium
-                  spa experience in the comfort of your chosen location. Whether
-                  you&apos;re relaxing after a long day exploring Mallorca or
-                  celebrating a special event, we&apos;re here to ensure your
-                  complete relaxation.
+                  {currentLanguage?.home_choose_wellness_content_1}
                 </motion.span>
                 <motion.div
                   variants={containerVariants}
@@ -91,25 +95,19 @@ export default function WhyChooseSection() {
                     variants={itemVariants}
                     className="text-black md:text-base text-sm Poppins-font"
                   >
-                    • Convenient &amp; Time-saving: book our mobile massage or
-                    beauty treatment at a time that suits you. No need to worry
-                    about driving, parking, or babysitters-stay in the comfort
-                    of your space.
+                    • {currentLanguage?.home_choose_wellness_content_2}
                   </motion.span>
                   <motion.span
                     variants={itemVariants}
                     className="text-black md:text-base text-sm Poppins-font"
                   >
-                    • Tailored Services: Our skilled professionals offer
-                    personalized treatments across Mallorca, including sports
-                    recovery, pain relief, and relaxation massages.
+                    • {currentLanguage?.home_choose_wellness_content_3}
                   </motion.span>
                   <motion.span
                     variants={itemVariants}
                     className="text-black md:text-base text-sm Poppins-font"
                   >
-                    • Spa Quality at Home: Enjoy premium wellness services
-                    without the hassle of traveling to a spa.
+                    • {currentLanguage?.home_choose_wellness_content_4}
                   </motion.span>
                 </motion.div>
                 <motion.button
