@@ -5,7 +5,7 @@ import {
   MantineProvider,
   mantineHtmlProps,
 } from "@mantine/core";
-import MainLayout from "./components/layouts/MainLayout";
+import MainLayout from "./[language_id]/components/layouts/MainLayout";
 import { Bounce } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 
@@ -14,7 +14,7 @@ import "@mantine/core/styles.css";
 import "@mantine/carousel/styles.css";
 import "@mantine/dates/styles.css";
 import "@mantine/dropzone/styles.css";
-import { BlockedUserHandler } from "./components/BlockedUserHandler";
+import { BlockedUserHandler } from "./[language_id]/components/BlockedUserHandler";
 import { Suspense } from "react";
 
 const geistSans = localFont({
