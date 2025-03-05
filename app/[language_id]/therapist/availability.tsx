@@ -302,6 +302,13 @@ const Paymentcomponent = ({
   const stripe = useStripe();
   const supabase = createClient();
 
+  const [currentLanguage, setCurrentLanguage] = useState("en");
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language_id") || "en";
+    setCurrentLanguage(savedLanguage);
+  }, []);
+
   const handlePayment = async () => {
     const bookingId = await handleSubmit();
     if (!stripe) {
@@ -412,7 +419,7 @@ const Paymentcomponent = ({
 
       // toast.success("Payment successful");
       setTimeout(() => {
-        router.push("/booking/list");
+        router.replace(`/${currentLanguage}/booking/list`);
       }, 1000);
     } catch (err: unknown) {
       const errorMessage =

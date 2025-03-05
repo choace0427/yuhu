@@ -7,7 +7,9 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/[language_id]");
+    const savedLanguage = localStorage.getItem("language_id") || "en";
+    console.log("savedLanguage", savedLanguage);
+    router.replace(`/${savedLanguage}/`);
   }, [router]);
 
   return <></>;

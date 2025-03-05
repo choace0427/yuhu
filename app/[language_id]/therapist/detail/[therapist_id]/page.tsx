@@ -29,6 +29,8 @@ export default function Home(params: any) {
   const [userData, setUserData] = useState<any>(null);
   const [reviews, setReviews] = useState<any[]>([]);
 
+  const [currentLanguage, setCurrentLanguage] = useState("en");
+
   const [userId, setUserId] = useState(
     params.params.therapist_id.split("_")[0]
   );
@@ -81,7 +83,7 @@ export default function Home(params: any) {
   };
 
   const handleConfirmBooking = () => {
-    router.push(`/booking/${userId}`);
+    router.replace(`/${currentLanguage}/booking/${userId}`);
   };
 
   const getReviews = async () => {
@@ -99,6 +101,11 @@ export default function Home(params: any) {
   useEffect(() => {
     getUserData(userId, serviceType);
     getReviews();
+  }, []);
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language_id") || "en";
+    setCurrentLanguage(savedLanguage);
   }, []);
 
   return (

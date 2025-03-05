@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "../../utils/supabase/client";
 import { useAuthStore } from "../_store/authStore";
@@ -11,6 +11,13 @@ export function BlockedUserHandler() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = createClient();
+
+  const [currentLanguage, setCurrentLanguage] = useState("en");
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language_id") || "en";
+    setCurrentLanguage(savedLanguage);
+  }, []);
 
   useEffect(() => {
     const checkBlockedStatus = async () => {
@@ -37,7 +44,7 @@ export function BlockedUserHandler() {
         newUrl.searchParams.delete("blocked");
         window.history.replaceState({}, "", newUrl.toString());
 
-        router.push("/auth/login");
+        router.replace(`/${currentLanguage}/auth/login`);
       }
     };
     const checkPendingStatus = async () => {
@@ -63,7 +70,7 @@ export function BlockedUserHandler() {
         newUrl.searchParams.delete("pending");
         window.history.replaceState({}, "", newUrl.toString());
 
-        router.push("/home");
+        router.replace(`/${currentLanguage}/`);
       }
     };
 

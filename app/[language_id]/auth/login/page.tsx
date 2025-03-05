@@ -3,7 +3,7 @@
 import { useForm } from "@mantine/form";
 import { Button, Image, PasswordInput, Text, TextInput } from "@mantine/core";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "../../_store/authStore";
 
 export default function LoginPage() {
@@ -21,6 +21,13 @@ export default function LoginPage() {
           : "Password must include uppercase, lowercase, and a number",
     },
   });
+
+  const [currentLanguage, setCurrentLanguage] = useState("en");
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language_id") || "en";
+    setCurrentLanguage(savedLanguage);
+  }, []);
 
   const [loading, setLoading] = useState(false);
 
@@ -71,7 +78,9 @@ export default function LoginPage() {
                 fw={500}
                 mt={"sm"}
                 ta={"end"}
-                onClick={() => router.push("/auth/forgot-password")}
+                onClick={() =>
+                  router.replace(`//${currentLanguage}/auth/forgot-password`)
+                }
                 className="hover:cursor-pointer"
               >
                 Forgot Password

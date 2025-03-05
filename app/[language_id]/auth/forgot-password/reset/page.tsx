@@ -22,19 +22,23 @@ export default function ResetPassword() {
     },
   });
 
+  const [currentLanguage, setCurrentLanguage] = useState("en");
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language_id") || "en";
+    setCurrentLanguage(savedLanguage);
+  }, []);
+
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (values: typeof form.values) => {
-    console.log("=========eventValue", eventValue);
     setLoading(true);
     const { data, error } = await supabase.auth.updateUser({
       password: values.newPassword,
     });
-    console.log("--------data", data);
-    console.log("--------error", error);
     if (data?.user) {
       toast.success("Password updated successfully!");
-      router.push("/auth/login");
+      router.replace(`//${currentLanguage}/auth/login`);
     }
     if (error) toast.error(`${error?.message}`);
     setLoading(false);
@@ -47,7 +51,7 @@ export default function ResetPassword() {
     //   console.log("--------error", error);
     //   if (data?.user) {
     //     toast.success("Password updated successfully!");
-    //     router.push("/auth/login");
+    //     router.replace("/auth/login");
     //   }
     //   if (error) toast.error(`${error?.message}`);
     //   setLoading(false);

@@ -119,8 +119,10 @@ export default function CustomerPage() {
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState<any[]>([]);
 
+  const [currentLanguage, setCurrentLanguage] = useState("en");
+
   const handleBooking = (service: string) => {
-    router.push(`/therapist/list?service=${service}`);
+    router.replace(`/${currentLanguage}/therapist/list?service=${service}`);
   };
 
   const handlefetchCategory = async () => {
@@ -149,6 +151,11 @@ export default function CustomerPage() {
   useEffect(() => {
     handlefetchServices();
     handlefetchCategory();
+  }, []);
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language_id") || "en";
+    setCurrentLanguage(savedLanguage);
   }, []);
 
   const containerVariants = {

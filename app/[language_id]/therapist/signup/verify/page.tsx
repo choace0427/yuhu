@@ -57,6 +57,13 @@ export default function ImageManager() {
     if (userInfo?.id) fetchImages();
   }, [userInfo?.id]);
 
+  const [currentLanguage, setCurrentLanguage] = useState("en");
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language_id") || "en";
+    setCurrentLanguage(savedLanguage);
+  }, []);
+
   const fetchImages = async () => {
     try {
       const { data, error } = await supabase.storage
@@ -178,7 +185,7 @@ export default function ImageManager() {
       .eq("id", userInfo?.id);
     if (error) throw error;
     toast.success("Uploaded documents successfully");
-    router.push("/therapist/signup/payment");
+    router.replace(`/${currentLanguage}/therapist/signup/payment`);
   };
 
   return (
@@ -322,7 +329,9 @@ export default function ImageManager() {
 
         <Flex justify={"end"} mt={"lg"} gap={"lg"}>
           <Button
-            onClick={() => router.push("/therapist/signup/services")}
+            onClick={() =>
+              router.replace(`/${currentLanguage}/therapist/signup/services`)
+            }
             leftSection={<IconArrowLeft size={"1rem"} />}
             variant="outline"
             color="blue"

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { useAuthStore } from "../_store/authStore";
 import { toast } from "react-toastify";
@@ -9,11 +9,14 @@ import { IconMassage, IconUser } from "@tabler/icons-react";
 import { createClient } from "../../utils/supabase/client";
 
 export default function UserRole() {
+  const pathname = usePathname();
   const supabase = createClient();
   const { setUserInfo, setIsAuth } = useAuthStore();
   const [selectedRole, setSelectedRole] = useState("customer");
   const router = useRouter();
   const [userData, setUserData] = useState<any>();
+
+  const [currentLanguage, setCurrentLanguage] = useState("en");
 
   const handleCustomerCreateAccount = async () => {
     const response = await fetch("/api/create-customer", {
@@ -57,10 +60,10 @@ export default function UserRole() {
         toast.success("Sign-up successful!");
         if (userData?.app_metadata?.provider === "google") {
           setIsAuth(true);
-          router.push("/customer");
+          router.replace(`/${currentLanguage}/services`);
         } else
           setTimeout(() => {
-            router.push("/auth/login");
+            router.replace(`/${currentLanguage}/auth/login`);
           }, 1000);
       }
     } else {
@@ -98,13 +101,18 @@ export default function UserRole() {
       toast.success("Sign-up successful!");
       if (userData?.app_metadata?.provider === "google") {
         setIsAuth(true);
-        router.push("/therapist/signup/general");
+        router.replace(`/${currentLanguage}/therapist/signup/general`);
       } else
         setTimeout(() => {
-          router.push("/auth/login");
+          router.replace(`/${currentLanguage}/auth/login`);
         }, 1000);
     }
   };
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language_id") || "en";
+    setCurrentLanguage(savedLanguage);
+  }, []);
 
   useEffect(() => {
     const handleGetUser = async () => {

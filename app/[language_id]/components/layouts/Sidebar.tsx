@@ -54,6 +54,13 @@ export function MembersSidebar() {
 
   const [selectedUserIndex, setSelectedUserIndex] = useState<any>(null);
 
+  const [currentLanguage, setCurrentLanguage] = useState("en");
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language_id") || "en";
+    setCurrentLanguage(savedLanguage);
+  }, []);
+
   const getCurrentUser = async (room_id: string) => {
     if (userInfo?.role === "customer") {
       const { data: currentUser, error: currentUserError } = await supabase
@@ -165,7 +172,9 @@ export function MembersSidebar() {
                       } transition-colors cursor-pointer`}
                       onClick={() => {
                         setSelectedUserIndex(index);
-                        router.push(`/chat/${member?.rooms_id}`);
+                        router.push(
+                          `//${currentLanguage}/chat/${member?.rooms_id}`
+                        );
                       }}
                     >
                       <div className="flex items-center space-x-3">

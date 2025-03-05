@@ -294,6 +294,13 @@ export default function ServicesComponent() {
       service.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const [currentLanguage, setCurrentLanguage] = useState("en");
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language_id") || "en";
+    setCurrentLanguage(savedLanguage);
+  }, []);
+
   const handleEditClick = (service: Service) => {
     setEditingService(service);
     setSelectedCategory(service.category_id.toString());
@@ -390,7 +397,7 @@ export default function ServicesComponent() {
     if (error) throw error;
     await handlequery();
     toast.success("Services added successfully!");
-    router.push("/therapist/signup/verify");
+    router.replace(`/${currentLanguage}/therapist/signup/verify`);
     setSubmitLoading(false);
   };
 
@@ -560,7 +567,9 @@ export default function ServicesComponent() {
         )}
         <Flex mt={"xl"} align={"center"} gap={"xl"} justify={"end"}>
           <Button
-            onClick={() => router.push("/therapist/signup/general")}
+            onClick={() =>
+              router.replace(`/${currentLanguage}/therapist/signup/general`)
+            }
             leftSection={<IconArrowLeft size={"1rem"} />}
             variant="outline"
             color="blue"

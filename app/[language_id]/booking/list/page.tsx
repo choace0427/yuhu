@@ -46,6 +46,13 @@ export default function BookingList() {
 
   const [opened, { open, close }] = useDisclosure(false);
 
+  const [currentLanguage, setCurrentLanguage] = useState("en");
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language_id") || "en";
+    setCurrentLanguage(savedLanguage);
+  }, []);
+
   const handleCancel = async (booking_id: string) => {
     const { error } = await supabase
       .from("booking_list")
@@ -133,11 +140,11 @@ export default function BookingList() {
         throw new Error(insertError.message);
       } else {
         setLoading(false);
-        router.push(`/chat/${newRoom.rooms_id}`);
+        router.replace(`/${currentLanguage}/chat/${newRoom.rooms_id}`);
       }
     } else {
       setLoading(false);
-      router.push(`/chat/${data.rooms_id}`);
+      router.replace(`/${currentLanguage}/chat/${data.rooms_id}`);
     }
   };
 

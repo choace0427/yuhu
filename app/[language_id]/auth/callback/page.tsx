@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useContext, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/supabase";
 import { Loader } from "@mantine/core";
@@ -12,7 +12,13 @@ const Callback = () => {
   const { setUserInfo, setIsAuth } = useAuthStore();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const supabase = createClient();
+  const supabaseClient = createClient();
+  const [savedLanguage, setSavedLanguage] = useState("en");
+
+  useEffect(() => {
+    const language = localStorage.getItem("language_id") || "en";
+    setSavedLanguage(language);
+  }, []);
 
   useEffect(() => {
     handleCallback();
@@ -22,47 +28,53 @@ const Callback = () => {
     try {
       setIsLoading(true);
 
-      const { data, error: userError } = await supabase.auth.getUser();
+      const { data: userData, error: userError } =
+        await supabaseClient.auth.getUser();
 
       if (userError) {
-        console.log("errr", userError);
+        console.error("Error fetching user:", userError);
         setIsLoading(false);
         return;
       }
 
-      const { data: customerData, error: customerError } = await supabase
+      const userEmail = userData?.user?.email;
+
+      if (!userEmail) {
+        console.error("User email is not available.");
+        setIsLoading(false);
+        return;
+      }
+
+      const { data: customerData, error: customerError } = await supabaseClient
         .from("customers_list")
         .select("*")
-        .eq("email", data?.user?.email)
+        .eq("email", userEmail)
         .single();
 
       if (customerError || !customerData) {
-        const { data: therapistData, error: therapistError } = await supabase
-          .from("therapist_list")
-          .select("*")
-          .eq("id", data?.user?.email)
-          .single();
+        const { data: therapistData, error: therapistError } =
+          await supabaseClient
+            .from("therapist_list")
+            .select("*")
+            .eq("email", userEmail)
+            .single();
 
         if (therapistError || !therapistData) {
-          console.log("error", therapistError);
-          router.push("/role");
+          console.error("Therapist not found. Redirecting to role selection.");
+          router.replace(`/${savedLanguage}/role`);
         } else {
           setUserInfo(therapistData);
           setIsAuth(true);
-          router.push("/therapist");
+          router.replace(`/${savedLanguage}/therapist`);
         }
       } else {
-        setIsAuth(true);
         setUserInfo(customerData);
-        router.push("/customer");
+        setIsAuth(true);
+        router.replace(`/${savedLanguage}/services`);
       }
     } catch (error) {
       console.error("Error during callback:", error);
-      // invokeToast(
-      //   "error",
-      //   "An error occurred during the callback process.",
-      //   "top"
-      // );
+      toast.error("An error occurred during the callback process.");
     } finally {
       setIsLoading(false);
     }

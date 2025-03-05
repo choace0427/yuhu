@@ -288,8 +288,8 @@ export default function HomePage() {
                   mt="md"
                   leftSection={<IconHeartHandshake size={16} />}
                   onClick={() =>
-                    router.push(
-                      `/therapist/list?country=${city.location_country?.country}&cities=${city?.city}`
+                    router.replace(
+                      `/${currentLanguage}/therapist/list?country=${city.location_country?.country}&cities=${city?.city}`
                     )
                   }
                 >

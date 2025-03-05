@@ -3,10 +3,18 @@
 import { Image } from "@mantine/core";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../../_store/authStore";
+import { useEffect, useState } from "react";
 
 export default function TeamMember() {
   const { isAuthenticated } = useAuthStore();
   const router = useRouter();
+
+  const [currentLanguage, setCurrentLanguage] = useState("en");
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language_id") || "en";
+    setCurrentLanguage(savedLanguage);
+  }, []);
 
   return (
     <div className="flex md:flex-row flex-col md:gap-0 gap-4 w-full justify-between items-center">
@@ -28,9 +36,9 @@ export default function TeamMember() {
           className="font-bold Poppins-font border-b-2 border-[#46A7B0] text-black animate-pulse"
           onClick={() => {
             if (isAuthenticated) {
-              router.push("/customer");
+              router.replace(`/${currentLanguage}/services`);
             } else {
-              router.push("/role");
+              router.replace(`/${currentLanguage}/role`);
             }
           }}
         >

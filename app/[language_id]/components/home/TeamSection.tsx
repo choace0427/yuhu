@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../../_store/authStore";
+import { useEffect, useState } from "react";
 
 export default function TeamSection() {
   const { isAuthenticated } = useAuthStore();
@@ -66,6 +67,13 @@ export default function TeamSection() {
     },
   };
 
+  const [currentLanguage, setCurrentLanguage] = useState("en");
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language_id") || "en";
+    setCurrentLanguage(savedLanguage);
+  }, []);
+
   return (
     <section className="flex w-full bg-[#f5f5f5] items-center justify-center py-20 px-4">
       <motion.div
@@ -112,9 +120,9 @@ export default function TeamSection() {
               className="font-bold Poppins-font border-b-2 border-[#46A7B0] text-black"
               onClick={() => {
                 if (isAuthenticated) {
-                  router.push("/customer");
+                  router.replace(`/${currentLanguage}/services`);
                 } else {
-                  router.push("/role");
+                  router.replace(`/${currentLanguage}/role`);
                 }
               }}
             >

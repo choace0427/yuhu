@@ -41,6 +41,13 @@ export function ChatWidget() {
     }
   }, []);
 
+  const [currentLanguage, setCurrentLanguage] = useState("en");
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language_id") || "en";
+    setCurrentLanguage(savedLanguage);
+  }, []);
+
   useEffect(() => {
     const dataToSave: any = { messages };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
@@ -293,8 +300,8 @@ export function ChatWidget() {
                               color: "white",
                             }}
                             onClick={() => {
-                              router.push(
-                                `${process.env.NEXT_PUBLIC_APP_URL}/therapist/detail/${therapist?.id}`
+                              router.replace(
+                                `${process.env.NEXT_PUBLIC_APP_URL}//${currentLanguage}/therapist/detail/${therapist?.id}`
                               );
                               setIsOpen(false);
                             }}

@@ -117,9 +117,9 @@ export default function WhyChooseSection() {
                   className="font-bold Poppins-font border-b-2 border-[#46A7B0] text-black"
                   onClick={() => {
                     if (isAuthenticated) {
-                      router.push("/customer");
+                      router.replace(`/${currentLanguage}/services`);
                     } else {
-                      router.push("/role");
+                      router.replace(`/${currentLanguage}/role`);
                     }
                   }}
                 >

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { List, ThemeIcon, rem } from "@mantine/core";
 import { IconUser } from "@tabler/icons-react";
@@ -16,9 +16,16 @@ export function MembersList() {
   const [selectedMember, setSelectedMember] = useState<string | null>(null);
   const router = useRouter();
 
+  const [currentLanguage, setCurrentLanguage] = useState("en");
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language_id") || "en";
+    setCurrentLanguage(savedLanguage);
+  }, []);
+
   const handleMemberClick = (memberId: string) => {
     setSelectedMember(memberId);
-    router.push(`/chat/${memberId}`);
+    router.replace(`/${currentLanguage}/chat/${memberId}`);
   };
 
   return (

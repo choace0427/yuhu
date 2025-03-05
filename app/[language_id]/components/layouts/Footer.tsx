@@ -1,9 +1,17 @@
 import { Anchor, Image } from "@mantine/core";
 import { IconMapPin } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Footer() {
   const router = useRouter();
+
+  const [currentLanguage, setCurrentLanguage] = useState("en");
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language_id") || "en";
+    setCurrentLanguage(savedLanguage);
+  }, []);
 
   return (
     <div className="w-full lg:h-[480px] h-[380px] bg-[#46A7B0] shadow-2xl flex px-4 flex-col items-center">
@@ -53,22 +61,26 @@ export default function Footer() {
               Company
             </span>
             <div className="flex flex-col lg:gap-4 md:gap-3 gap-2">
-              <Anchor onClick={() => router.push("/")}>
+              <Anchor onClick={() => router.replace(`/${currentLanguage}/`)}>
                 <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
                   Home
                 </span>
               </Anchor>
-              {/* <Anchor onClick={() => router.push("/faqs")}>
+              {/* <Anchor onClick={() => router.replace("/faqs")}>
                 <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
                   FAQ&apos;s
                 </span>
               </Anchor> */}
-              <Anchor onClick={() => router.push("/services")}>
+              <Anchor
+                onClick={() => router.replace(`/${currentLanguage}/services`)}
+              >
                 <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
                   Our Services
                 </span>
               </Anchor>
-              <Anchor onClick={() => router.push("/pricing")}>
+              <Anchor
+                onClick={() => router.replace(`/${currentLanguage}/pricing`)}
+              >
                 <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
                   Events
                 </span>
@@ -80,19 +92,23 @@ export default function Footer() {
               Therapist
             </span>
             <div className="flex flex-col lg:gap-4 md:gap-3 gap-2">
-              <Anchor onClick={() => router.push("/team")}>
+              <Anchor
+                onClick={() => router.replace(`/${currentLanguage}/team`)}
+              >
                 <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
                   Join the team
                 </span>
               </Anchor>
-              <Anchor onClick={() => router.push("/events")}>
+              <Anchor
+                onClick={() => router.replace(`/${currentLanguage}/events`)}
+              >
                 <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
                   Store 
                 </span>
               </Anchor>
               <button
                 className="bg-white flex flex-row items-center justify-center rounded-md p-2 gap-2"
-                onClick={() => router.push("/")}
+                onClick={() => router.replace(`/${currentLanguage}/`)}
               >
                 <IconMapPin size={"1rem"} />
                 <span className="text-black lg:text-base md:text-sm text-xs text-left">
@@ -101,7 +117,7 @@ export default function Footer() {
               </button>
               <button
                 className="bg-white flex flex-row items-center justify-center rounded-md p-2 gap-2"
-                onClick={() => router.push("/")}
+                onClick={() => router.replace(`/${currentLanguage}/`)}
               >
                 <IconMapPin size={"1rem"} />
                 <span className="text-black lg:text-base md:text-sm text-xs text-left">
@@ -114,22 +130,22 @@ export default function Footer() {
             <span className="lg:text-2xl md:text-xl sm:text-lg text-base text-white Poppins-font font-medium md:text-start text-center">
               Legal
             </span>
-            <Anchor onClick={() => router.push("/legal")}>
+            <Anchor onClick={() => router.replace(`/${currentLanguage}/legal`)}>
               <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
                 Privacy Policy
               </span>
             </Anchor>
-            <Anchor onClick={() => router.push("/legal")}>
+            <Anchor onClick={() => router.replace(`/${currentLanguage}/legal`)}>
               <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
                 Cookies Policy
               </span>
             </Anchor>
-            <Anchor onClick={() => router.push("/legal")}>
+            <Anchor onClick={() => router.replace(`/${currentLanguage}/legal`)}>
               <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
                 Imprint
               </span>
             </Anchor>
-            <Anchor onClick={() => router.push("/legal")}>
+            <Anchor onClick={() => router.replace(`/${currentLanguage}/legal`)}>
               <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
                 Terms of Service
               </span>

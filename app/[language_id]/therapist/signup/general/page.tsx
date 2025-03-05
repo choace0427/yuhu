@@ -56,6 +56,13 @@ export default function GeneralProfileSignUp() {
 
   const [profileLoading, setProfileLoading] = useState(false);
 
+  const [currentLanguage, setCurrentLanguage] = useState("en");
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language_id") || "en";
+    setCurrentLanguage(savedLanguage);
+  }, []);
+
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
   };
@@ -130,7 +137,7 @@ export default function GeneralProfileSignUp() {
     }
     setProfileLoading(false);
     // handlequery();
-    router.push("/therapist/signup/services");
+    router.replace(`/${currentLanguage}/therapist/signup/services`);
   };
 
   const supabase = createClient();

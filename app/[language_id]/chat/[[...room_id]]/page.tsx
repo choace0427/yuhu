@@ -39,6 +39,8 @@ import { createClient } from "@/app/utils/supabase/client";
 import { useAuthStore } from "../../_store/authStore";
 
 export default function ChatPage(params: any) {
+  const { language_id } = params;
+  console.log("-----", language_id);
   const supabase = createClient();
   const { userInfo } = useAuthStore();
   const router = useRouter();

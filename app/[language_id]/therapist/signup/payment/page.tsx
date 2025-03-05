@@ -35,6 +35,13 @@ function PaymentSignUpComponent() {
   const [loading, setLoading] = useState(false);
   const [active, setActive] = useState(0);
 
+  const [currentLanguage, setCurrentLanguage] = useState("en");
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language_id") || "en";
+    setCurrentLanguage(savedLanguage);
+  }, []);
+
   const handleInsertCard = async () => {
     try {
       setLoading(true);
@@ -82,7 +89,7 @@ function PaymentSignUpComponent() {
       console.error("An unexpected error occurred.");
     } finally {
       setLoading(false);
-      //   router.push("/therapist");
+      //   router.replace("/therapist");
     }
   };
 
@@ -185,7 +192,7 @@ function PaymentSignUpComponent() {
         if (notificationError) throw notificationError;
 
         toast.success("Bank details saved successfully");
-        router.push("/therapist");
+        router.replace(`/${currentLanguage}/therapist`);
 
         form.reset();
       } catch (error) {
