@@ -3,14 +3,23 @@ import { IconMapPin } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { useParams } from "next/navigation";
+import translations from "@/app/utils/language";
+type TranslationKeys = keyof typeof translations;
+
 export default function Footer() {
   const router = useRouter();
 
-  const [currentLanguage, setCurrentLanguage] = useState("en");
+  const params = useParams();
+  const languageId = params.language_id as TranslationKeys;
+
+  const currentLanguage = translations[languageId] || translations.en;
+
+  const [savedLanguage, setSavedLanguage] = useState("en");
 
   useEffect(() => {
-    const savedLanguage = localStorage.getItem("language_id") || "en";
-    setCurrentLanguage(savedLanguage);
+    const saveLanguage = localStorage.getItem("language_id") || "en";
+    setSavedLanguage(saveLanguage);
   }, []);
 
   return (
@@ -42,28 +51,28 @@ export default function Footer() {
         <div className="flex flex-row lg:gap-16 md:gap-12 sm:gap-8 gap-4 md:justify-start justify-center">
           <div className="flex flex-col lg:gap-6 md:gap-4 sm:gap-2 gap-1">
             <span className="lg:text-2xl md:text-xl sm:text-lg text-base text-white Poppins-font font-medium md:text-start text-center">
-              Treatments
+              {currentLanguage?.treatments}
             </span>
             <div className="flex flex-col gap-4">
               <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
-                Categories
+                {currentLanguage?.categories}
               </span>
               <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
-                Gift cards 
+                {currentLanguage?.giftCards}
               </span>
               <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
-                Book now
+                {currentLanguage?.bookNow}
               </span>
             </div>
           </div>
           <div className="flex flex-col lg:gap-6 md:gap-4 gap-2">
             <span className="lg:text-2xl md:text-xl sm:text-lg text-base text-white Poppins-font font-medium md:text-start text-center">
-              Company
+              {currentLanguage?.company}
             </span>
             <div className="flex flex-col lg:gap-4 md:gap-3 gap-2">
-              <Anchor onClick={() => router.replace(`/${currentLanguage}/`)}>
+              <Anchor onClick={() => router.replace(`/${savedLanguage}/`)}>
                 <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
-                  Home
+                  {currentLanguage?.home}
                 </span>
               </Anchor>
               {/* <Anchor onClick={() => router.replace("/faqs")}>
@@ -72,88 +81,86 @@ export default function Footer() {
                 </span>
               </Anchor> */}
               <Anchor
-                onClick={() => router.replace(`/${currentLanguage}/services`)}
+                onClick={() => router.replace(`/${savedLanguage}/services`)}
               >
                 <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
                   Our Services
                 </span>
               </Anchor>
               <Anchor
-                onClick={() => router.replace(`/${currentLanguage}/pricing`)}
+                onClick={() => router.replace(`/${savedLanguage}/pricing`)}
               >
                 <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
-                  Events
+                  {currentLanguage?.events}
                 </span>
               </Anchor>
             </div>
           </div>
           <div className="flex flex-col lg:gap-6 md:gap-4 gap-2">
             <span className="lg:text-2xl md:text-xl sm:text-lg text-base text-white Poppins-font font-medium md:text-start text-center">
-              Therapist
+              {currentLanguage?.therapist}
             </span>
             <div className="flex flex-col lg:gap-4 md:gap-3 gap-2">
-              <Anchor
-                onClick={() => router.replace(`/${currentLanguage}/team`)}
-              >
+              <Anchor onClick={() => router.replace(`/${savedLanguage}/team`)}>
                 <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
-                  Join the team
+                  {currentLanguage?.join_the_team}
                 </span>
               </Anchor>
               <Anchor
-                onClick={() => router.replace(`/${currentLanguage}/events`)}
+                onClick={() => router.replace(`/${savedLanguage}/events`)}
               >
                 <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
-                  Store 
+                  {currentLanguage?.store}
                 </span>
               </Anchor>
               <button
                 className="bg-white flex flex-row items-center justify-center rounded-md p-2 gap-2"
-                onClick={() => router.replace(`/${currentLanguage}/`)}
+                onClick={() => router.replace(`/${savedLanguage}/`)}
               >
                 <IconMapPin size={"1rem"} />
                 <span className="text-black lg:text-base md:text-sm text-xs text-left">
-                  Spain
+                  {currentLanguage?.spain}
                 </span>
               </button>
               <button
                 className="bg-white flex flex-row items-center justify-center rounded-md p-2 gap-2"
-                onClick={() => router.replace(`/${currentLanguage}/`)}
+                onClick={() => router.replace(`/${savedLanguage}/`)}
               >
                 <IconMapPin size={"1rem"} />
                 <span className="text-black lg:text-base md:text-sm text-xs text-left">
-                  Italy
+                  {currentLanguage?.italy}
                 </span>
               </button>
             </div>
           </div>
           <div className="flex flex-col lg:gap-6 md:gap-4 gap-2">
             <span className="lg:text-2xl md:text-xl sm:text-lg text-base text-white Poppins-font font-medium md:text-start text-center">
-              Legal
+              {currentLanguage?.legal}
             </span>
-            <Anchor onClick={() => router.replace(`/${currentLanguage}/legal`)}>
+            <Anchor onClick={() => router.replace(`/${savedLanguage}/legal`)}>
               <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
-                Privacy Policy
+                {currentLanguage?.privacy_policy}
               </span>
             </Anchor>
-            <Anchor onClick={() => router.replace(`/${currentLanguage}/legal`)}>
+            <Anchor onClick={() => router.replace(`/${savedLanguage}/legal`)}>
               <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
-                Cookies Policy
+                {currentLanguage?.cookies_policy}
               </span>
             </Anchor>
-            <Anchor onClick={() => router.replace(`/${currentLanguage}/legal`)}>
+            <Anchor onClick={() => router.replace(`/${savedLanguage}/legal`)}>
               <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
-                Imprint
+                {currentLanguage?.imprint}
               </span>
             </Anchor>
-            <Anchor onClick={() => router.replace(`/${currentLanguage}/legal`)}>
+            <Anchor onClick={() => router.replace(`/${savedLanguage}/legal`)}>
               <span className="lg:text-base md:text-sm text-xs text-white Poppins-font md:text-start text-center">
-                Terms of Service
+                {currentLanguage?.terms_service}
               </span>
             </Anchor>
           </div>
           <div className="flex flex-col lg:gap-6 md:gap-4 sm:gap-2 gap-1 items-center">
             <span className="lg:text-2xl md:text-xl sm:text-lg text-base text-white Poppins-font font-medium md:text-start text-center">
-              AI Health Advisor
+              {currentLanguage?.health_advisor}
             </span>
             <Image
               className="ai-logo-responsive w-20 h-60"
@@ -168,7 +175,7 @@ export default function Footer() {
       </div>
       <div className="border-b-2 border-white w-full px-20"></div>
       <span className="text-white text-xs mt-2 sm:pb-2 pb-0">
-        &copy;2024 Yuhu All Rights Reserved.
+        &copy;{currentLanguage?.footer_content}
       </span>
     </div>
   );

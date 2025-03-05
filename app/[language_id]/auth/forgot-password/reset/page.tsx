@@ -7,6 +7,10 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/supabase";
 import { useRouter } from "next/navigation";
 
+import { useParams } from "next/navigation";
+import translations from "@/app/utils/language";
+type TranslationKeys = keyof typeof translations;
+
 export default function ResetPassword() {
   const router = useRouter();
   const form = useForm({
@@ -22,11 +26,16 @@ export default function ResetPassword() {
     },
   });
 
-  const [currentLanguage, setCurrentLanguage] = useState("en");
+  const params = useParams();
+  const languageId = params.language_id as TranslationKeys;
+
+  const currentLanguage = translations[languageId] || translations.en;
+
+  const [savedLanguage, setSavedLanguage] = useState("en");
 
   useEffect(() => {
-    const savedLanguage = localStorage.getItem("language_id") || "en";
-    setCurrentLanguage(savedLanguage);
+    const saveLanguage = localStorage.getItem("language_id") || "en";
+    setSavedLanguage(saveLanguage);
   }, []);
 
   const [loading, setLoading] = useState(false);
@@ -38,33 +47,16 @@ export default function ResetPassword() {
     });
     if (data?.user) {
       toast.success("Password updated successfully!");
-      router.replace(`//${currentLanguage}/auth/login`);
+      router.replace(`/${savedLanguage}/auth/login`);
     }
     if (error) toast.error(`${error?.message}`);
     setLoading(false);
-    // if (eventValue === "PASSWORD_RECOVERY") {
-    //   setLoading(true);
-    //   const { data, error } = await supabase.auth.updateUser({
-    //     password: values.newPassword,
-    //   });
-    //   console.log("--------data", data);
-    //   console.log("--------error", error);
-    //   if (data?.user) {
-    //     toast.success("Password updated successfully!");
-    //     router.replace("/auth/login");
-    //   }
-    //   if (error) toast.error(`${error?.message}`);
-    //   setLoading(false);
-    // } else {
-    //   toast.error("Failed to reset password!");
-    // }
   };
 
   const [eventValue, setEventValue] = useState<any>();
 
   useEffect(() => {
     supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("event=======", event);
       if (event == "PASSWORD_RECOVERY") {
         setEventValue(event);
       }
@@ -79,7 +71,7 @@ export default function ResetPassword() {
             <header className="text-start flex flex-col gap-4">
               <Image src="/img/logo.png" alt="logo" w={80} h={50} ml={-20} />
               <span className="text-3xl font-bold Poppins-font text-left">
-                Forgot Password
+                {currentLanguage?.forgot_password}
               </span>
             </header>
             <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -88,7 +80,7 @@ export default function ResetPassword() {
                 size="md"
                 key={form.key("newPassword")}
                 required
-                label="New Password"
+                label={currentLanguage?.new_password}
                 placeholder="Enter your new password"
                 {...form.getInputProps("newPassword")}
               />
@@ -97,7 +89,7 @@ export default function ResetPassword() {
                 size="md"
                 key={form.key("confirmPassword")}
                 required
-                label="Confirm Password"
+                label={currentLanguage?.confirm_password}
                 placeholder="Confirm your new password"
                 {...form.getInputProps("confirmPassword")}
               />
@@ -109,7 +101,7 @@ export default function ResetPassword() {
                 className="!bg-[#46A7B0]"
                 loading={loading}
               >
-                Reset Password
+                {currentLanguage?.reset_password}
               </Button>
             </form>
           </div>
@@ -131,11 +123,10 @@ export default function ResetPassword() {
           <div>
             <div className="text-center max-w-lg px-1.5 m-auto">
               <h3 className="text-white font-semibold font-popins text-4xl mb-4 Poppins-font">
-                Relax, Quick and Smooth
+                {currentLanguage?.auth_content_1}
               </h3>
               <p className="text-white text-base font-medium Poppins-font">
-                Your gateway to relaxation and rejuvenation. Log in to unwind,
-                refresh, and feel your best.
+                {currentLanguage?.auth_content_2}
               </p>
             </div>
           </div>

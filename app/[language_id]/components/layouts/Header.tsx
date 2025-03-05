@@ -361,6 +361,9 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import { useAuthStore } from "@/app/[language_id]/_store/authStore";
+import { useParams } from "next/navigation";
+import translations from "@/app/utils/language";
+type TranslationKeys = keyof typeof translations;
 
 const Header = () => {
   const { colorScheme } = useMantineColorScheme();
@@ -449,6 +452,11 @@ const Header = () => {
 
     router.replace(`/${segments[0]}${path}`);
   };
+
+  const params = useParams();
+  const languageId = params.language_id as TranslationKeys;
+
+  const selectedLanguage = translations[languageId] || translations.en;
 
   return (
     <div
@@ -561,13 +569,13 @@ const Header = () => {
             className="!bg-[#46A7B0]"
             onClick={() => navigateTo("/auth/login")}
           >
-            Sign In
+            {selectedLanguage?.signin}
           </Button>
           <Button
             className="!bg-[#46A7B0]"
             onClick={() => navigateTo("/auth/signup")}
           >
-            Sign Up
+            {selectedLanguage?.signup}
           </Button>
         </Group>
       ) : (

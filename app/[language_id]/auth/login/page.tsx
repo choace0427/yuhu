@@ -6,6 +6,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "../../_store/authStore";
 
+import { useParams } from "next/navigation";
+import translations from "@/app/utils/language";
+type TranslationKeys = keyof typeof translations;
+
 export default function LoginPage() {
   const { signIn, handlegoogleSignin } = useAuthStore();
   const router = useRouter();
@@ -22,11 +26,16 @@ export default function LoginPage() {
     },
   });
 
-  const [currentLanguage, setCurrentLanguage] = useState("en");
+  const params = useParams();
+  const languageId = params.language_id as TranslationKeys;
+
+  const currentLanguage = translations[languageId] || translations.en;
+
+  const [savedLanguage, setSavedLanguage] = useState("en");
 
   useEffect(() => {
-    const savedLanguage = localStorage.getItem("language_id") || "en";
-    setCurrentLanguage(savedLanguage);
+    const saveLanguage = localStorage.getItem("language_id") || "en";
+    setSavedLanguage(saveLanguage);
   }, []);
 
   const [loading, setLoading] = useState(false);
@@ -50,23 +59,23 @@ export default function LoginPage() {
             <header className="text-start flex flex-col gap-4">
               <Image src="/img/logo.png" alt="logo" w={80} h={50} ml={-20} />
               <span className="text-3xl font-bold Poppins-font text-left">
-                Welcome back 👋
+                {currentLanguage?.welcome_back} 👋
               </span>
               <span className="text-base Poppins-font">
-                We are happy to have you back
+                {currentLanguage?.welcome_back_content}
               </span>
             </header>
             <form onSubmit={form.onSubmit(handleFormSubmit)}>
               <TextInput
                 mt="sm"
-                label="Email"
+                label={currentLanguage?.email}
                 placeholder="Enter your email address"
                 size="md"
                 key={form.key("email")}
                 {...form.getInputProps("email")}
               />
               <PasswordInput
-                label="Password"
+                label={currentLanguage?.password}
                 placeholder="Enter your password"
                 mt={"sm"}
                 size="md"
@@ -79,11 +88,11 @@ export default function LoginPage() {
                 mt={"sm"}
                 ta={"end"}
                 onClick={() =>
-                  router.replace(`//${currentLanguage}/auth/forgot-password`)
+                  router.replace(`/${savedLanguage}/auth/forgot-password`)
                 }
                 className="hover:cursor-pointer"
               >
-                Forgot Password
+                {currentLanguage?.forgot_password}
               </Text>
               <Button
                 type="submit"
@@ -93,13 +102,13 @@ export default function LoginPage() {
                 className="!bg-[#46A7B0]"
                 loading={loading}
               >
-                Login
+                {currentLanguage?.login}
               </Button>
             </form>
             <div className="flex justify-start items-center self-stretch flex-grow-0 flex-shrink-0 gap-[23px]">
               <div className="flex-grow h-[1.5px] opacity-60 bg-black"></div>
               <p className="flex-grow-0 flex-shrink-0 text-lg font-medium text-left text-black">
-                Or
+                {currentLanguage?.or}
               </p>
               <div className="flex-grow h-[1.5px] opacity-60 bg-black"></div>
             </div>
@@ -155,11 +164,10 @@ export default function LoginPage() {
           <div>
             <div className="text-center max-w-lg px-1.5 m-auto">
               <h3 className="text-white font-semibold font-popins text-4xl mb-4 Poppins-font">
-                Relax, Quick and Smooth
+                {currentLanguage?.auth_content_1}
               </h3>
               <p className="text-white text-base font-medium Poppins-font">
-                Your gateway to relaxation and rejuvenation. Log in to unwind,
-                refresh, and feel your best.
+                {currentLanguage?.auth_content_2}
               </p>
             </div>
           </div>

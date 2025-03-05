@@ -6,6 +6,10 @@ import { toast } from "react-toastify";
 import { supabase } from "@/supabase";
 import { useState } from "react";
 
+import { useParams } from "next/navigation";
+import translations from "@/app/utils/language";
+type TranslationKeys = keyof typeof translations;
+
 export default function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const form = useForm({
@@ -40,6 +44,11 @@ export default function ForgotPassword() {
     setLoading(false);
   };
 
+  const params = useParams();
+  const languageId = params.language_id as TranslationKeys;
+
+  const currentLanguage = translations[languageId] || translations.en;
+
   return (
     <div className="flex flex-row lg:flex-col w-full">
       <div className="lg:w-1/2 w-full h-[calc(100vh-80px)] flex justify-center items-center">
@@ -48,7 +57,7 @@ export default function ForgotPassword() {
             <header className="text-start flex flex-col gap-4">
               <Image src="/img/logo.png" alt="logo" w={80} h={50} ml={-20} />
               <span className="text-3xl font-bold Poppins-font text-left">
-                Forgot Password
+                {currentLanguage?.forgot_password}
               </span>
             </header>
             <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -56,7 +65,7 @@ export default function ForgotPassword() {
                 mt="sm"
                 size="md"
                 required
-                label="Email"
+                label={currentLanguage?.email}
                 placeholder="Enter your email address"
                 key={form.key("email")}
                 {...form.getInputProps("email")}
@@ -69,7 +78,7 @@ export default function ForgotPassword() {
                 className="!bg-[#46A7B0]"
                 loading={loading}
               >
-                Login
+                {currentLanguage?.login}
               </Button>
             </form>
           </div>
@@ -91,11 +100,10 @@ export default function ForgotPassword() {
           <div>
             <div className="text-center max-w-lg px-1.5 m-auto">
               <h3 className="text-white font-semibold font-popins text-4xl mb-4 Poppins-font">
-                Relax, Quick and Smooth
+                {currentLanguage?.auth_content_1}
               </h3>
               <p className="text-white text-base font-medium Poppins-font">
-                Your gateway to relaxation and rejuvenation. Log in to unwind,
-                refresh, and feel your best.
+                {currentLanguage?.auth_content_2}
               </p>
             </div>
           </div>
